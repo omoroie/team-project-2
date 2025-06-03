@@ -17,7 +17,12 @@ export function Hero() {
                 {t('heroSubtitle')}
               </h2>
               <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight">
-                {t('heroTitle')}
+                {t('heroTitle').split('\n').map((line, index) => (
+                  <span key={index}>
+                    {line}
+                    {index < t('heroTitle').split('\n').length - 1 && <br />}
+                  </span>
+                ))}
               </h1>
               <p className="text-lg text-muted-foreground max-w-lg">
                 {t('heroDescription')}
@@ -34,38 +39,39 @@ export function Hero() {
 
           {/* Right Content */}
           <div className="relative">
-            <div className="grid grid-cols-2 gap-4">
-              {/* Hero Products Display */}
-              <div className="space-y-4">
-                <div className="product-card p-6 aspect-square flex items-center justify-center">
+            <div className="grid grid-cols-2 gap-6">
+              {/* 첫 번째 열 */}
+              <div className="space-y-6">
+                <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://picsum.photos/300/300?random=5"
-                    alt="Recipe 1"
-                    className="w-full h-full object-cover rounded-lg"
+                    src="https://picsum.photos/350/280?random=1"
+                    alt="한국 요리"
+                    className="w-full h-[280px] object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="product-card p-4 aspect-video flex items-center justify-center bg-accent/10">
+                <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://picsum.photos/400/250?random=6"
-                    alt="Ingredient"
-                    className="w-full h-full object-cover rounded-lg"
+                    src="https://picsum.photos/350/200?random=2"
+                    alt="신선한 재료"
+                    className="w-full h-[200px] object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>
               
-              <div className="space-y-4 pt-8">
-                <div className="product-card p-4 aspect-video flex items-center justify-center bg-secondary">
+              {/* 두 번째 열 */}
+              <div className="space-y-6 pt-12">
+                <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://picsum.photos/400/250?random=7"
-                    alt="Cooking"
-                    className="w-full h-full object-cover rounded-lg"
+                    src="https://picsum.photos/350/220?random=3"
+                    alt="요리 과정"
+                    className="w-full h-[220px] object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
-                <div className="product-card p-6 aspect-square flex items-center justify-center">
+                <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://picsum.photos/300/300?random=8"
-                    alt="Recipe 2"
-                    className="w-full h-full object-cover rounded-lg"
+                    src="https://picsum.photos/350/260?random=4"
+                    alt="완성된 요리"
+                    className="w-full h-[260px] object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>

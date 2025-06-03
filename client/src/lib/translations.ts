@@ -10,10 +10,10 @@ export const translations = {
     logout: '로그아웃',
     
     // Home page
-    heroTitle: '여러분의 요리 여정이 여기서 시작됩니다',
-    heroSubtitle: '스마트한 요리로 매일을 새롭게',
-    heroDescription: '스마트 특가 최대 50% 할인과 여러분의 사랑이 만나 해낼 수 있어요',
-    exploreRecipes: '그래 해볼게요',
+    heroTitle: '요리의 즐거움을\n새롭게 발견하세요',
+    heroSubtitle: '만개의레시피와 함께하는 특별한 요리 경험',
+    heroDescription: '전문 셰프의 비법 레시피부터 신선한 재료까지, 당신의 요리 실력을 한 단계 업그레이드해보세요.',
+    exploreRecipes: '레시피 둘러보기',
     
     // Common
     loading: '로딩 중...',
@@ -30,10 +30,10 @@ export const translations = {
     logout: 'Logout',
     
     // Home page
-    heroTitle: 'Your culinary journey starts here',
-    heroSubtitle: 'Smart cooking for a new everyday',
-    heroDescription: 'Smart deals up to 50% off and your love come together to make it happen',
-    exploreRecipes: 'Let\'s Do It',
+    heroTitle: 'Discover the joy\nof cooking',
+    heroSubtitle: 'Special cooking experience with 10000 Recipe',
+    heroDescription: 'From expert chef recipes to fresh ingredients, upgrade your cooking skills to the next level.',
+    exploreRecipes: 'Explore Recipes',
     
     // Common
     loading: 'Loading...',
