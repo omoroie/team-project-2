@@ -20,6 +20,8 @@ export const recipes = pgTable("recipes", {
   cookingTime: integer("cooking_time").notNull(),
   servings: integer("servings").notNull(),
   difficulty: text("difficulty").notNull(),
+  category: text("category").default("일반한식"),
+  type: text("type").default("일상"),
   imageUrl: text("image_url"),
   authorId: integer("author_id").notNull(),
   createdAt: timestamp("created_at").defaultNow(),

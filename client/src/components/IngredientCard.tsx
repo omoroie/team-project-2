@@ -27,7 +27,7 @@ export function IngredientCard({ ingredient }: IngredientCardProps) {
         </p>
 
         <div className="flex items-center justify-between">
-          <span className="text-lg font-bold text-primary">
+          <span className="text-lg font-bold text-accent">
             ₩{ingredient.price.toLocaleString()}
           </span>
           <span className="text-sm text-muted-foreground ingredient-badge">
