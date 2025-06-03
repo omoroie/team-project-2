@@ -82,6 +82,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.get("/api/recipes/best", async (req, res) => {
+    try {
+      const recipes = await storage.getRecipes();
+      
+      // 베스트 레시피 로직 - 실제로는 평점, 조회수, 좋아요 등을 기준으로 정렬
+      // 현재는 샘플 데이터로 베스트 레시피 형태로 변환
+      const bestRecipes = recipes.slice(0, 10).map((recipe, index) => ({
+        ...recipe,
+        ranking: index + 1,
+        rating: 4.5 + Math.random() * 0.5, // 4.5-5.0 사이 평점
+        reviewCount: Math.floor(Math.random() * 500) + 50,
+        viewCount: Math.floor(Math.random() * 10000) + 1000,
+        author: {
+          name: `요리사${index + 1}`,
+          avatar: `https://picsum.photos/32/32?random=${index + 10}`
+        },
+        isVideo: Math.random() > 0.7 // 30% 확률로 비디오
+      }));
+
+      res.json(bestRecipes);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch best recipes" });
+    }
+  });
+
   app.get("/api/recipes/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);

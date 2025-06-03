@@ -96,6 +96,7 @@ export const authAPI = {
 
 export const recipeAPI = {
   getAll: () => gatewayApi.get('/api/recipes'),
+  getBest: () => gatewayApi.get('/api/recipes/best'),
   getById: (id: number) => gatewayApi.get(`/api/recipes/${id}`),
   create: (data: any) => gatewayApi.post('/api/recipes', data),
   update: (id: number, data: any) => gatewayApi.put(`/api/recipes/${id}`, data),
