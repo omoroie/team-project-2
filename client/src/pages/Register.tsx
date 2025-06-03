@@ -95,7 +95,11 @@ export default function Register() {
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                 required
+                className={formData.password.length > 0 && formData.password.length < 6 ? 'border-red-500' : ''}
               />
+              {formData.password.length > 0 && formData.password.length < 6 && (
+                <p className="text-sm text-red-500">비밀번호는 6자리 이상이어야 합니다</p>
+              )}
             </div>
 
             <div className="flex items-center space-x-2">
