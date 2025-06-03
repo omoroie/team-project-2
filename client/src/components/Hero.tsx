@@ -39,14 +39,14 @@ export function Hero() {
               <div className="space-y-4">
                 <div className="product-card p-6 aspect-square flex items-center justify-center">
                   <img
-                    src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=200&h=200&fit=crop&crop=center"
+                    src="https://picsum.photos/300/300?random=5"
                     alt="Recipe 1"
                     className="w-full h-full object-cover rounded-lg"
                   />
                 </div>
                 <div className="product-card p-4 aspect-video flex items-center justify-center bg-accent/10">
                   <img
-                    src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=300&h=200&fit=crop&crop=center"
+                    src="https://picsum.photos/400/250?random=6"
                     alt="Ingredient"
                     className="w-full h-full object-cover rounded-lg"
                   />
@@ -56,14 +56,14 @@ export function Hero() {
               <div className="space-y-4 pt-8">
                 <div className="product-card p-4 aspect-video flex items-center justify-center bg-secondary">
                   <img
-                    src="https://images.unsplash.com/photo-1544025162-d76694265947?w=300&h=200&fit=crop&crop=center"
+                    src="https://picsum.photos/400/250?random=7"
                     alt="Cooking"
                     className="w-full h-full object-cover rounded-lg"
                   />
                 </div>
                 <div className="product-card p-6 aspect-square flex items-center justify-center">
                   <img
-                    src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=200&h=200&fit=crop&crop=center"
+                    src="https://picsum.photos/300/300?random=8"
                     alt="Recipe 2"
                     className="w-full h-full object-cover rounded-lg"
                   />

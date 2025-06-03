@@ -13,7 +13,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
       <Card className="product-card overflow-hidden group cursor-pointer">
         <div className="aspect-video overflow-hidden">
           <img
-            src={recipe.imageUrl || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=center'}
+            src={recipe.imageUrl || 'https://picsum.photos/400/300?random=9'}
             alt={recipe.title}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />

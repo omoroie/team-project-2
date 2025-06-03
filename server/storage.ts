@@ -51,10 +51,10 @@ export class MemStorage implements IStorage {
   private async initializeSampleData() {
     // Create sample ingredients
     const sampleIngredients = [
-      { name: "토마토", description: "신선한 토마토", price: 2000, unit: "개", imageUrl: "https://images.unsplash.com/photo-1546470427-e4cf2b19e1d4?w=400", inStock: true },
-      { name: "양파", description: "국산 양파", price: 1500, unit: "개", imageUrl: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=400", inStock: true },
-      { name: "마늘", description: "햇마늘", price: 3000, unit: "봉", imageUrl: "https://images.unsplash.com/photo-1553978297-833d09932d37?w=400", inStock: true },
-      { name: "쌀", description: "신동진쌀", price: 15000, unit: "kg", imageUrl: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=400", inStock: true },
+      { name: "토마토", description: "신선한 토마토", price: 2000, unit: "개", imageUrl: "https://picsum.photos/400/300?random=1", inStock: true },
+      { name: "양파", description: "국산 양파", price: 1500, unit: "개", imageUrl: "https://picsum.photos/400/300?random=2", inStock: true },
+      { name: "마늘", description: "햇마늘", price: 3000, unit: "봉", imageUrl: "https://picsum.photos/400/300?random=3", inStock: true },
+      { name: "쌀", description: "신동진쌀", price: 15000, unit: "kg", imageUrl: "https://picsum.photos/400/300?random=4", inStock: true },
     ];
 
     for (const ingredient of sampleIngredients) {
