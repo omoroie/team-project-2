@@ -1,4 +1,4 @@
-package com.samsung.recipe.user.config;
+package com.samsung.recipe.board.config;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.EnableCaching;
