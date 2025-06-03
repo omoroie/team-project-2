@@ -1,0 +1,139 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15
+    container_name: samsung-recipe-postgres
+    environment:
+      POSTGRES_DB: samsung_recipe
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - samsung-recipe-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: samsung-recipe-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - samsung-recipe-network
+
+  # User Service
+  user-service:
+    build:
+      context: ./backend/user-service
+      dockerfile: Dockerfile
+    container_name: samsung-recipe-user-service
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/samsung_recipe
+      PGUSER: postgres
+      PGPASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - samsung-recipe-network
+
+  # Recipe Service
+  recipe-service:
+    build:
+      context: ./backend/recipe-service
+      dockerfile: Dockerfile
+    container_name: samsung-recipe-recipe-service
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/samsung_recipe
+      PGUSER: postgres
+      PGPASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      UNSPLASH_ACCESS_KEY: ${UNSPLASH_ACCESS_KEY:-}
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - samsung-recipe-network
+
+  # Ingredient Service
+  ingredient-service:
+    build:
+      context: ./backend/ingredient-service
+      dockerfile: Dockerfile
+    container_name: samsung-recipe-ingredient-service
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/samsung_recipe
+      PGUSER: postgres
+      PGPASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+    ports:
+      - "8083:8083"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - samsung-recipe-network
+
+  # Board Service
+  board-service:
+    build:
+      context: ./backend/board-service
+      dockerfile: Dockerfile
+    container_name: samsung-recipe-board-service
+    environment:
+      DATABASE_URL: jdbc:postgresql://postgres:5432/samsung_recipe
+      PGUSER: postgres
+      PGPASSWORD: password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GOOGLE_TRANSLATE_API_KEY: ${GOOGLE_TRANSLATE_API_KEY:-}
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - samsung-recipe-network
+
+  # Frontend
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: samsung-recipe-frontend
+    environment:
+      VITE_USER_SERVICE_URL: http://user-service:8081
+      VITE_RECIPE_SERVICE_URL: http://recipe-service:8082
+      VITE_INGREDIENT_SERVICE_URL: http://ingredient-service:8083
+      VITE_BOARD_SERVICE_URL: http://board-service:8084
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user-service
+      - recipe-service
+      - ingredient-service
+      - board-service
+    networks:
+      - samsung-recipe-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  samsung-recipe-network:
+    driver: bridge

@@ -323,3 +323,78 @@ export class DatabaseStorage implements IStorage {
 }
 
 export const storage = new DatabaseStorage();
+    }
+  }
+
+  // User methods
+  async getUser(id: number): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.username, username)).limit(1);
+    return result[0];
+  }
+
+  async getUserByEmail(email: string): Promise<User | undefined> {
+    const result = await this.db.select().from(users).where(eq(users.email, email)).limit(1);
+    return result[0];
+  }
+
+  async createUser(user: InsertUser): Promise<User> {
+    const result = await this.db.insert(users).values(user).returning();
+    return result[0];
+  }
+
+  // Recipe methods
+  async getRecipes(): Promise<Recipe[]> {
+    return await this.db.select().from(recipes);
+  }
+
+  async getRecipe(id: number): Promise<Recipe | undefined> {
+    const result = await this.db.select().from(recipes).where(eq(recipes.id, id)).limit(1);
+    return result[0];
+  }
+
+  async getRecipesByAuthor(authorId: number): Promise<Recipe[]> {
+    return await this.db.select().from(recipes).where(eq(recipes.authorId, authorId));
+  }
+
+  async createRecipe(recipe: InsertRecipe): Promise<Recipe> {
+    const result = await this.db.insert(recipes).values(recipe).returning();
+    return result[0];
+  }
+
+  // Ingredient methods
+  async getIngredients(): Promise<Ingredient[]> {
+    return await this.db.select().from(ingredients);
+  }
+
+  async getIngredient(id: number): Promise<Ingredient | undefined> {
+    const result = await this.db.select().from(ingredients).where(eq(ingredients.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createIngredient(ingredient: InsertIngredient): Promise<Ingredient> {
+    const result = await this.db.insert(ingredients).values(ingredient).returning();
+    return result[0];
+  }
+
+  // Board post methods
+  async getBoardPosts(): Promise<BoardPost[]> {
+    return await this.db.select().from(boardPosts);
+  }
+
+  async getBoardPost(id: number): Promise<BoardPost | undefined> {
+    const result = await this.db.select().from(boardPosts).where(eq(boardPosts.id, id)).limit(1);
+    return result[0];
+  }
+
+  async createBoardPost(post: InsertBoardPost): Promise<BoardPost> {
+    const result = await this.db.insert(boardPosts).values(post).returning();
+    return result[0];
+  }
+}
+
+export const storage = new DatabaseStorage();
