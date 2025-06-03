@@ -3,11 +3,11 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 // 마이크로서비스 베이스 URL 설정
 // 현재는 Express.js 게이트웨이를 통해 모든 API 호출
 const API_ENDPOINTS = {
-  user: 'http://localhost:5000', // Express.js 게이트웨이 사용
-  recipe: 'http://localhost:5000', 
-  ingredient: 'http://localhost:5000',
-  board: 'http://localhost:5000',
-  gateway: 'http://localhost:5000' 
+  user: '', // 상대 경로 사용으로 CORS 회피
+  recipe: '', 
+  ingredient: '',
+  board: '',
+  gateway: '' 
 };
 
 // 공통 axios 설정
