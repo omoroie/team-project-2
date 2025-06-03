@@ -1,0 +1,56 @@
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.0)
+
+2025-06-04 02:19:49 - Starting UserServiceApplication using Java 23.0.2 with PID 99503 (/Users/junsujeong/team-project/pj-02/pj-1/backend/user-service/target/classes started by junsujeong in /Users/junsujeong/team-project/pj-02/pj-1/backend/user-service)
+2025-06-04 02:19:49 - Running with Spring Boot v3.2.0, Spring v6.1.1
+2025-06-04 02:19:49 - No active profile set, falling back to 1 default profile: "default"
+2025-06-04 02:19:49 - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-06-04 02:19:49 - Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2025-06-04 02:19:49 - Finished Spring Data repository scanning in 52 ms. Found 1 JPA repository interface.
+2025-06-04 02:19:49 - Multiple Spring Data modules found, entering strict repository configuration mode
+2025-06-04 02:19:49 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2025-06-04 02:19:49 - Spring Data Redis - Could not safely identify store assignment for repository candidate interface com.samsung.recipe.user.repository.UserRepository; If you want this repository to be a Redis repository, consider annotating your entities with one of these annotations: org.springframework.data.redis.core.RedisHash (preferred), or consider extending one of the following types with your repository: org.springframework.data.keyvalue.repository.KeyValueRepository
+2025-06-04 02:19:49 - Finished Spring Data repository scanning in 2 ms. Found 0 Redis repository interfaces.
+2025-06-04 02:19:50 - Tomcat initialized with port 8081 (http)
+2025-06-04 02:19:50 - Starting service [Tomcat]
+2025-06-04 02:19:50 - Starting Servlet engine: [Apache Tomcat/10.1.16]
+2025-06-04 02:19:50 - Initializing Spring embedded WebApplicationContext
+2025-06-04 02:19:50 - Root WebApplicationContext: initialization completed in 549 ms
+2025-06-04 02:19:50 - HHH000204: Processing PersistenceUnitInfo [name: default]
+2025-06-04 02:19:50 - HHH000412: Hibernate ORM core version 6.3.1.Final
+2025-06-04 02:19:50 - HHH000026: Second-level cache disabled
+2025-06-04 02:19:50 - No LoadTimeWeaver setup: ignoring JPA class transformer
+2025-06-04 02:19:50 - HikariPool-1 - Starting...
+2025-06-04 02:19:50 - HikariPool-1 - Added connection org.postgresql.jdbc.PgConnection@553ce348
+2025-06-04 02:19:50 - HikariPool-1 - Start completed.
+2025-06-04 02:19:50 - HHH90000025: PostgreSQLDialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2025-06-04 02:19:50 - HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2025-06-04 02:19:50 - Initialized JPA EntityManagerFactory for persistence unit 'default'
+2025-06-04 02:19:50 - Hibernate is in classpath; If applicable, HQL parser will be used.
+2025-06-04 02:19:51 - spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2025-06-04 02:19:51 - 
+
+Using generated security password: 78deaa39-a84c-43a9-8e2b-8fdf44bf6fe9
+
+This generated password is for development use only. Your security configuration must be updated before running your application in production.
+
+2025-06-04 02:19:51 - Will secure any request with [org.springframework.security.web.session.DisableEncodeUrlFilter@37d12d0e, org.springframework.security.web.context.request.async.WebAsyncManagerIntegrationFilter@6f8c6694, org.springframework.security.web.context.SecurityContextHolderFilter@7d28d525, org.springframework.security.web.header.HeaderWriterFilter@412bb41f, org.springframework.web.filter.CorsFilter@71b01319, org.springframework.security.web.authentication.logout.LogoutFilter@1285ec6, org.springframework.security.web.savedrequest.RequestCacheAwareFilter@7e7e34ef, org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestFilter@e7c3ba2, org.springframework.security.web.authentication.AnonymousAuthenticationFilter@16fa28eb, org.springframework.security.web.session.SessionManagementFilter@6b3bcab7, org.springframework.security.web.access.ExceptionTranslationFilter@11893180, org.springframework.security.web.access.intercept.AuthorizationFilter@5cc088a8]
+2025-06-04 02:19:51 - Tomcat started on port 8081 (http) with context path ''
+2025-06-04 02:19:51 - Started UserServiceApplication in 2.014 seconds (process running for 2.154)
+2025-06-04 02:20:29 - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2025-06-04 02:20:29 - Initializing Servlet 'dispatcherServlet'
+2025-06-04 02:20:29 - Completed initialization in 3 ms
+2025-06-04 02:20:29 - Securing OPTIONS /auth/register
+2025-06-04 02:20:29 - Securing POST /auth/register
+2025-06-04 02:20:29 - Set SecurityContextHolder to anonymous SecurityContext
+2025-06-04 02:20:29 - Cache miss for REQUEST dispatch to '/auth/register' (previous null). Performing MatchableHandlerMapping lookup. This is logged once only at WARN level, and every time at TRACE.
+2025-06-04 02:20:29 - Secured POST /auth/register
+2025-06-04 02:20:29 - Securing POST /error
+2025-06-04 02:20:29 - Set SecurityContextHolder to anonymous SecurityContext
+2025-06-04 02:20:29 - Pre-authenticated entry point called. Rejecting access
