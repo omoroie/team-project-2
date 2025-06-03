@@ -1,0 +1,206 @@
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  1.093 s
+[INFO] Finished at: 2025-06-04T01:20:34+09:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.11.0:compile (default-compile) on project board-service: Compilation failure: Compilation failure: 
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[40,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[57,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[69,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[81,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[93,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[105,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[127,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[150,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/controller/BoardPostController.java:[172,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.controller.BoardPostController
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[40,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[40,68] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPostRequestDto of type com.samsung.recipe.board.dto.BoardPostRequestDto
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[45,34] cannot find symbol
+[ERROR]   symbol:   method getOriginalLanguage()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[46,97] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[47,99] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[49,22] cannot find symbol
+[ERROR]   symbol:   method setTranslatedTitleEn(java.lang.String)
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[50,22] cannot find symbol
+[ERROR]   symbol:   method setTranslatedContentEn(java.lang.String)
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[51,53] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[52,55] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[54,97] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[55,99] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[57,22] cannot find symbol
+[ERROR]   symbol:   method setTranslatedTitleKo(java.lang.String)
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[58,22] cannot find symbol
+[ERROR]   symbol:   method setTranslatedContentKo(java.lang.String)
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[59,53] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[60,55] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[68,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[68,71] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable savedBoardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[74,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[80,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[89,41] cannot find symbol
+[ERROR]   symbol:   method getViewCount()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[96,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[102,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[117,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[126,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[135,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[144,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[155,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[160,47] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPostRequestDto of type com.samsung.recipe.board.dto.BoardPostRequestDto
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[161,49] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPostRequestDto of type com.samsung.recipe.board.dto.BoardPostRequestDto
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[162,50] cannot find symbol
+[ERROR]   symbol:   method getIsPinned()
+[ERROR]   location: variable boardPostRequestDto of type com.samsung.recipe.board.dto.BoardPostRequestDto
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[165,34] cannot find symbol
+[ERROR]   symbol:   method getOriginalLanguage()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[166,97] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[167,99] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[169,22] cannot find symbol
+[ERROR]   symbol:   method setTranslatedTitleEn(java.lang.String)
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[170,22] cannot find symbol
+[ERROR]   symbol:   method setTranslatedContentEn(java.lang.String)
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[171,53] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[172,55] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[174,97] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[175,99] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[177,22] cannot find symbol
+[ERROR]   symbol:   method setTranslatedTitleKo(java.lang.String)
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[178,22] cannot find symbol
+[ERROR]   symbol:   method setTranslatedContentKo(java.lang.String)
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[179,53] cannot find symbol
+[ERROR]   symbol:   method getTitle()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[180,55] cannot find symbol
+[ERROR]   symbol:   method getContent()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[188,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[195,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[206,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[214,59] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[216,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[216,53] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable boardPost of type com.samsung.recipe.board.entity.BoardPost
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[222,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/BoardPostService.java:[227,9] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.BoardPostService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/GoogleTranslateService.java:[26,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.GoogleTranslateService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/GoogleTranslateService.java:[35,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.GoogleTranslateService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/GoogleTranslateService.java:[68,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.GoogleTranslateService
+[ERROR] /Users/junsujeong/team-project/pj-02/pj-1/backend/board-service/src/main/java/com/samsung/recipe/board/service/GoogleTranslateService.java:[72,13] cannot find symbol
+[ERROR]   symbol:   variable log
+[ERROR]   location: class com.samsung.recipe.board.service.GoogleTranslateService
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
+junsujeong@JUNSUui-noteubug board-service % 
