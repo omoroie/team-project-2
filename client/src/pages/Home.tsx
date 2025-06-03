@@ -9,12 +9,20 @@ import { recipeAPI } from '@/lib/apiClient';
 export default function Home() {
   const { t } = useLanguage();
 
-  const { data: bestRecipes = [] } = useQuery({
-    queryKey: ['/api/recipes/best'],
+  const { data: bestRecipes = [], isLoading: bestRecipesLoading } = useQuery({
+    queryKey: ['best-recipes'],
     queryFn: async () => {
-      const response = await recipeAPI.getBest();
-      return response.data;
+      try {
+        const response = await recipeAPI.getBest();
+        console.log('Best recipes response:', response.data);
+        return response.data;
+      } catch (error) {
+        console.error('Failed to fetch best recipes:', error);
+        return [];
+      }
     },
+    retry: 3,
+    retryDelay: 1000,
   });
 
   const { data: recipes = [] } = useQuery<Recipe[]>({
@@ -53,8 +61,16 @@ export default function Home() {
       <Hero />
       
       {/* 베스트 레시피 섹션 */}
-      {bestRecipes.length > 0 && (
+      {bestRecipesLoading ? (
+        <div className="py-16 text-center">
+          <div className="text-lg">베스트 레시피를 불러오는 중...</div>
+        </div>
+      ) : bestRecipes.length > 0 ? (
         <BestRecipes recipes={bestRecipes} />
+      ) : (
+        <div className="py-16 text-center">
+          <div className="text-lg">베스트 레시피를 준비 중입니다.</div>
+        </div>
       )}
       
       {recipes.length > 0 && (
