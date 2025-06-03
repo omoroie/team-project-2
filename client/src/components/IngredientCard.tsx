@@ -1,0 +1,49 @@
+import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Ingredient } from '@shared/schema';
+
+interface IngredientCardProps {
+  ingredient: Ingredient;
+}
+
+export function IngredientCard({ ingredient }: IngredientCardProps) {
+  const { t } = useLanguage();
+
+  return (
+    <Card className="product-card overflow-hidden">
+      <div className="aspect-video overflow-hidden">
+        <img
+          src={ingredient.imageUrl || 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center'}
+          alt={ingredient.name}
+          className="w-full h-full object-cover"
+        />
+      </div>
+      
+      <CardContent className="p-4">
+        <h3 className="font-semibold text-lg mb-2">{ingredient.name}</h3>
+        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          {ingredient.description}
+        </p>
+
+        <div className="flex items-center justify-between">
+          <span className="text-lg font-bold text-blue-600">
+            ₩{ingredient.price.toLocaleString()}
+          </span>
+          <span className="text-sm text-gray-500">
+            /{ingredient.unit}
+          </span>
+        </div>
+      </CardContent>
+
+      <CardFooter className="p-4 pt-0">
+        <Button 
+          className="w-full" 
+          disabled={!ingredient.inStock}
+        >
+          {ingredient.inStock ? t('addToCart') : '품절'}
+        </Button>
+      </CardFooter>
+    </Card>
+  );
+}
