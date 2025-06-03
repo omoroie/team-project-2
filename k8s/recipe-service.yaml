@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: recipe-service
+  namespace: samsung-recipe
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: recipe-service
+  template:
+    metadata:
+      labels:
+        app: recipe-service
+    spec:
+      containers:
+      - name: recipe-service
+        image: samsung-recipe/recipe-service:latest
+        ports:
+        - containerPort: 8082
+        env:
+        - name: DATABASE_URL
+          value: "jdbc:postgresql://postgres-service:5432/samsung_recipe"
+        - name: PGUSER
+          value: "postgres"
+        - name: PGPASSWORD
+          value: "password"
+        - name: REDIS_HOST
+          value: "redis-service"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: UNSPLASH_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: external-api-secrets
+              key: unsplash-access-key
+        livenessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 60
+          periodSeconds: 30
+        readinessProbe:
+          httpGet:
+            path: /actuator/health
+            port: 8082
+          initialDelaySeconds: 30
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: recipe-service
+  namespace: samsung-recipe
+spec:
+  selector:
+    app: recipe-service
+  ports:
+  - port: 8082
+    targetPort: 8082
+  type: ClusterIP
