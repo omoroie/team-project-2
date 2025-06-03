@@ -1,57 +1,57 @@
-# 삼성 레시피 플랫폼
+# Samsung Recipe Platform
 
-삼성닷컴 스타일의 레시피 공유 및 식재료 구매 플랫폼입니다. TypeScript React 프론트엔드와 Spring Boot 마이크로서비스 백엔드로 구성되어 있습니다.
+A Samsung.com-inspired recipe sharing and ingredient purchasing platform built with TypeScript React frontend and Spring Boot microservices backend.
 
-## 아키텍처 개요
+## Architecture Overview
 
-### 프론트엔드
-- **TypeScript React** 삼성 스타일 UI 디자인
-- **한영 이중 언어 지원** (한국어/영어)
-- **전역 상태 관리** Context API 사용
-- **모던 UI 컴포넌트** shadcn/ui 라이브러리
+### Frontend
+- **TypeScript React** with Samsung-style UI design
+- **Bilingual Support** (Korean/English)
+- **Global State Management** with Context API
+- **Material Design** with shadcn/ui components
 
-### 백엔드 마이크로서비스
-- **사용자 서비스** (8081포트) - 인증 및 사용자 관리
-- **레시피 서비스** (8082포트) - 레시피 공유 및 관리
-- **식재료 서비스** (8083포트) - 식재료 마켓플레이스
-- **게시판 서비스** (8084포트) - 기업 전용 게시판
+### Backend Microservices
+- **User Service** (Port 8081) - Authentication and user management
+- **Recipe Service** (Port 8082) - Recipe sharing and management
+- **Ingredient Service** (Port 8083) - Ingredient marketplace
+- **Board Service** (Port 8084) - Corporate board with translation
 
-### 인프라
-- **PostgreSQL** - 메인 데이터베이스
-- **Redis** - 캐싱 레이어
-- **Docker** - 컨테이너화
-- **Kubernetes** - 오케스트레이션
+### Infrastructure
+- **PostgreSQL** - Primary database
+- **Redis** - Caching layer
+- **Docker** - Containerization
+- **Kubernetes** - Orchestration
 
-## 주요 기능
+## Features
 
-### 핵심 기능
-- ✅ JWT를 통한 사용자 등록 및 인증
-- ✅ 자동 이미지 생성 레시피 공유
-- ✅ 재고 관리 식재료 마켓플레이스
-- ✅ 기업 전용 게시판 접근
-- ✅ 한영 이중 언어 인터페이스
-- ✅ 성능 최적화 Redis 캐싱
+### Core Features
+- ✅ User registration and authentication with JWT
+- ✅ Recipe sharing with auto-generated images
+- ✅ Ingredient marketplace with inventory management
+- ✅ Corporate-only board access
+- ✅ Korean/English bilingual interface
+- ✅ Redis caching for performance
 
-### 고급 기능
-- 🔄 Google 번역 API 연동
-- 🔄 Unsplash 이미지 연동
+### Advanced Features
+- 🔄 Google Translate API integration
+- 🔄 Unsplash image integration
 - 🔄 AWS S3 + CloudFront CDN
-- 🔄 실시간 알림
+- 🔄 Real-time notifications
 
-## 빠른 시작
+## Quick Start
 
-### 필수 요구사항
+### Prerequisites
 - Java 17+
 - Node.js 18+
 - Docker & Docker Compose
 - PostgreSQL 15+
 - Redis 7+
 
-### 환경 변수
-루트 디렉토리에 `.env` 파일을 생성하세요:
+### Environment Variables
+Create a `.env` file in the root directory:
 
 ```env
-# 데이터베이스
+# Database
 DATABASE_URL=jdbc:postgresql://localhost:5432/samsung_recipe
 PGUSER=postgres
 PGPASSWORD=password
@@ -63,7 +63,7 @@ PGDATABASE=samsung_recipe
 REDIS_HOST=localhost
 REDIS_PORT=6379
 
-# 외부 API (선택사항)
+# External APIs (Optional)
 UNSPLASH_ACCESS_KEY=your_unsplash_key
 GOOGLE_TRANSLATE_API_KEY=your_google_translate_key
 
@@ -71,38 +71,38 @@ GOOGLE_TRANSLATE_API_KEY=your_google_translate_key
 JWT_SECRET=samsung-recipe-platform-secret-key-2024-very-secure
 ```
 
-### 개발 환경 설정
+### Development Setup
 
-1. **인프라 시작**
+1. **Start Infrastructure**
 ```bash
 docker-compose up postgres redis -d
 ```
 
-2. **백엔드 서비스 시작**
+2. **Start Backend Services**
 ```bash
-# 사용자 서비스
+# User Service
 cd backend/user-service
 ./mvnw spring-boot:run
 
-# 레시피 서비스
+# Recipe Service
 cd backend/recipe-service
 ./mvnw spring-boot:run
 
-# 식재료 서비스
+# Ingredient Service
 cd backend/ingredient-service
 ./mvnw spring-boot:run
 
-# 게시판 서비스
+# Board Service
 cd backend/board-service
 ./mvnw spring-boot:run
 ```
 
-3. **프론트엔드 시작**
+3. **Start Frontend**
 ```bash
 npm run dev
 ```
 
-### 프로덕션 배포
+### Production Deployment
 
 #### Docker Compose
 ```bash
@@ -114,63 +114,63 @@ docker-compose up -d
 kubectl apply -f k8s/
 ```
 
-## API 문서
+## API Documentation
 
-### 사용자 서비스 (8081)
-- `POST /api/users/register` - 새 사용자 등록
-- `POST /api/users/login` - 사용자 인증
-- `GET /api/users/{id}` - ID로 사용자 조회
-- `GET /api/users/corporate` - 기업 사용자 조회
+### User Service (8081)
+- `POST /api/users/register` - Register new user
+- `POST /api/users/login` - User authentication
+- `GET /api/users/{id}` - Get user by ID
+- `GET /api/users/corporate` - Get corporate users
 
-### 레시피 서비스 (8082)
-- `POST /api/recipes` - 레시피 생성
-- `GET /api/recipes` - 모든 레시피 조회
-- `GET /api/recipes/{id}` - ID로 레시피 조회
-- `GET /api/recipes/search?keyword=` - 레시피 검색
-- `GET /api/recipes/author/{authorId}` - 작성자별 레시피 조회
+### Recipe Service (8082)
+- `POST /api/recipes` - Create recipe
+- `GET /api/recipes` - Get all recipes
+- `GET /api/recipes/{id}` - Get recipe by ID
+- `GET /api/recipes/search?keyword=` - Search recipes
+- `GET /api/recipes/author/{authorId}` - Get recipes by author
 
-### 식재료 서비스 (8083)
-- `POST /api/ingredients` - 식재료 생성
-- `GET /api/ingredients` - 모든 식재료 조회
-- `GET /api/ingredients/{id}` - ID로 식재료 조회
-- `GET /api/ingredients/category/{category}` - 카테고리별 조회
+### Ingredient Service (8083)
+- `POST /api/ingredients` - Create ingredient
+- `GET /api/ingredients` - Get all ingredients
+- `GET /api/ingredients/{id}` - Get ingredient by ID
+- `GET /api/ingredients/category/{category}` - Get by category
 
-### 게시판 서비스 (8084)
-- `POST /api/board` - 게시글 생성 (기업 전용)
-- `GET /api/board` - 모든 게시글 조회 (기업 전용)
-- `GET /api/board/{id}` - ID로 게시글 조회
-- `POST /api/board/{id}/translate` - 게시글 번역
+### Board Service (8084)
+- `POST /api/board` - Create board post (Corporate only)
+- `GET /api/board` - Get all board posts (Corporate only)
+- `GET /api/board/{id}` - Get board post by ID
+- `POST /api/board/{id}/translate` - Translate post content
 
-## 기술 스택
+## Technology Stack
 
-### 프론트엔드
+### Frontend
 - React 18 with TypeScript
-- Vite 빌드 도구
-- TailwindCSS 스타일링
-- shadcn/ui 컴포넌트
-- React Query 상태 관리
-- Wouter 라우팅
+- Vite for build tooling
+- TailwindCSS for styling
+- shadcn/ui for components
+- React Query for state management
+- Wouter for routing
 
-### 백엔드
+### Backend
 - Spring Boot 3.2
 - Spring Data JPA
 - Spring Security
-- Redis 캐싱
-- PostgreSQL 데이터베이스
-- JWT 인증
-- Lombok 코드 생성
-- ModelMapper DTO 변환
+- Redis for caching
+- PostgreSQL database
+- JWT authentication
+- Lombok for code generation
+- ModelMapper for DTOs
 
 ### DevOps
 - Docker & Docker Compose
-- Kubernetes 배포
-- PostgreSQL 영구 볼륨
-- Redis 캐싱 클러스터
-- 환경별 설정
+- Kubernetes deployments
+- PostgreSQL with persistent volumes
+- Redis caching cluster
+- Environment-based configuration
 
-## 데이터베이스 스키마
+## Database Schema
 
-### 사용자 테이블
+### Users Table
 ```sql
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -183,7 +183,7 @@ CREATE TABLE users (
 );
 ```
 
-### 레시피 테이블
+### Recipes Table
 ```sql
 CREATE TABLE recipes (
     id SERIAL PRIMARY KEY,
@@ -199,7 +199,7 @@ CREATE TABLE recipes (
 );
 ```
 
-### 식재료 테이블
+### Ingredients Table
 ```sql
 CREATE TABLE ingredients (
     id SERIAL PRIMARY KEY,
@@ -217,67 +217,67 @@ CREATE TABLE ingredients (
 );
 ```
 
-## 성능 최적화
+## Performance Features
 
-### Redis 캐싱 전략
-- 사용자 데이터 24시간 캐싱
-- 레시피 데이터 12시간 캐싱
-- 식재료 데이터 6시간 캐싱
-- 게시글 2시간 캐싱
+### Redis Caching Strategy
+- User data cached for 24 hours
+- Recipe data cached for 12 hours
+- Ingredient data cached for 6 hours
+- Board posts cached for 2 hours
 
-### 데이터베이스 최적화
-- 외래 키 인덱싱
-- 커넥션 풀링
-- JPA 쿼리 최적화
-- 관계형 지연 로딩
+### Database Optimization
+- Indexed foreign keys
+- Connection pooling
+- Query optimization with JPA
+- Lazy loading for relationships
 
-## 보안 기능
+## Security Features
 
-### 인증
-- JWT 기반 인증
-- BCrypt 패스워드 해싱
-- 세션 관리
-- CORS 설정
+### Authentication
+- JWT-based authentication
+- Password hashing with BCrypt
+- Session management
+- CORS configuration
 
-### 권한 관리
-- 역할 기반 접근 제어
-- 기업 사용자 검증
-- API 엔드포인트 보호
-- 요청 데이터 검증
+### Authorization
+- Role-based access control
+- Corporate user verification
+- API endpoint protection
+- Request validation
 
-## 모니터링 및 헬스 체크
+## Monitoring & Health Checks
 
-### 애플리케이션 상태
-- Spring Actuator 엔드포인트
-- 데이터베이스 연결 확인
-- Redis 연결 확인
-- 서비스 의존성 모니터링
+### Application Health
+- Spring Actuator endpoints
+- Database connectivity checks
+- Redis connectivity checks
+- Service dependency monitoring
 
-### 로깅
-- SLF4J 구조화 로깅
-- 요청/응답 로깅
-- 오류 추적 및 리포팅
-- 성능 메트릭
+### Logging
+- Structured logging with SLF4J
+- Request/response logging
+- Error tracking and reporting
+- Performance metrics
 
-## 기여하기
+## Contributing
 
-1. 저장소 포크
-2. 기능 브랜치 생성 (`git checkout -b feature/amazing-feature`)
-3. 변경사항 커밋 (`git commit -m 'Add amazing feature'`)
-4. 브랜치에 푸시 (`git push origin feature/amazing-feature`)
-5. Pull Request 생성
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
-## 라이선스
+## License
 
-이 프로젝트는 MIT 라이선스 하에 라이선스가 부여됩니다. 자세한 내용은 [LICENSE](LICENSE) 파일을 참조하세요.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 지원
+## Support
 
-지원 및 질문사항:
-- 저장소에 이슈 생성
-- 개발팀 연락
-- 문서 위키 확인
+For support and questions:
+- Create an issue in the repository
+- Contact the development team
+- Check the documentation wiki
 
 ---
 
-❤️로 제작된 삼성 레시피 플랫폼
+Built with ❤️ for Samsung Recipe Platform
