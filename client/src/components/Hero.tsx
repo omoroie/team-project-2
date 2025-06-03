@@ -11,12 +11,12 @@ export function Hero() {
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-12">
+          <div className="space-y-16">
             <div className="space-y-6">
-              <h2 className="text-lg font-medium text-muted-foreground">
+              <h2 className="text-xl font-medium text-muted-foreground">
                 {t('heroSubtitle')}
               </h2>
-              <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight">
+              <h1 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
                 {t('heroTitle').split('\n').map((line, index) => (
                   <span key={index}>
                     {line}
@@ -24,7 +24,7 @@ export function Hero() {
                   </span>
                 ))}
               </h1>
-              <p className="text-lg text-muted-foreground max-w-lg">
+              <p className="text-xl text-muted-foreground max-w-lg mb-8">
                 {t('heroDescription')}
               </p>
             </div>
