@@ -99,3 +99,6 @@ k8s/secrets/
 # Temporary files
 tmp/
 temp/
+
+# Replit Log File Trash
+attached_assets/
