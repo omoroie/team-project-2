@@ -1,11 +1,11 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
-// 마이크로서비스 베이스 URL 설정
+// 마이크로서비스 베이스 URL 설정 - CORS 회피를 위해 프록시 경로 사용
 const API_ENDPOINTS = {
-  user: 'http://localhost:8081', // User Service
-  recipe: 'http://localhost:8082', // Recipe Service
-  ingredient: 'http://localhost:8083', // Ingredient Service
-  board: 'http://localhost:8084', // Board Service
+  user: '/api/user', // User Service proxy
+  recipe: '/api/recipe', // Recipe Service proxy
+  ingredient: '/api/ingredient', // Ingredient Service proxy
+  board: '/api/board', // Board Service proxy
 };
 
 // 공통 axios 설정
