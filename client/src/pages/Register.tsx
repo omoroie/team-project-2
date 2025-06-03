@@ -61,9 +61,9 @@ export default function Register() {
     <div className="min-h-screen flex items-center justify-center py-12 px-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
-          <div className="mx-auto w-12 h-12 samsung-gradient rounded-lg mb-4"></div>
-          <CardTitle className="text-2xl font-bold">{t('register')}</CardTitle>
-          <p className="text-gray-600">Create your Samsung Recipe account</p>
+          <div className="mx-auto w-12 h-12 recipe-gradient rounded-lg mb-4"></div>
+          <CardTitle className="text-2xl font-bold text-foreground">{t('register')}</CardTitle>
+          <p className="text-muted-foreground">만개의레시피 계정을 만들어보세요</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -115,18 +115,18 @@ export default function Register() {
 
             <Button 
               type="submit" 
-              className="w-full samsung-gradient text-white"
+              className="w-full recipe-gradient text-white"
               disabled={registerMutation.isPending}
             >
-              {registerMutation.isPending ? 'Creating account...' : t('register')}
+              {registerMutation.isPending ? '계정 생성 중...' : t('register')}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600">
-              Already have an account?{' '}
+            <p className="text-sm text-muted-foreground">
+              이미 계정이 있으신가요?{' '}
               <Link href="/login">
-                <span className="text-blue-600 hover:underline">{t('login')}</span>
+                <span className="text-primary hover:underline">{t('login')}</span>
               </Link>
             </p>
           </div>
