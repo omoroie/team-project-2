@@ -2,8 +2,14 @@ import { QueryClient, QueryFunction } from "@tanstack/react-query";
 
 async function throwIfResNotOk(res: Response) {
   if (!res.ok) {
-    const text = (await res.text()) || res.statusText;
-    throw new Error(`${res.status}: ${text}`);
+    let errorMessage = res.statusText;
+    try {
+      const errorData = await res.json();
+      errorMessage = errorData.message || errorData.error || errorMessage;
+    } catch {
+      errorMessage = await res.text() || errorMessage;
+    }
+    throw new Error(`${res.status}: ${errorMessage}`);
   }
 }
 
@@ -12,11 +18,21 @@ export async function apiRequest(
   url: string,
   data?: unknown | undefined,
 ): Promise<Response> {
+  const headers: HeadersInit = {
+    "Content-Type": "application/json",
+  };
+
+  // JWT 토큰이 있으면 Authorization 헤더에 추가
+  const token = localStorage.getItem('jwt_token');
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
   const res = await fetch(url, {
     method,
-    headers: data ? { "Content-Type": "application/json" } : {},
+    headers,
     body: data ? JSON.stringify(data) : undefined,
-    credentials: "include",
+    mode: 'cors',
   });
 
   await throwIfResNotOk(res);
@@ -29,8 +45,19 @@ export const getQueryFn: <T>(options: {
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
+    const headers: HeadersInit = {
+      "Content-Type": "application/json",
+    };
+
+    // JWT 토큰이 있으면 Authorization 헤더에 추가
+    const token = localStorage.getItem('jwt_token');
+    if (token) {
+      headers.Authorization = `Bearer ${token}`;
+    }
+
     const res = await fetch(queryKey[0] as string, {
-      credentials: "include",
+      headers,
+      mode: 'cors',
     });
 
     if (unauthorizedBehavior === "returnNull" && res.status === 401) {
