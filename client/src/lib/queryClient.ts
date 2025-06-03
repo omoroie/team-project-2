@@ -24,13 +24,13 @@ export const getQueryFn: <T>(options: {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "throw" }),
+      queryFn: getQueryFn({ on401: "returnNull" }),
       refetchInterval: false,
       refetchOnWindowFocus: false,
-      staleTime: Infinity,
+      staleTime: 30000, // 30초 캐시
       retry: (failureCount, error: any) => {
         if (error.response?.status === 401) return false;
-        return failureCount < 3;
+        return failureCount < 1; // 재시도 횟수 줄임
       },
     },
     mutations: {

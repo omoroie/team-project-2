@@ -21,21 +21,7 @@ import Register from "@/pages/Register";
 import NotFound from "@/pages/not-found";
 
 function AuthChecker() {
-  const { dispatch } = useApp();
-
-  const { data: userResponse } = useQuery({
-    queryKey: ['/api/auth/me'],
-    retry: false,
-  });
-
-  useEffect(() => {
-    if (userResponse && (userResponse as any).user) {
-      dispatch({ type: 'SET_USER', payload: (userResponse as any).user });
-    } else {
-      dispatch({ type: 'SET_USER', payload: null });
-    }
-  }, [userResponse, dispatch]);
-
+  // 임시로 비활성화 - 무한 인증 호출 방지
   return null;
 }
 
