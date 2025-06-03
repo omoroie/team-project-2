@@ -11,7 +11,7 @@ export const translations = {
     
     // Home page
     heroTitle: '여러분의 요리 여정, 지금부터 시작해요\n누구나 쉽게, 매일 맛있게',
-    heroSubtitle: '우리들의 레시피와 함께하는 특별한 요리 경험',
+    heroSubtitle: '우리들의 레시피와 함께하는 특별한 요리 경험 ✨',
     heroDescription: '전문 셰프의 비법 레시피부터 신선한 재료까지, 당신의 요리 실력을 한 단계 업그레이드해보세요.',
     exploreRecipes: '오늘 뭐 먹지?',
     
