@@ -21,16 +21,16 @@ export function IngredientCard({ ingredient }: IngredientCardProps) {
       </div>
       
       <CardContent className="p-4">
-        <h3 className="font-semibold text-lg mb-2">{ingredient.name}</h3>
-        <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+        <h3 className="font-semibold text-lg mb-2 text-foreground">{ingredient.name}</h3>
+        <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
           {ingredient.description}
         </p>
 
         <div className="flex items-center justify-between">
-          <span className="text-lg font-bold text-blue-600">
+          <span className="text-lg font-bold text-primary">
             ₩{ingredient.price.toLocaleString()}
           </span>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-muted-foreground ingredient-badge">
             /{ingredient.unit}
           </span>
         </div>

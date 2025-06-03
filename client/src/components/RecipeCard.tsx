@@ -20,24 +20,24 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
         </div>
         
         <CardContent className="p-4">
-          <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+          <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-foreground">
             {recipe.title}
           </h3>
-          <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+          <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
             {recipe.description}
           </p>
 
-          <div className="flex items-center space-x-4 text-sm text-gray-500">
-            <div className="flex items-center space-x-1">
+          <div className="flex items-center space-x-4 text-sm text-muted-foreground">
+            <div className="flex items-center space-x-1 cooking-time-badge">
               <Clock className="h-4 w-4" />
               <span>{recipe.cookingTime}분</span>
             </div>
             <div className="flex items-center space-x-1">
-              <Users className="h-4 w-4" />
+              <Users className="h-4 w-4 text-accent" />
               <span>{recipe.servings}인분</span>
             </div>
             <div className="flex items-center space-x-1">
-              <ChefHat className="h-4 w-4" />
+              <ChefHat className="h-4 w-4 text-primary" />
               <span>{recipe.difficulty}</span>
             </div>
           </div>
