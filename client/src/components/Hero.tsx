@@ -25,13 +25,18 @@ export function Hero() {
                 ))}
               </h1>
               <p className="text-xl text-muted-foreground max-w-lg">
-                {t('heroDescription')}
+                {t('heroDescription').split('\n').map((line, index) => (
+                  <span key={index}>
+                    {line}
+                    {index < t('heroDescription').split('\n').length - 1 && <br />}
+                  </span>
+                ))}
               </p>
             </div>
             
-            <div className="pt-8">
+            <div className="pt-4">
               <Link href="/recipes">
-                <Button size="lg" className="recipe-gradient text-white px-8 py-6 text-lg font-medium hover:opacity-90 transition-opacity">
+                <Button size="lg" className="recipe-gradient text-white px-10 py-7 text-xl font-medium hover:opacity-90 transition-opacity">
                   {t('exploreRecipes')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
