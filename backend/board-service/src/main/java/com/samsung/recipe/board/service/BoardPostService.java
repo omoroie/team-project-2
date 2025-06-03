@@ -1,0 +1,229 @@
+package com.samsung.recipe.board.service;
+
+import com.samsung.recipe.board.dto.BoardPostRequestDto;
+import com.samsung.recipe.board.dto.BoardPostResponseDto;
+import com.samsung.recipe.board.entity.BoardPost;
+import com.samsung.recipe.board.mapper.BoardPostMapper;
+import com.samsung.recipe.board.repository.BoardPostRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+@Transactional(readOnly = true)
+public class BoardPostService {
+    
+    private final BoardPostRepository boardPostRepository;
+    private final BoardPostMapper boardPostMapper;
+    private final GoogleTranslateService googleTranslateService;
+    private final RedisTemplate<String, Object> redisTemplate;
+    
+    private static final String BOARD_POST_CACHE_KEY = "board_post:";
+    private static final String BOARD_POSTS_LIST_CACHE_KEY = "board_posts:list";
+    private static final long CACHE_TTL_HOURS = 2;
+    
+    @Transactional
+    public BoardPostResponseDto createBoardPost(BoardPostRequestDto boardPostRequestDto) {
+        log.info("Creating new board post: {}", boardPostRequestDto.getTitle());
+        
+        BoardPost boardPost = boardPostMapper.toEntity(boardPostRequestDto);
+        
+        // Auto-translate content
+        if ("ko".equals(boardPost.getOriginalLanguage())) {
+            String translatedTitleEn = googleTranslateService.translateKoreanToEnglish(boardPost.getTitle());
+            String translatedContentEn = googleTranslateService.translateKoreanToEnglish(boardPost.getContent());
+            
+            boardPost.setTranslatedTitleEn(translatedTitleEn);
+            boardPost.setTranslatedContentEn(translatedContentEn);
+            boardPost.setTranslatedTitleKo(boardPost.getTitle());
+            boardPost.setTranslatedContentKo(boardPost.getContent());
+        } else {
+            String translatedTitleKo = googleTranslateService.translateEnglishToKorean(boardPost.getTitle());
+            String translatedContentKo = googleTranslateService.translateEnglishToKorean(boardPost.getContent());
+            
+            boardPost.setTranslatedTitleKo(translatedTitleKo);
+            boardPost.setTranslatedContentKo(translatedContentKo);
+            boardPost.setTranslatedTitleEn(boardPost.getTitle());
+            boardPost.setTranslatedContentEn(boardPost.getContent());
+        }
+        
+        BoardPost savedBoardPost = boardPostRepository.save(boardPost);
+        
+        cacheBoardPost(savedBoardPost);
+        evictListCache();
+        
+        log.info("Board post created successfully: {}", savedBoardPost.getId());
+        return boardPostMapper.toResponseDto(savedBoardPost);
+    }
+    
+    @Cacheable(value = "board_posts", key = "#id")
+    public BoardPostResponseDto getBoardPostById(Long id) {
+        log.info("Fetching board post by ID: {}", id);
+        
+        String cacheKey = BOARD_POST_CACHE_KEY + id;
+        BoardPost cachedBoardPost = (BoardPost) redisTemplate.opsForValue().get(cacheKey);
+        
+        if (cachedBoardPost != null) {
+            log.info("Board post found in cache: {}", id);
+            return boardPostMapper.toResponseDto(cachedBoardPost);
+        }
+        
+        BoardPost boardPost = boardPostRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Board post not found"));
+        
+        // Increment view count
+        boardPostRepository.incrementViewCount(id);
+        boardPost.setViewCount(boardPost.getViewCount() + 1);
+        
+        cacheBoardPost(boardPost);
+        return boardPostMapper.toResponseDto(boardPost);
+    }
+    
+    public List<BoardPostResponseDto> getAllBoardPosts() {
+        log.info("Fetching all board posts");
+        
+        @SuppressWarnings("unchecked")
+        List<BoardPost> cachedBoardPosts = (List<BoardPost>) redisTemplate.opsForValue().get(BOARD_POSTS_LIST_CACHE_KEY);
+        
+        if (cachedBoardPosts != null) {
+            log.info("Board posts found in cache");
+            return cachedBoardPosts.stream()
+                    .map(boardPostMapper::toResponseDto)
+                    .collect(Collectors.toList());
+        }
+        
+        List<BoardPost> boardPosts = boardPostRepository.findAll();
+        redisTemplate.opsForValue().set(BOARD_POSTS_LIST_CACHE_KEY, boardPosts, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        
+        return boardPosts.stream()
+                .map(boardPostMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+    
+    public List<BoardPostResponseDto> getBoardPostsByAuthor(Long authorId) {
+        log.info("Fetching board posts by author: {}", authorId);
+        
+        return boardPostRepository.findByAuthorId(authorId)
+                .stream()
+                .map(boardPostMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+    
+    public List<BoardPostResponseDto> searchBoardPosts(String keyword) {
+        log.info("Searching board posts with keyword: {}", keyword);
+        
+        return boardPostRepository.findByTitleOrContentContainingIgnoreCase(keyword)
+                .stream()
+                .map(boardPostMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+    
+    public List<BoardPostResponseDto> getPinnedPosts() {
+        log.info("Fetching pinned posts");
+        
+        return boardPostRepository.findPinnedPosts()
+                .stream()
+                .map(boardPostMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+    
+    public Page<BoardPostResponseDto> getBoardPostsOrderedByPinned(int page, int size) {
+        log.info("Fetching board posts ordered by pinned: page={}, size={}", page, size);
+        
+        Pageable pageable = PageRequest.of(page, size);
+        Page<BoardPost> boardPostPage = boardPostRepository.findAllOrderByPinnedAndCreatedAt(pageable);
+        
+        return boardPostPage.map(boardPostMapper::toResponseDto);
+    }
+    
+    @Transactional
+    @CacheEvict(value = "board_posts", key = "#id")
+    public BoardPostResponseDto updateBoardPost(Long id, BoardPostRequestDto boardPostRequestDto) {
+        log.info("Updating board post: {}", id);
+        
+        BoardPost boardPost = boardPostRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Board post not found"));
+        
+        boardPost.setTitle(boardPostRequestDto.getTitle());
+        boardPost.setContent(boardPostRequestDto.getContent());
+        boardPost.setIsPinned(boardPostRequestDto.getIsPinned());
+        
+        // Re-translate updated content
+        if ("ko".equals(boardPost.getOriginalLanguage())) {
+            String translatedTitleEn = googleTranslateService.translateKoreanToEnglish(boardPost.getTitle());
+            String translatedContentEn = googleTranslateService.translateKoreanToEnglish(boardPost.getContent());
+            
+            boardPost.setTranslatedTitleEn(translatedTitleEn);
+            boardPost.setTranslatedContentEn(translatedContentEn);
+            boardPost.setTranslatedTitleKo(boardPost.getTitle());
+            boardPost.setTranslatedContentKo(boardPost.getContent());
+        } else {
+            String translatedTitleKo = googleTranslateService.translateEnglishToKorean(boardPost.getTitle());
+            String translatedContentKo = googleTranslateService.translateEnglishToKorean(boardPost.getContent());
+            
+            boardPost.setTranslatedTitleKo(translatedTitleKo);
+            boardPost.setTranslatedContentKo(translatedContentKo);
+            boardPost.setTranslatedTitleEn(boardPost.getTitle());
+            boardPost.setTranslatedContentEn(boardPost.getContent());
+        }
+        
+        BoardPost updatedBoardPost = boardPostRepository.save(boardPost);
+        
+        cacheBoardPost(updatedBoardPost);
+        evictListCache();
+        
+        log.info("Board post updated successfully: {}", id);
+        return boardPostMapper.toResponseDto(updatedBoardPost);
+    }
+    
+    @Transactional
+    @CacheEvict(value = "board_posts", key = "#id")
+    public void deleteBoardPost(Long id) {
+        log.info("Deleting board post: {}", id);
+        
+        if (!boardPostRepository.existsById(id)) {
+            throw new RuntimeException("Board post not found");
+        }
+        
+        boardPostRepository.deleteById(id);
+        
+        evictBoardPostFromCache(id);
+        evictListCache();
+        
+        log.info("Board post deleted successfully: {}", id);
+    }
+    
+    public Long getBoardPostCountByAuthor(Long authorId) {
+        return boardPostRepository.countByAuthorId(authorId);
+    }
+    
+    private void cacheBoardPost(BoardPost boardPost) {
+        String cacheKey = BOARD_POST_CACHE_KEY + boardPost.getId();
+        redisTemplate.opsForValue().set(cacheKey, boardPost, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        log.debug("Board post cached: {}", boardPost.getId());
+    }
+    
+    private void evictBoardPostFromCache(Long boardPostId) {
+        String cacheKey = BOARD_POST_CACHE_KEY + boardPostId;
+        redisTemplate.delete(cacheKey);
+        log.debug("Board post evicted from cache: {}", boardPostId);
+    }
+    
+    private void evictListCache() {
+        redisTemplate.delete(BOARD_POSTS_LIST_CACHE_KEY);
+        log.debug("Board post list cache evicted");
+    }
+}
