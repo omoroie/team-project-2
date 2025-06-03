@@ -80,6 +80,7 @@ export class MemStorage implements IStorage {
     const user: User = {
       ...insertUser,
       id,
+      isCorporate: insertUser.isCorporate ?? false,
       createdAt: new Date(),
     };
     this.users.set(id, user);
@@ -104,6 +105,7 @@ export class MemStorage implements IStorage {
     const recipe: Recipe = {
       ...insertRecipe,
       id,
+      imageUrl: insertRecipe.imageUrl ?? null,
       createdAt: new Date(),
     };
     this.recipes.set(id, recipe);
@@ -124,6 +126,8 @@ export class MemStorage implements IStorage {
     const ingredient: Ingredient = {
       ...insertIngredient,
       id,
+      imageUrl: insertIngredient.imageUrl ?? null,
+      inStock: insertIngredient.inStock ?? true,
       createdAt: new Date(),
     };
     this.ingredients.set(id, ingredient);

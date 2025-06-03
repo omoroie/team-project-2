@@ -23,18 +23,18 @@ import NotFound from "@/pages/not-found";
 function AuthChecker() {
   const { dispatch } = useApp();
 
-  const { data: user } = useQuery({
+  const { data: userResponse } = useQuery({
     queryKey: ['/api/auth/me'],
     retry: false,
   });
 
   useEffect(() => {
-    if (user) {
-      dispatch({ type: 'SET_USER', payload: user.user });
+    if (userResponse && (userResponse as any).user) {
+      dispatch({ type: 'SET_USER', payload: (userResponse as any).user });
     } else {
       dispatch({ type: 'SET_USER', payload: null });
     }
-  }, [user, dispatch]);
+  }, [userResponse, dispatch]);
 
   return null;
 }
