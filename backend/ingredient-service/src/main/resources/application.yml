@@ -1,9 +1,9 @@
 server:
-  port: 8084
+  port: 8083
 
 spring:
   application:
-    name: board-service
+    name: ingredient-service
   
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/recipe_db}
@@ -30,15 +30,14 @@ spring:
         max-idle: 8
         min-idle: 0
 
-google:
-  translate:
-    api:
-      key: ${GOOGLE_TRANSLATE_API_KEY:}
-      url: https://translation.googleapis.com/language/translate/v2
+jwt:
+  secret: ${JWT_SECRET:samsung-recipe-platform-secret-key-2024-very-secure}
+  expiration: 86400000 # 24 hours
 
 logging:
   level:
-    com.samsung.recipe.board: DEBUG
+    com.samsung.recipe.user: DEBUG
+    org.springframework.security: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
 
