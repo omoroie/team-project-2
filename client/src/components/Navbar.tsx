@@ -46,7 +46,7 @@ export function Navbar() {
           <Link href="/">
             <div className="flex items-center space-x-2">
               <div className="w-8 h-8 recipe-gradient rounded-lg"></div>
-              <span className="text-xl font-bold text-foreground">만개의레시피</span>
+              <span className="text-xl font-bold text-foreground">우리들의레시피</span>
             </div>
           </Link>
 

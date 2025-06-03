@@ -11,12 +11,12 @@ export function Hero() {
       <div className="max-w-7xl mx-auto">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Content */}
-          <div className="space-y-8">
-            <div className="space-y-4">
+          <div className="space-y-10">
+            <div className="space-y-6">
               <h2 className="text-lg font-medium text-muted-foreground">
                 {t('heroSubtitle')}
               </h2>
-              <h1 className="text-4xl lg:text-6xl font-bold text-foreground leading-tight">
+              <h1 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
                 {t('heroTitle').split('\n').map((line, index) => (
                   <span key={index}>
                     {line}
@@ -39,39 +39,39 @@ export function Hero() {
 
           {/* Right Content */}
           <div className="relative">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-4">
               {/* 첫 번째 열 */}
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://picsum.photos/350/280?random=1"
+                    src="https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&h=250&fit=crop"
                     alt="한국 요리"
-                    className="w-full h-[280px] object-cover hover:scale-105 transition-transform duration-300"
+                    className="w-full h-[250px] object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://picsum.photos/350/200?random=2"
+                    src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&h=250&fit=crop"
                     alt="신선한 재료"
-                    className="w-full h-[200px] object-cover hover:scale-105 transition-transform duration-300"
+                    className="w-full h-[250px] object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>
               
               {/* 두 번째 열 */}
-              <div className="space-y-6 pt-12">
+              <div className="space-y-4 pt-8">
                 <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://picsum.photos/350/220?random=3"
+                    src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=250&fit=crop"
                     alt="요리 과정"
-                    className="w-full h-[220px] object-cover hover:scale-105 transition-transform duration-300"
+                    className="w-full h-[250px] object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
                 <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://picsum.photos/350/260?random=4"
+                    src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=250&fit=crop"
                     alt="완성된 요리"
-                    className="w-full h-[260px] object-cover hover:scale-105 transition-transform duration-300"
+                    className="w-full h-[250px] object-cover hover:scale-105 transition-transform duration-300"
                   />
                 </div>
               </div>
