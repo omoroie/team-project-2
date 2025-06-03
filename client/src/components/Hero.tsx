@@ -76,7 +76,7 @@ export function Hero() {
                 </div>
                 <div className="overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-shadow">
                   <img
-                    src="https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=250&fit=crop"
+                    src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=250&fit=crop"
                     alt="완성된 요리"
                     className="w-full h-[250px] object-cover hover:scale-105 transition-transform duration-300"
                   />
