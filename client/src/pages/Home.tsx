@@ -13,9 +13,21 @@ export default function Home() {
     queryKey: ['best-recipes'],
     queryFn: async () => {
       try {
-        const response = await recipeAPI.getBest();
-        console.log('Best recipes response:', response.data);
-        return response.data;
+        // Direct fetch instead of axios to avoid CORS issues
+        const response = await fetch('/api/recipes/best', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+        
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Best recipes response:', data);
+        return data;
       } catch (error) {
         console.error('Failed to fetch best recipes:', error);
         return [];

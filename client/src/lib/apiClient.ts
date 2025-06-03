@@ -18,7 +18,7 @@ const createApiClient = (baseURL: string): AxiosInstance => {
     headers: {
       'Content-Type': 'application/json',
     },
-    withCredentials: true, // 세션 쿠키 포함
+    withCredentials: false, // 세션 쿠키 비활성화로 CORS 문제 해결
   });
 
   // 요청 인터셉터
