@@ -16,7 +16,6 @@ const createApiClient = (baseURL: string): AxiosInstance => {
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
-      'X-Requested-With': 'XMLHttpRequest',
     },
     withCredentials: true, // Spring Boot 세션 인증을 위해 활성화
   });
