@@ -9,14 +9,14 @@ export function Hero() {
   return (
     <section className="hero-section py-20 px-4">
       <div className="max-w-7xl mx-auto">
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
-          <div className="space-y-16">
+          <div className="space-y-8">
             <div className="space-y-6">
               <h2 className="text-xl font-medium text-muted-foreground">
                 {t('heroSubtitle')}
               </h2>
-              <h1 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
+              <h1 className="text-2xl lg:text-4xl font-bold text-foreground leading-tight">
                 {t('heroTitle').split('\n').map((line, index) => (
                   <span key={index}>
                     {line}
@@ -24,17 +24,19 @@ export function Hero() {
                   </span>
                 ))}
               </h1>
-              <p className="text-xl text-muted-foreground max-w-lg mb-8">
+              <p className="text-xl text-muted-foreground max-w-lg">
                 {t('heroDescription')}
               </p>
             </div>
             
-            <Link href="/recipes">
-              <Button size="lg" className="recipe-gradient text-white px-8 py-6 text-lg font-medium hover:opacity-90 transition-opacity">
-                {t('exploreRecipes')}
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
+            <div className="pt-8">
+              <Link href="/recipes">
+                <Button size="lg" className="recipe-gradient text-white px-8 py-6 text-lg font-medium hover:opacity-90 transition-opacity">
+                  {t('exploreRecipes')}
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
           </div>
 
           {/* Right Content */}
