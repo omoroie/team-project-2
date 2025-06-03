@@ -33,7 +33,7 @@ export function ProductGrid({ title, products, viewAllHref, showPrice = false }:
     <section className="py-16 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900">{title}</h2>
+          <h2 className="text-3xl font-bold text-foreground">{title}</h2>
           <Button variant="outline" asChild>
             <a href={viewAllHref}>
               {showPrice ? t('viewAllIngredients') : t('viewAllRecipes')}
@@ -53,30 +53,30 @@ export function ProductGrid({ title, products, viewAllHref, showPrice = false }:
               </div>
               
               <CardContent className="p-4">
-                <h3 className="font-semibold text-lg mb-2 line-clamp-2">
+                <h3 className="font-semibold text-lg mb-2 line-clamp-2 text-foreground">
                   {product.title}
                 </h3>
-                <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                <p className="text-muted-foreground text-sm mb-3 line-clamp-2">
                   {product.description}
                 </p>
 
                 {!showPrice && product.type === 'recipe' && (
-                  <div className="flex items-center space-x-4 text-sm text-gray-500">
+                  <div className="flex items-center space-x-4 text-sm text-muted-foreground">
                     {product.cookingTime && (
-                      <div className="flex items-center space-x-1">
+                      <div className="flex items-center space-x-1 cooking-time-badge">
                         <Clock className="h-4 w-4" />
                         <span>{product.cookingTime}분</span>
                       </div>
                     )}
                     {product.servings && (
                       <div className="flex items-center space-x-1">
-                        <Users className="h-4 w-4" />
+                        <Users className="h-4 w-4 text-accent" />
                         <span>{product.servings}인분</span>
                       </div>
                     )}
                     {product.difficulty && (
                       <div className="flex items-center space-x-1">
-                        <ChefHat className="h-4 w-4" />
+                        <ChefHat className="h-4 w-4 text-primary" />
                         <span>{product.difficulty}</span>
                       </div>
                     )}
@@ -85,10 +85,10 @@ export function ProductGrid({ title, products, viewAllHref, showPrice = false }:
 
                 {showPrice && product.price && (
                   <div className="flex items-center justify-between">
-                    <span className="text-lg font-bold text-blue-600">
+                    <span className="text-lg font-bold text-accent">
                       ₩{product.price.toLocaleString()}
                     </span>
-                    <span className="text-sm text-gray-500">
+                    <span className="text-sm text-muted-foreground ingredient-badge">
                       /{product.unit}
                     </span>
                   </div>
