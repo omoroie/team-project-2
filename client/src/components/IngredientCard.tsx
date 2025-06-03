@@ -14,7 +14,7 @@ export function IngredientCard({ ingredient }: IngredientCardProps) {
     <Card className="product-card overflow-hidden">
       <div className="aspect-video overflow-hidden">
         <img
-          src={ingredient.imageUrl || 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=400&h=300&fit=crop&crop=center'}
+          src={ingredient.imageUrl || 'https://picsum.photos/400/300?random=10'}
           alt={ingredient.name}
           className="w-full h-full object-cover"
         />
