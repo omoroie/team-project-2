@@ -5,7 +5,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useApp } from '@/contexts/AppContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { boardAPI } from '@/lib/queryClient';
 import { BoardPost } from '@shared/schema';
 import { Plus, MessageSquare } from 'lucide-react';
 import { useState } from 'react';
@@ -25,7 +25,7 @@ export default function Board() {
 
   const createPostMutation = useMutation({
     mutationFn: (data: { title: string; content: string }) =>
-      apiRequest('POST', '/api/board', data),
+      boardAPI.create(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/board'] });
       setNewPost({ title: '', content: '' });
