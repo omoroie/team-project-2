@@ -1,0 +1,111 @@
+junsujeong@JUNSUui-noteubug pj-1 % npm install
+npm warn deprecated @esbuild-kit/esm-loader@2.6.5: Merged into tsx: https://tsx.is
+npm warn deprecated @esbuild-kit/core-utils@3.3.2: Merged into tsx: https://tsx.is
+
+added 493 packages, and audited 494 packages in 6s
+
+65 packages are looking for funding
+  run `npm fund` for details
+
+7 moderate severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+junsujeong@JUNSUui-noteubug pj-1 % npm run dev
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+node:events:485
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen ENOTSUP: operation not supported on socket 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1917:21)
+    at listenInCluster (node:net:1996:12)
+    at node:net:2205:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1975:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ENOTSUP',
+  errno: -45,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v23.11.0
+junsujeong@JUNSUui-noteubug pj-1 % cd client
+junsujeong@JUNSUui-noteubug client % npm run dev
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+node:events:485
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen ENOTSUP: operation not supported on socket 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1917:21)
+    at listenInCluster (node:net:1996:12)
+    at node:net:2205:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1975:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ENOTSUP',
+  errno: -45,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v23.11.0
+junsujeong@JUNSUui-noteubug client % npm install
+
+up to date, audited 494 packages in 909ms
+
+65 packages are looking for funding
+  run `npm fund` for details
+
+7 moderate severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+junsujeong@JUNSUui-noteubug client % npm run dev
+
+> rest-express@1.0.0 dev
+> NODE_ENV=development tsx server/index.ts
+
+node:events:485
+      throw er; // Unhandled 'error' event
+      ^
+
+Error: listen ENOTSUP: operation not supported on socket 0.0.0.0:5000
+    at Server.setupListenHandle [as _listen2] (node:net:1917:21)
+    at listenInCluster (node:net:1996:12)
+    at node:net:2205:7
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+Emitted 'error' event on Server instance at:
+    at emitErrorNT (node:net:1975:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21) {
+  code: 'ENOTSUP',
+  errno: -45,
+  syscall: 'listen',
+  address: '0.0.0.0',
+  port: 5000
+}
+
+Node.js v23.11.0
+junsujeong@JUNSUui-noteubug client % 
