@@ -39,14 +39,14 @@ export function Navbar() {
   ];
 
   return (
-    <nav className="samsung-nav sticky top-0 z-50">
+    <nav className="recipe-nav sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 samsung-gradient rounded"></div>
-              <span className="text-xl font-bold text-gray-900">SAMSUNG</span>
+              <div className="w-8 h-8 recipe-gradient rounded-lg"></div>
+              <span className="text-xl font-bold text-foreground">만개의레시피</span>
             </div>
           </Link>
 
@@ -55,10 +55,10 @@ export function Navbar() {
             {navItems.map((item) => (
               <Link key={item.href} href={item.href}>
                 <span
-                  className={`text-sm font-medium transition-colors hover:text-blue-600 ${
+                  className={`text-sm font-medium transition-colors hover:text-primary ${
                     location === item.href
-                      ? 'text-blue-600 border-b-2 border-blue-600 pb-1'
-                      : 'text-gray-700'
+                      ? 'text-primary border-b-2 border-primary pb-1'
+                      : 'text-foreground/70'
                   }`}
                 >
                   {item.label}
