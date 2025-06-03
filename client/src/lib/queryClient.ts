@@ -1,8 +1,30 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
 import { recipeAPI, ingredientAPI, boardAPI, authAPI } from "./apiClient";
+import axios from 'axios';
 
 // 각 서비스별 API 함수들을 export
 export { recipeAPI, ingredientAPI, boardAPI, authAPI };
+
+// API 요청을 위한 기본 함수
+export const apiRequest = async (method: string, url: string, data?: any) => {
+  const token = localStorage.getItem('token');
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+
+  try {
+    const response = await axios({
+      method,
+      url,
+      data,
+      headers,
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+};
 
 type UnauthorizedBehavior = "returnNull" | "throw";
 
