@@ -4,7 +4,7 @@ import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { Search, ShoppingCart, User } from 'lucide-react';
-import { apiRequest } from '@/lib/queryClient';
+import { authAPI } from '@/lib/queryClient';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 
@@ -16,7 +16,7 @@ export function Navbar() {
   const queryClient = useQueryClient();
 
   const logoutMutation = useMutation({
-    mutationFn: () => apiRequest('POST', '/api/auth/logout'),
+    mutationFn: () => authAPI.logout(),
     onSuccess: () => {
       dispatch({ type: 'LOGOUT' });
       queryClient.clear();

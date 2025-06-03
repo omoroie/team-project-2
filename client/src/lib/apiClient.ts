@@ -1,24 +1,24 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // 마이크로서비스 베이스 URL 설정
-// 현재는 Express.js 게이트웨이를 통해 모든 API 호출
 const API_ENDPOINTS = {
-  user: '', // 상대 경로 사용으로 CORS 회피
-  recipe: '', 
-  ingredient: '',
-  board: '',
-  gateway: '' 
+  user: 'http://localhost:8081', // User Service
+  recipe: 'http://localhost:8082', // Recipe Service
+  ingredient: 'http://localhost:8083', // Ingredient Service
+  board: 'http://localhost:8084', // Board Service
 };
 
 // 공통 axios 설정
 const createApiClient = (baseURL: string): AxiosInstance => {
   const client = axios.create({
     baseURL,
-    timeout: 10000,
+    timeout: 15000,
     headers: {
       'Content-Type': 'application/json',
+      'Accept': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest',
     },
-    withCredentials: false, // 세션 쿠키 비활성화로 CORS 문제 해결
+    withCredentials: true, // Spring Boot 세션 인증을 위해 활성화
   });
 
   // 요청 인터셉터
@@ -59,18 +59,15 @@ export const userApi = createApiClient(API_ENDPOINTS.user);
 export const recipeApi = createApiClient(API_ENDPOINTS.recipe);
 export const ingredientApi = createApiClient(API_ENDPOINTS.ingredient);
 export const boardApi = createApiClient(API_ENDPOINTS.board);
-export const gatewayApi = createApiClient(API_ENDPOINTS.gateway); // 임시 사용
 
 // API 요청 헬퍼 함수
 export const apiRequest = async (
+  client: AxiosInstance,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   url: string,
   data?: any,
   config?: AxiosRequestConfig
 ) => {
-  // 현재는 모든 요청을 Express.js 게이트웨이로 전송
-  const client = gatewayApi;
-
   try {
     const response = await client.request({
       method,
@@ -88,35 +85,52 @@ export const apiRequest = async (
 // 서비스별 API 호출 함수들
 export const authAPI = {
   login: (credentials: { username: string; password: string }) =>
-    gatewayApi.post('/api/auth/login', credentials),
-  register: (userData: any) => gatewayApi.post('/api/auth/register', userData),
-  logout: () => gatewayApi.post('/api/auth/logout'),
-  me: () => gatewayApi.get('/api/auth/me'),
+    userApi.post('/auth/login', credentials),
+  register: (userData: any) => userApi.post('/auth/register', userData),
+  logout: () => userApi.post('/auth/logout'),
+  me: () => userApi.get('/auth/me'),
+  refreshToken: () => userApi.post('/auth/refresh'),
 };
 
 export const recipeAPI = {
-  getAll: () => gatewayApi.get('/api/recipes'),
-  getBest: () => gatewayApi.get('/api/recipes/best'),
-  getById: (id: number) => gatewayApi.get(`/api/recipes/${id}`),
-  create: (data: any) => gatewayApi.post('/api/recipes', data),
-  update: (id: number, data: any) => gatewayApi.put(`/api/recipes/${id}`, data),
-  delete: (id: number) => gatewayApi.delete(`/api/recipes/${id}`),
-  getByAuthor: (authorId: number) => gatewayApi.get(`/api/recipes/author/${authorId}`),
+  getAll: (params?: { page?: number; size?: number; category?: string; difficulty?: string }) =>
+    recipeApi.get('/recipes', { params }),
+  getBest: (limit?: number) => 
+    recipeApi.get('/recipes/best', { params: { limit } }),
+  getById: (id: number) => recipeApi.get(`/recipes/${id}`),
+  create: (data: any) => recipeApi.post('/recipes', data),
+  update: (id: number, data: any) => recipeApi.put(`/recipes/${id}`, data),
+  delete: (id: number) => recipeApi.delete(`/recipes/${id}`),
+  getByAuthor: (authorId: number) => recipeApi.get(`/recipes/author/${authorId}`),
+  search: (query: string, filters?: any) => 
+    recipeApi.get('/recipes/search', { params: { q: query, ...filters } }),
+  getByCategory: (category: string) => recipeApi.get(`/recipes/category/${category}`),
 };
 
 export const ingredientAPI = {
-  getAll: () => gatewayApi.get('/api/ingredients'),
-  getById: (id: number) => gatewayApi.get(`/api/ingredients/${id}`),
-  create: (data: any) => gatewayApi.post('/api/ingredients', data),
-  update: (id: number, data: any) => gatewayApi.put(`/api/ingredients/${id}`, data),
-  delete: (id: number) => gatewayApi.delete(`/api/ingredients/${id}`),
+  getAll: (params?: { page?: number; size?: number; category?: string; inStock?: boolean }) =>
+    ingredientApi.get('/ingredients', { params }),
+  getById: (id: number) => ingredientApi.get(`/ingredients/${id}`),
+  create: (data: any) => ingredientApi.post('/ingredients', data),
+  update: (id: number, data: any) => ingredientApi.put(`/ingredients/${id}`, data),
+  delete: (id: number) => ingredientApi.delete(`/ingredients/${id}`),
+  search: (query: string) => 
+    ingredientApi.get('/ingredients/search', { params: { q: query } }),
+  getByCategory: (category: string) => ingredientApi.get(`/ingredients/category/${category}`),
+  updateStock: (id: number, quantity: number) => 
+    ingredientApi.patch(`/ingredients/${id}/stock`, { quantity }),
 };
 
 export const boardAPI = {
-  getAll: () => gatewayApi.get('/api/board'),
-  getById: (id: number) => gatewayApi.get(`/api/board/${id}`),
-  create: (data: any) => gatewayApi.post('/api/board', data),
-  update: (id: number, data: any) => gatewayApi.put(`/api/board/${id}`, data),
-  delete: (id: number) => gatewayApi.delete(`/api/board/${id}`),
-  getByAuthor: (authorId: number) => gatewayApi.get(`/api/board/author/${authorId}`),
+  getAll: (params?: { page?: number; size?: number; type?: string }) =>
+    boardApi.get('/board', { params }),
+  getById: (id: number) => boardApi.get(`/board/${id}`),
+  create: (data: any) => boardApi.post('/board', data),
+  update: (id: number, data: any) => boardApi.put(`/board/${id}`, data),
+  delete: (id: number) => boardApi.delete(`/board/${id}`),
+  getByAuthor: (authorId: number) => boardApi.get(`/board/author/${authorId}`),
+  getCorporateOnly: () => boardApi.get('/board/corporate'),
+  addComment: (postId: number, comment: any) => 
+    boardApi.post(`/board/${postId}/comments`, comment),
+  getComments: (postId: number) => boardApi.get(`/board/${postId}/comments`),
 };

@@ -1,17 +1,48 @@
 import { QueryClient, QueryFunction } from "@tanstack/react-query";
-import { apiRequest } from "./apiClient";
+import { recipeAPI, ingredientAPI, boardAPI, authAPI } from "./apiClient";
 
-// apiRequest를 다시 export
-export { apiRequest };
+// 각 서비스별 API 함수들을 export
+export { recipeAPI, ingredientAPI, boardAPI, authAPI };
 
 type UnauthorizedBehavior = "returnNull" | "throw";
+
+// 기본 쿼리 함수 - 각 API별로 분기 처리
 export const getQueryFn: <T>(options: {
   on401: UnauthorizedBehavior;
 }) => QueryFunction<T> =
   ({ on401: unauthorizedBehavior }) =>
   async ({ queryKey }) => {
     try {
-      const response = await apiRequest('GET', queryKey[0] as string);
+      const [path, ...params] = queryKey as [string, ...any[]];
+      let response;
+
+      // API 경로에 따라 적절한 서비스 호출
+      if (path.includes('/recipes/best')) {
+        response = await recipeAPI.getBest(params[0]);
+      } else if (path.includes('/recipes')) {
+        if (params[0]) {
+          response = await recipeAPI.getById(params[0]);
+        } else {
+          response = await recipeAPI.getAll();
+        }
+      } else if (path.includes('/ingredients')) {
+        if (params[0]) {
+          response = await ingredientAPI.getById(params[0]);
+        } else {
+          response = await ingredientAPI.getAll();
+        }
+      } else if (path.includes('/board')) {
+        if (params[0]) {
+          response = await boardAPI.getById(params[0]);
+        } else {
+          response = await boardAPI.getAll();
+        }
+      } else if (path.includes('/auth/me')) {
+        response = await authAPI.me();
+      } else {
+        throw new Error(`Unknown API path: ${path}`);
+      }
+
       return response.data;
     } catch (error: any) {
       if (unauthorizedBehavior === "returnNull" && error.response?.status === 401) {
