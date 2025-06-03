@@ -24,10 +24,9 @@ export default function Login() {
 
   const loginMutation = useMutation({
     mutationFn: (data: { username: string; password: string }) =>
-      apiRequest('POST', '/api/auth/login', data),
-    onSuccess: async (response) => {
-      const data = await response.json();
-      dispatch({ type: 'SET_USER', payload: data.user });
+      authAPI.login(data),
+    onSuccess: (response: any) => {
+      dispatch({ type: 'SET_USER', payload: response.data.user });
       queryClient.clear();
       toast({
         title: 'Success',

@@ -1,12 +1,13 @@
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // 마이크로서비스 베이스 URL 설정
+// 현재는 Express.js 게이트웨이를 통해 모든 API 호출
 const API_ENDPOINTS = {
-  user: 'http://localhost:8081',
-  recipe: 'http://localhost:8082', 
-  ingredient: 'http://localhost:8083',
-  board: 'http://localhost:8084',
-  gateway: 'http://localhost:5000' // 현재 Express.js 서버 (임시)
+  user: 'http://localhost:5000', // Express.js 게이트웨이 사용
+  recipe: 'http://localhost:5000', 
+  ingredient: 'http://localhost:5000',
+  board: 'http://localhost:5000',
+  gateway: 'http://localhost:5000' 
 };
 
 // 공통 axios 설정
@@ -67,22 +68,8 @@ export const apiRequest = async (
   data?: any,
   config?: AxiosRequestConfig
 ) => {
-  // URL을 기반으로 적절한 클라이언트 선택
-  let client = gatewayApi; // 기본값은 게이트웨이
-
-  if (url.startsWith('/api/users') || url.startsWith('/api/auth')) {
-    client = userApi;
-    url = url.replace('/api', ''); // 마이크로서비스에서는 /api 제거
-  } else if (url.startsWith('/api/recipes')) {
-    client = recipeApi;
-    url = url.replace('/api', '');
-  } else if (url.startsWith('/api/ingredients')) {
-    client = ingredientApi;
-    url = url.replace('/api', '');
-  } else if (url.startsWith('/api/board')) {
-    client = boardApi;
-    url = url.replace('/api', '');
-  }
+  // 현재는 모든 요청을 Express.js 게이트웨이로 전송
+  const client = gatewayApi;
 
   try {
     const response = await client.request({
@@ -101,34 +88,34 @@ export const apiRequest = async (
 // 서비스별 API 호출 함수들
 export const authAPI = {
   login: (credentials: { username: string; password: string }) =>
-    userApi.post('/auth/login', credentials),
-  register: (userData: any) => userApi.post('/auth/register', userData),
-  logout: () => userApi.post('/auth/logout'),
-  me: () => userApi.get('/auth/me'),
+    gatewayApi.post('/api/auth/login', credentials),
+  register: (userData: any) => gatewayApi.post('/api/auth/register', userData),
+  logout: () => gatewayApi.post('/api/auth/logout'),
+  me: () => gatewayApi.get('/api/auth/me'),
 };
 
 export const recipeAPI = {
-  getAll: () => recipeApi.get('/recipes'),
-  getById: (id: number) => recipeApi.get(`/recipes/${id}`),
-  create: (data: any) => recipeApi.post('/recipes', data),
-  update: (id: number, data: any) => recipeApi.put(`/recipes/${id}`, data),
-  delete: (id: number) => recipeApi.delete(`/recipes/${id}`),
-  getByAuthor: (authorId: number) => recipeApi.get(`/recipes/author/${authorId}`),
+  getAll: () => gatewayApi.get('/api/recipes'),
+  getById: (id: number) => gatewayApi.get(`/api/recipes/${id}`),
+  create: (data: any) => gatewayApi.post('/api/recipes', data),
+  update: (id: number, data: any) => gatewayApi.put(`/api/recipes/${id}`, data),
+  delete: (id: number) => gatewayApi.delete(`/api/recipes/${id}`),
+  getByAuthor: (authorId: number) => gatewayApi.get(`/api/recipes/author/${authorId}`),
 };
 
 export const ingredientAPI = {
-  getAll: () => ingredientApi.get('/ingredients'),
-  getById: (id: number) => ingredientApi.get(`/ingredients/${id}`),
-  create: (data: any) => ingredientApi.post('/ingredients', data),
-  update: (id: number, data: any) => ingredientApi.put(`/ingredients/${id}`, data),
-  delete: (id: number) => ingredientApi.delete(`/ingredients/${id}`),
+  getAll: () => gatewayApi.get('/api/ingredients'),
+  getById: (id: number) => gatewayApi.get(`/api/ingredients/${id}`),
+  create: (data: any) => gatewayApi.post('/api/ingredients', data),
+  update: (id: number, data: any) => gatewayApi.put(`/api/ingredients/${id}`, data),
+  delete: (id: number) => gatewayApi.delete(`/api/ingredients/${id}`),
 };
 
 export const boardAPI = {
-  getAll: () => boardApi.get('/board'),
-  getById: (id: number) => boardApi.get(`/board/${id}`),
-  create: (data: any) => boardApi.post('/board', data),
-  update: (id: number, data: any) => boardApi.put(`/board/${id}`, data),
-  delete: (id: number) => boardApi.delete(`/board/${id}`),
-  getByAuthor: (authorId: number) => boardApi.get(`/board/author/${authorId}`),
+  getAll: () => gatewayApi.get('/api/board'),
+  getById: (id: number) => gatewayApi.get(`/api/board/${id}`),
+  create: (data: any) => gatewayApi.post('/api/board', data),
+  update: (id: number, data: any) => gatewayApi.put(`/api/board/${id}`, data),
+  delete: (id: number) => gatewayApi.delete(`/api/board/${id}`),
+  getByAuthor: (authorId: number) => gatewayApi.get(`/api/board/author/${authorId}`),
 };

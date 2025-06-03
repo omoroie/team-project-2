@@ -6,7 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useApp } from '@/contexts/AppContext';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { apiRequest } from '@/lib/queryClient';
+import { authAPI } from '@/lib/apiClient';
 import { useToast } from '@/hooks/use-toast';
 import { Link, useLocation } from 'wouter';
 import { useState } from 'react';
@@ -26,10 +26,9 @@ export default function Register() {
 
   const registerMutation = useMutation({
     mutationFn: (data: { username: string; email: string; password: string; isCorporate: boolean }) =>
-      apiRequest('POST', '/api/auth/register', data),
-    onSuccess: async (response) => {
-      const data = await response.json();
-      dispatch({ type: 'SET_USER', payload: data.user });
+      authAPI.register(data),
+    onSuccess: (response: any) => {
+      dispatch({ type: 'SET_USER', payload: response.data.user });
       queryClient.clear();
       toast({
         title: 'Success',
@@ -37,12 +36,11 @@ export default function Register() {
       });
       setLocation('/');
     },
-    onError: async (error: any) => {
+    onError: (error: any) => {
       let message = 'Registration failed';
-      try {
-        const errorData = await error.response?.json();
-        message = errorData?.message || message;
-      } catch {}
+      if (error.response?.data?.message) {
+        message = error.response.data.message;
+      }
       
       toast({
         title: 'Error',
