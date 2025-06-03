@@ -20,6 +20,12 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
   
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    deserialization:
+      fail-on-unknown-properties: false
+  
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
