@@ -1,22 +1,20 @@
 package com.samsung.recipe.user.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserResponseDto {
+public class LoginRequestDto {
     
-    private Long id;
+    @NotBlank(message = "Username is required")
     private String username;
-    private String email;
-    private Boolean isCorporate;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
+    
+    @NotBlank(message = "Password is required")
+    private String password;
 }
