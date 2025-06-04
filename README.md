@@ -1,179 +1,245 @@
-# 만개의레시피 - 레시피 공유 플랫폼
+# 만개의레시피 (Recipe Platform)
 
-TypeScript 기반의 레시피 공유 및 식재료 구매 플랫폼입니다. 만개의레시피 스타일의 UI를 참고하여 구현했습니다.
+한국 요리 전문 레시피 공유 플랫폼입니다. 마이크로서비스 아키텍처로 구성되어 있으며, React 프론트엔드와 Spring Boot 백엔드 서비스들로 구성됩니다.
 
-## 🍳 주요 기능
+## 🏗️ 아키텍처
 
-### 📱 프론트엔드
-- **요리 테마 디자인**: 크림색 배경, 허브 그린, 따뜻한 오렌지 색상 테마
-- **레시피 공유**: 레시피 등록, 조회, 검색 기능
-- **카테고리 필터**: 종류별, 상황별, 재료별, 방법별, 타이밍별 분류
-- **식재료 마켓플레이스**: 재료 구매 및 가격 정보
-- **기업 전용 게시판**: 기업 계정용 특별 게시판
-- **다국어 지원**: 한국어/영어 지원
-- **소셜 로그인**: 카카오, 네이버 로그인 UI (API 연동 준비 완료)
+### 프론트엔드
+- **React + TypeScript** (포트: 5000)
+- **Vite** 개발 서버
+- **TailwindCSS + shadcn/ui** 컴포넌트
+- **TanStack Query** 상태 관리
+- **Wouter** 라우팅
 
-### 🏗️ 백엔드 아키텍처
-- **Express.js**: REST API 서버
-- **Spring Boot 마이크로서비스**: 4개 독립 서비스
-  - User Service (사용자 관리)
-  - Recipe Service (레시피 관리)
-  - Ingredient Service (식재료 관리) 
-  - Board Service (게시판 관리)
-- **Redis 캐싱**: 성능 최적화
-- **PostgreSQL**: 데이터베이스
-- **Google Translate API**: 자동 번역 기능
+### 백엔드 마이크로서비스
+- **User Service** (포트: 8081) - 사용자 인증/관리
+- **Recipe Service** (포트: 8082) - 레시피 관리
+- **Ingredient Service** (포트: 8083) - 재료 관리
+- **Board Service** (포트: 8084) - 게시판 관리
 
-### 🐳 인프라
-- **Docker**: 컨테이너화
-- **Kubernetes**: 오케스트레이션
-- **Nginx**: 로드 밸런서
-- **완전한 CI/CD**: 배포 자동화
+### 데이터베이스
+- **PostgreSQL** - 각 서비스별 독립 데이터베이스
+- **Redis** - 세션 및 캐시 관리
 
-## 🛠️ 기술 스택
+## 🚀 로컬 개발 환경 설정
 
-### Frontend
-- React 18 + TypeScript
-- Vite (빌드 도구)
-- TailwindCSS + shadcn/ui
-- TanStack Query (상태 관리)
-- Wouter (라우팅)
-
-### Backend
-- Node.js + Express (Gateway)
-- Spring Boot 3.x (마이크로서비스)
-- Drizzle ORM
-- Redis (캐싱)
-- PostgreSQL (데이터베이스)
-
-### Infrastructure
-- Docker & Docker Compose
-- Kubernetes
-- Nginx
-
-## 🚀 시작하기
-
-### 필수 요구사항
-- Node.js 20+
-- PostgreSQL
-- Redis (선택사항)
-
-### 로컬 개발 환경 설정
-
-1. **저장소 클론**
+### 1. 사전 요구사항
 ```bash
-git clone <repository-url>
-cd recipe-platform
+# 필수 설치 항목
+- Java 17+
+- Node.js 18+
+- PostgreSQL 12+
+- Redis 6+
+- Maven 3.8+
 ```
 
-2. **의존성 설치**
+### 2. 데이터베이스 설정
 ```bash
+# PostgreSQL 데이터베이스 생성
+createdb recipe_db
+
+# Redis 서버 실행
+redis-server
+```
+
+### 3. 환경변수 설정
+
+각 백엔드 서비스의 `application.yml`에서 다음 환경변수를 설정하세요:
+
+#### User Service (8081)
+```yaml
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/recipe_db}
+    username: ${DB_USERNAME:recipe_user}
+    password: ${DB_PASSWORD:recipe_password}
+  redis:
+    host: ${REDIS_HOST:localhost}
+    port: ${REDIS_PORT:6379}
+
+jwt:
+  secret: ${JWT_SECRET:samsung-recipe-platform-secret-key-2024-very-secure}
+```
+
+#### Recipe Service (8082)
+```yaml
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/recipe_db}
+    username: ${DB_USERNAME:recipe_user}
+    password: ${DB_PASSWORD:recipe_password}
+```
+
+#### Ingredient Service (8083)
+```yaml
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/recipe_db}
+    username: ${DB_USERNAME:recipe_user}
+    password: ${DB_PASSWORD:recipe_password}
+```
+
+#### Board Service (8084)
+```yaml
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/recipe_db}
+    username: ${DB_USERNAME:recipe_user}
+    password: ${DB_PASSWORD:recipe_password}
+```
+
+### 4. 서비스 실행 순서
+
+#### 백엔드 서비스 실행
+```bash
+# 1. User Service 실행
+cd backend/user-service
+mvn spring-boot:run
+
+# 2. Recipe Service 실행 (새 터미널)
+cd backend/recipe-service
+mvn spring-boot:run
+
+# 3. Ingredient Service 실행 (새 터미널)
+cd backend/ingredient-service
+mvn spring-boot:run
+
+# 4. Board Service 실행 (새 터미널)
+cd backend/board-service
+mvn spring-boot:run
+```
+
+#### 프론트엔드 실행
+```bash
+# 프론트엔드 실행 (새 터미널)
 npm install
-```
-
-3. **환경 변수 설정**
-```bash
-# .env 파일 생성 (Replit에서 자동 관리됨)
-DATABASE_URL=postgresql://...
-REDIS_HOST=localhost
-REDIS_PORT=6379
-```
-
-4. **개발 서버 시작**
-```bash
 npm run dev
 ```
 
-## 🏃‍♂️ 실행 방법
+### 5. 서비스 확인
+- **프론트엔드**: http://localhost:5000
+- **User Service**: http://localhost:8081/actuator/health
+- **Recipe Service**: http://localhost:8082/actuator/health
+- **Ingredient Service**: http://localhost:8083/actuator/health
+- **Board Service**: http://localhost:8084/actuator/health
 
-### 개발 모드
+## 🐳 Docker 컨테이너 실행
+
+### 1. Docker Compose 실행
 ```bash
-npm run dev
+# 모든 서비스 빌드 및 실행
+docker-compose up --build
+
+# 백그라운드 실행
+docker-compose up -d --build
 ```
 
-### 프로덕션 빌드
+### 2. 개별 서비스 빌드
 ```bash
+# User Service
+cd backend/user-service
+docker build -t recipe-platform/user-service .
+
+# Recipe Service
+cd backend/recipe-service
+docker build -t recipe-platform/recipe-service .
+
+# Ingredient Service
+cd backend/ingredient-service
+docker build -t recipe-platform/ingredient-service .
+
+# Board Service
+cd backend/board-service
+docker build -t recipe-platform/board-service .
+
+# Frontend
+docker build -f Dockerfile.frontend -t recipe-platform/frontend .
+```
+
+## 📋 API 엔드포인트
+
+### User Service (8081)
+- `POST /auth/register` - 회원가입
+- `POST /auth/login` - 로그인
+- `POST /auth/logout` - 로그아웃
+- `GET /auth/me` - 사용자 정보 조회
+
+### Recipe Service (8082)
+- `GET /recipes` - 레시피 목록 조회
+- `GET /recipes/best` - 인기 레시피 조회
+- `GET /recipes/{id}` - 레시피 상세 조회
+- `POST /recipes` - 레시피 생성
+- `PUT /recipes/{id}` - 레시피 수정
+- `DELETE /recipes/{id}` - 레시피 삭제
+
+### Ingredient Service (8083)
+- `GET /ingredients` - 재료 목록 조회
+- `GET /ingredients/{id}` - 재료 상세 조회
+- `POST /ingredients` - 재료 생성
+- `PUT /ingredients/{id}` - 재료 수정
+- `DELETE /ingredients/{id}` - 재료 삭제
+
+### Board Service (8084)
+- `GET /board` - 게시글 목록 조회
+- `GET /board/{id}` - 게시글 상세 조회
+- `POST /board` - 게시글 생성
+- `PUT /board/{id}` - 게시글 수정
+- `DELETE /board/{id}` - 게시글 삭제
+
+## 🛠️ 개발 가이드
+
+### 프론트엔드 개발
+- 컴포넌트는 `client/src/components/` 에 위치
+- 페이지는 `client/src/pages/` 에 위치
+- API 클라이언트는 `client/src/lib/apiClient.ts` 에서 관리
+- 다국어 지원: 한국어/영어
+
+### 백엔드 개발
+- 각 서비스는 독립적인 Maven 프로젝트
+- Spring Boot 3.2.0 + Java 17 사용
+- JPA + PostgreSQL 사용
+- Redis를 통한 세션 관리
+
+### 빌드 및 배포
+```bash
+# 프론트엔드 빌드
 npm run build
-npm start
+
+# 백엔드 빌드 (각 서비스별)
+mvn clean package -DskipTests
 ```
 
-### Docker로 실행
-```bash
-docker-compose up -d
-```
+## 🔧 트러블슈팅
+
+### CORS 오류
+각 백엔드 서비스에서 `http://localhost:5000` 을 허용하도록 설정됨
+
+### 데이터베이스 연결 오류
+PostgreSQL 서비스가 실행 중인지 확인하고 연결 정보를 점검하세요
+
+### 포트 충돌
+각 서비스가 지정된 포트를 사용하는지 확인하세요:
+- Frontend: 5000
+- User Service: 8081
+- Recipe Service: 8082
+- Ingredient Service: 8083
+- Board Service: 8084
+
+## 🚀 배포
 
 ### Kubernetes 배포
 ```bash
-./deploy.sh
+# Namespace 생성
+kubectl apply -f k8s/namespace.yaml
+
+# 서비스 배포
+kubectl apply -f k8s/
 ```
 
-## 📁 프로젝트 구조
+### 환경별 설정
+- **개발환경**: 로컬 PostgreSQL/Redis 사용
+- **운영환경**: 클러스터 환경의 데이터베이스 서비스 사용
 
-```
-├── client/                 # React 프론트엔드
-│   ├── src/
-│   │   ├── components/     # 재사용 가능한 컴포넌트
-│   │   ├── pages/         # 페이지 컴포넌트
-│   │   ├── contexts/      # React 컨텍스트
-│   │   ├── hooks/         # 커스텀 훅
-│   │   └── lib/          # 유틸리티 함수
-├── server/                # Express.js 서버
-├── backend/               # Spring Boot 마이크로서비스
-│   ├── user-service/
-│   ├── recipe-service/
-│   ├── ingredient-service/
-│   └── board-service/
-├── shared/               # 공유 타입 및 스키마
-├── k8s/                 # Kubernetes 설정
-└── docker-compose.yml   # Docker 설정
-```
+## 📝 라이센스
 
-## 🎨 디자인 시스템
-
-### 색상 팔레트
-- **Primary**: 허브 그린 (120, 60%, 45%)
-- **Accent**: 따뜻한 오렌지 (25, 85%, 65%)
-- **Background**: 크림색 (42, 100%, 98%)
-- **Secondary**: 따뜻한 베이지 (35, 77%, 88%)
-
-### 컴포넌트
-- shadcn/ui 기반 디자인 시스템
-- 요리 테마에 최적화된 커스텀 스타일
-- 반응형 디자인
-
-## 🔧 API 엔드포인트
-
-### 인증
-- `POST /api/auth/login` - 로그인
-- `POST /api/auth/register` - 회원가입
-- `POST /api/auth/logout` - 로그아웃
-- `GET /api/auth/me` - 사용자 정보
-
-### 레시피
-- `GET /api/recipes` - 레시피 목록
-- `POST /api/recipes` - 레시피 생성
-- `GET /api/recipes/:id` - 레시피 상세
-
-### 식재료
-- `GET /api/ingredients` - 식재료 목록
-- `POST /api/ingredients` - 식재료 추가
-
-### 게시판 (기업 전용)
-- `GET /api/board` - 게시글 목록
-- `POST /api/board` - 게시글 작성
-
-## 📝 라이선스
-
-MIT License
-
-## 🤝 기여하기
-
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📞 연락처
-
-프로젝트 관련 문의는 Issues를 통해 부탁드립니다.
+이 프로젝트는 MIT 라이센스를 따릅니다.

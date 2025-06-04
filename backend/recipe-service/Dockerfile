@@ -2,22 +2,17 @@ FROM openjdk:17-jdk-slim
 
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY mvnw .
-COPY .mvn .mvn
 COPY pom.xml .
+COPY src ./src
 
-# Copy source code
-COPY src src
+RUN apt-get update && apt-get install -y maven && \
+    mvn clean package -DskipTests && \
+    mv target/*.jar app.jar && \
+    apt-get remove -y maven && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf ~/.m2
 
-# Make mvnw executable
-RUN chmod +x ./mvnw
-
-# Build the application
-RUN ./mvnw clean package -DskipTests
-
-# Expose port
 EXPOSE 8082
 
-# Run the application
-CMD ["java", "-jar", "target/recipe-service-1.0.0.jar"]
+CMD ["java", "-jar", "app.jar"]
