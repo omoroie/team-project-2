@@ -37,7 +37,7 @@ spring:
         min-idle: 0
 
 jwt:
-  secret: ${JWT_SECRET:samsung-recipe-platform-secret-key-2024-very-secure}
+  secret: ${JWT_SECRET:Secret-key}
   expiration: 86400000 # 24 hours
 
 logging:

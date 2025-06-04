@@ -58,7 +58,7 @@ spring:
     port: ${REDIS_PORT:6379}
 
 jwt:
-  secret: ${JWT_SECRET:samsung-recipe-platform-secret-key-2024-very-secure}
+  secret: ${JWT_SECRET:Secret-key}
 ```
 
 #### Recipe Service (8082)

@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 public class JwtService {
     
-    @Value("${jwt.secret:samsung-recipe-platform-secret-key-2024}")
+    @Value("${jwt.secret:Secret-key}")
     private String jwtSecret;
     
     @Value("${jwt.expiration:86400000}") // 24 hours
