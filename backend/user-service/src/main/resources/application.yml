@@ -23,6 +23,8 @@ spring:
       write-dates-as-timestamps: false
     deserialization:
       fail-on-unknown-properties: false
+    modules:
+      - com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
   
   redis:
     host: ${REDIS_HOST:localhost}
