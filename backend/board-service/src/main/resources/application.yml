@@ -6,9 +6,7 @@ spring:
     name: board-service
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/${DB_NAME:recipe_db}
-    username: ${DB_USER:recipe_user}
-    password: ${DB_PASSWORD:recipe_password}
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/recipe_db}
     driver-class-name: org.postgresql.Driver
   
   jpa:
