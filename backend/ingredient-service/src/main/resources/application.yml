@@ -6,7 +6,7 @@ spring:
     name: ingredient-service
   
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/recipe_db}
+    url: jdbc:postgresql://neondb_owner:npg_S37INUGMiWOl@ep-shy-lab-a6zvz628.us-west-2.aws.neon.tech/neondb?sslmode=require
     driver-class-name: org.postgresql.Driver
   
   jpa:
