@@ -6,8 +6,13 @@ spring:
     name: recipe-service
   
   datasource:
-    url: jdbc:postgresql://neondb_owner:npg_S37INUGMiWOl@ep-shy-lab-a6zvz628.us-west-2.aws.neon.tech/neondb?sslmode=require
+    url: jdbc:postgresql://neondb_owner:npg_S37INUGMiWOl@ep-shy-lab-a6zvz628.us-west-2.aws.neon.tech/neondb?sslmode=require&ssl=true&sslcert=&sslkey=&sslrootcert=
     driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      maximum-pool-size: 10
   
   jpa:
     hibernate:
