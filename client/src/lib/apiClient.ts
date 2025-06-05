@@ -2,7 +2,7 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // 마이크로서비스 베이스 URL 설정 (Vite proxy 사용)
 const API_ENDPOINTS = {
-  user: '/api', // User Service (proxy를 통해 localhost:8081로 라우팅)
+  auth: '/api', // Auth API (모든 요청을 auth 경로로 통일)
   recipe: '/api', // Recipe Service (proxy를 통해 localhost:8082로 라우팅)
   ingredient: '/api', // Ingredient Service (proxy를 통해 localhost:8083로 라우팅)
   board: '/api', // Board Service (proxy를 통해 localhost:8084로 라우팅)
@@ -54,7 +54,7 @@ const createApiClient = (baseURL: string): AxiosInstance => {
 };
 
 // 각 마이크로서비스별 클라이언트 생성
-export const userApi = createApiClient(API_ENDPOINTS.user);
+export const authApi = createApiClient(API_ENDPOINTS.auth);
 export const recipeApi = createApiClient(API_ENDPOINTS.recipe);
 export const ingredientApi = createApiClient(API_ENDPOINTS.ingredient);
 export const boardApi = createApiClient(API_ENDPOINTS.board);
@@ -81,55 +81,67 @@ export const apiRequest = async (
   }
 };
 
-// 서비스별 API 호출 함수들
+// Auth API - 모든 사용자/인증 관련 요청 통합
 export const authAPI = {
+  // 인증 관련
   login: (credentials: { username: string; password: string }) =>
-    userApi.post('/auth/login', credentials),
-  register: (userData: any) => userApi.post('/auth/register', userData),
-  logout: () => userApi.post('/auth/logout'),
-  me: () => userApi.get('/auth/me'),
-  refreshToken: () => userApi.post('/auth/refresh'),
+    authApi.post('/api/auth/login', credentials),
+  register: (userData: any) => authApi.post('/api/auth/register', userData),
+  logout: () => authApi.post('/api/auth/logout'),
+  me: () => authApi.get('/api/auth/me'),
+  refreshToken: () => authApi.post('/api/auth/refresh'),
+  
+  // 사용자 관리
+  getById: (id: number) => authApi.get(`/api/auth/${id}`),
+  getByUsername: (username: string) => authApi.get(`/api/auth/username/${username}`),
+  getAll: () => authApi.get('/api/auth'),
+  getCorporate: () => authApi.get('/api/auth/corporate'),
+  update: (id: number, data: any) => authApi.put(`/api/auth/${id}`, data),
+  delete: (id: number) => authApi.delete(`/api/auth/${id}`),
+  checkUsername: (username: string) => authApi.get(`/api/auth/check/username/${username}`),
+  checkEmail: (email: string) => authApi.get(`/api/auth/check/email/${email}`),
+  getCorporateCount: () => authApi.get('/api/auth/stats/corporate-count'),
 };
 
 export const recipeAPI = {
   getAll: (params?: { page?: number; size?: number; category?: string; difficulty?: string }) =>
-    recipeApi.get('/recipes', { params }),
+    recipeApi.get('/api/recipes', { params }),
   getBest: (limit?: number) => 
-    recipeApi.get('/recipes/best', { params: { limit } }),
-  getById: (id: number) => recipeApi.get(`/recipes/${id}`),
-  create: (data: any) => recipeApi.post('/recipes', data),
-  update: (id: number, data: any) => recipeApi.put(`/recipes/${id}`, data),
-  delete: (id: number) => recipeApi.delete(`/recipes/${id}`),
-  getByAuthor: (authorId: number) => recipeApi.get(`/recipes/author/${authorId}`),
+    recipeApi.get('/api/recipes/best', { params: { limit } }),
+  getById: (id: number) => recipeApi.get(`/api/recipes/${id}`),
+  create: (data: any) => recipeApi.post('/api/recipes', data),
+  update: (id: number, data: any) => recipeApi.put(`/api/recipes/${id}`, data),
+  delete: (id: number) => recipeApi.delete(`/api/recipes/${id}`),
+  getByAuthor: (authorId: number) => recipeApi.get(`/api/recipes/author/${authorId}`),
   search: (query: string, filters?: any) => 
-    recipeApi.get('/recipes/search', { params: { q: query, ...filters } }),
-  getByCategory: (category: string) => recipeApi.get(`/recipes/category/${category}`),
+    recipeApi.get('/api/recipes/search', { params: { q: query, ...filters } }),
+  getByCategory: (category: string) => recipeApi.get(`/api/recipes/category/${category}`),
 };
 
 export const ingredientAPI = {
   getAll: (params?: { page?: number; size?: number; category?: string; inStock?: boolean }) =>
-    ingredientApi.get('/ingredients', { params }),
-  getById: (id: number) => ingredientApi.get(`/ingredients/${id}`),
-  create: (data: any) => ingredientApi.post('/ingredients', data),
-  update: (id: number, data: any) => ingredientApi.put(`/ingredients/${id}`, data),
-  delete: (id: number) => ingredientApi.delete(`/ingredients/${id}`),
+    ingredientApi.get('/api/ingredients', { params }),
+  getById: (id: number) => ingredientApi.get(`/api/ingredients/${id}`),
+  create: (data: any) => ingredientApi.post('/api/ingredients', data),
+  update: (id: number, data: any) => ingredientApi.put(`/api/ingredients/${id}`, data),
+  delete: (id: number) => ingredientApi.delete(`/api/ingredients/${id}`),
   search: (query: string) => 
-    ingredientApi.get('/ingredients/search', { params: { q: query } }),
-  getByCategory: (category: string) => ingredientApi.get(`/ingredients/category/${category}`),
+    ingredientApi.get('/api/ingredients/search', { params: { q: query } }),
+  getByCategory: (category: string) => ingredientApi.get(`/api/ingredients/category/${category}`),
   updateStock: (id: number, quantity: number) => 
-    ingredientApi.patch(`/ingredients/${id}/stock`, { quantity }),
+    ingredientApi.patch(`/api/ingredients/${id}/stock`, { quantity }),
 };
 
 export const boardAPI = {
   getAll: (params?: { page?: number; size?: number; type?: string }) =>
-    boardApi.get('/board', { params }),
-  getById: (id: number) => boardApi.get(`/board/${id}`),
-  create: (data: any) => boardApi.post('/board', data),
-  update: (id: number, data: any) => boardApi.put(`/board/${id}`, data),
-  delete: (id: number) => boardApi.delete(`/board/${id}`),
-  getByAuthor: (authorId: number) => boardApi.get(`/board/author/${authorId}`),
-  getCorporateOnly: () => boardApi.get('/board/corporate'),
+    boardApi.get('/api/board', { params }),
+  getById: (id: number) => boardApi.get(`/api/board/${id}`),
+  create: (data: any) => boardApi.post('/api/board', data),
+  update: (id: number, data: any) => boardApi.put(`/api/board/${id}`, data),
+  delete: (id: number) => boardApi.delete(`/api/board/${id}`),
+  getByAuthor: (authorId: number) => boardApi.get(`/api/board/author/${authorId}`),
+  getCorporateOnly: () => boardApi.get('/api/board/corporate'),
   addComment: (postId: number, comment: any) => 
-    boardApi.post(`/board/${postId}/comments`, comment),
-  getComments: (postId: number) => boardApi.get(`/board/${postId}/comments`),
+    boardApi.post(`/api/board/${postId}/comments`, comment),
+  getComments: (postId: number) => boardApi.get(`/api/board/${postId}/comments`),
 };

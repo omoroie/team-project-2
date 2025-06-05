@@ -61,6 +61,16 @@ export const getQueryFn: <T>(options: {
         }
       } else if (path.includes('/auth/me')) {
         response = await authAPI.me();
+      } else if (path.includes('/auth/') && params[0]) {
+        response = await authAPI.getById(params[0]);
+      } else if (path.includes('/auth/corporate')) {
+        response = await authAPI.getCorporate();
+      } else if (path.includes('/auth')) {
+        if (params[0]) {
+          response = await authAPI.getById(params[0]);
+        } else {
+          response = await authAPI.getAll();
+        }
       } else {
         throw new Error(`Unknown API path: ${path}`);
       }
