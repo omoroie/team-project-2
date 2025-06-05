@@ -24,12 +24,32 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    port: 3000,
+    port: 5000,
     proxy: {
-      '/api': {
-        target: 'http://user-service:8081',
+      '/api/auth': {
+        target: 'http://localhost:8081',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, '')
+        rewrite: (path) => path.replace(/^\/api\/auth/, '/auth')
+      },
+      '/api/users': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/users/, '/users')
+      },
+      '/api/recipes': {
+        target: 'http://localhost:8082',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/recipes/, '/recipes')
+      },
+      '/api/ingredients': {
+        target: 'http://localhost:8083',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/ingredients/, '/ingredients')
+      },
+      '/api/board': {
+        target: 'http://localhost:8084',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/board/, '/board')
       }
     }
   },
