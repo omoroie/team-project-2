@@ -243,3 +243,150 @@ kubectl apply -f k8s/
 ## 📝 라이센스
 
 이 프로젝트는 MIT 라이센스를 따릅니다.
+
+## 환경 설정
+
+### 1. 필수 환경변수
+프로젝트 루트 디렉토리에 `.env.development` 또는 `.env.production` 파일을 생성하고 다음 환경변수를 설정합니다:
+
+```bash
+# Frontend 설정 (선택적)
+NODE_ENV=development  # 또는 production (기본값: production)
+PORT=5000            # 개발 환경 기본값
+# PORT=3000          # 프로덕션 환경 기본값
+
+# Database 설정 (필수)
+POSTGRES_DB=recipe_db
+POSTGRES_USER=recipe_user
+POSTGRES_PASSWORD=recipe_password
+
+# JWT 설정 (필수)
+JWT_SECRET=your_jwt_secret_key
+
+# Redis 설정 (필수)
+REDIS_HOST=redis
+REDIS_PORT=6379
+```
+
+### 2. 환경변수 기본값
+- `NODE_ENV`: 설정하지 않으면 `production`으로 설정
+- `PORT`: 설정하지 않으면 개발 환경 5000, 프로덕션 환경 3000으로 설정
+- 나머지 환경변수들은 반드시 설정해야 합니다
+
+### 3. 환경변수 파일 생성 방법
+```bash
+# 개발 환경
+cp .env.development .env
+
+# 또는 프로덕션 환경
+cp .env.production .env
+```
+
+## 로컬 개발 환경 실행
+
+### 1. 프론트엔드 실행
+```bash
+# 개발 서버 실행 (포트 5000)
+npm run dev:frontend
+
+# 또는 포트 지정
+PORT=3000 npm run dev:frontend
+```
+
+### 2. 백엔드 서비스 실행
+```bash
+# 모든 백엔드 서비스 실행
+npm run dev:backend
+
+# 개별 서비스 실행
+npm run dev:user-service
+npm run dev:recipe-service
+npm run dev:ingredient-service
+npm run dev:board-service
+```
+
+### 3. 전체 서비스 실행
+```bash
+# 프론트엔드와 백엔드 동시 실행
+npm run dev
+```
+
+## Docker 환경 실행
+
+### 1. 개발 환경
+```bash
+# 환경변수 파일 복사
+cp .env.development .env
+
+# Docker Compose로 실행
+docker-compose up --build
+```
+
+### 2. 프로덕션 환경
+```bash
+# 환경변수 파일 복사
+cp .env.production .env
+
+# Docker Compose로 실행
+docker-compose up --build
+```
+
+### 3. 개별 서비스 빌드 및 실행
+
+#### 프론트엔드
+```bash
+# 프론트엔드 빌드
+docker build -t frontend -f Dockerfile.frontend .
+
+# 프론트엔드 실행
+docker run -d -p 5000:5000 frontend  # 개발 환경
+docker run -d -p 3000:3000 frontend  # 프로덕션 환경
+```
+
+#### 백엔드 서비스
+```bash
+# 사용자 서비스
+docker build -t user-service -f backend/user-service/Dockerfile backend/user-service
+docker run -d -p 8081:8081 user-service
+
+# 레시피 서비스
+docker build -t recipe-service -f backend/recipe-service/Dockerfile backend/recipe-service
+docker run -d -p 8082:8082 recipe-service
+
+# 재료 서비스
+docker build -t ingredient-service -f backend/ingredient-service/Dockerfile backend/ingredient-service
+docker run -d -p 8083:8083 ingredient-service
+
+# 게시판 서비스
+docker build -t board-service -f backend/board-service/Dockerfile backend/board-service
+docker run -d -p 8084:8084 board-service
+```
+
+### 4. 전체 서비스 한 번에 빌드 및 실행
+```bash
+# 모든 서비스 빌드
+docker-compose build
+
+# 모든 서비스 실행
+docker-compose up -d
+```
+
+## 주요 포트
+- 프론트엔드 개발 서버: 5000
+- 프론트엔드 프로덕션 서버: 3000
+- 사용자 서비스: 8081
+- 레시피 서비스: 8082
+- 재료 서비스: 8083
+- 게시판 서비스: 8084
+- PostgreSQL: 5432
+- Redis: 6379
+
+## 빌드 모드 설명
+- `development`: 소스맵 포함, 디버깅 용이
+- `production`: 코드 최적화, 압축 적용
+
+## 주의사항
+1. 환경변수 파일(`.env.*`)은 버전 관리에서 제외되어 있습니다
+2. 프로덕션 환경에서는 반드시 보안을 위해 환경변수를 적절히 설정해야 합니다
+3. Docker 실행 시 포트 충돌을 주의해야 합니다
+4. Database, JWT, Redis 관련 환경변수는 반드시 설정해야 합니다

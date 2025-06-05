@@ -1,14 +1,14 @@
-version: '3.8'
+version: '3'
 
 services:
   # Database
   postgres:
-    image: postgres:15
+    image: postgres:latest
     container_name: recipe-postgres
     environment:
-      POSTGRES_DB: recipe_db
-      POSTGRES_USER: recipe_user
-      POSTGRES_PASSWORD: recipe_password
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
     volumes:
@@ -16,14 +16,14 @@ services:
     networks:
       - recipe-network
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U recipe_user -d recipe_db"]
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
       interval: 30s
       timeout: 10s
       retries: 3
 
   # Redis Cache
   redis:
-    image: redis:7-alpine
+    image: redis:latest
     container_name: recipe-redis
     ports:
       - "6379:6379"
@@ -44,12 +44,12 @@ services:
       dockerfile: Dockerfile
     container_name: recipe-user-service
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/recipe_db
-      DB_USERNAME: recipe_user
-      DB_PASSWORD: recipe_password
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
-      JWT_SECRET: Secret-key
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     ports:
       - "8081:8081"
     depends_on:
@@ -68,9 +68,12 @@ services:
       dockerfile: Dockerfile
     container_name: recipe-recipe-service
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/recipe_db
-      DB_USERNAME: recipe_user
-      DB_PASSWORD: recipe_password
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     ports:
       - "8082:8082"
     depends_on:
@@ -87,9 +90,12 @@ services:
       dockerfile: Dockerfile
     container_name: recipe-ingredient-service
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/recipe_db
-      DB_USERNAME: recipe_user
-      DB_PASSWORD: recipe_password
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     ports:
       - "8083:8083"
     depends_on:
@@ -106,9 +112,12 @@ services:
       dockerfile: Dockerfile
     container_name: recipe-board-service
     environment:
-      DB_URL: jdbc:postgresql://postgres:5432/recipe_db
-      DB_USERNAME: recipe_user
-      DB_PASSWORD: recipe_password
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - JWT_SECRET=${JWT_SECRET}
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
     ports:
       - "8084:8084"
     depends_on:
@@ -123,14 +132,16 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.frontend
+      args:
+        - NODE_ENV=${NODE_ENV}
     container_name: recipe-frontend
     ports:
-      - "5000:5000"
+      - "3000:80"
     depends_on:
       - user-service
+      - board-service
       - recipe-service
       - ingredient-service
-      - board-service
     networks:
       - recipe-network
     restart: unless-stopped
