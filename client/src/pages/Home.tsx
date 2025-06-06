@@ -3,8 +3,28 @@ import { ProductGrid } from '@/components/ProductGrid';
 import { BestRecipes } from '@/components/BestRecipes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
-import { Recipe, Ingredient } from '@shared/schema';
 import { recipeAPI, ingredientAPI } from '@/lib/apiClient';
+
+// 타입 정의
+interface Recipe {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  cookingTime?: number;
+  servings?: number;
+  difficulty?: string;
+}
+
+interface Ingredient {
+  id: number;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  price?: number;
+  unit?: string;
+  inStock?: boolean;
+}
 
 export default function Home() {
   const { t } = useLanguage();

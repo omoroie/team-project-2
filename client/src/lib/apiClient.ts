@@ -98,50 +98,50 @@ export const authAPI = {
   getCorporate: () => authApi.get('/auth/corporate'),
   update: (id: number, data: any) => authApi.put(`/auth/${id}`, data),
   delete: (id: number) => authApi.delete(`/auth/${id}`),
-  checkUsername: (username: string) => authApi.get(`/api/auth/check/username/${username}`),
-  checkEmail: (email: string) => authApi.get(`/api/auth/check/email/${email}`),
-  getCorporateCount: () => authApi.get('/api/auth/stats/corporate-count'),
+  checkUsername: (username: string) => authApi.get(`/auth/check/username/${username}`),
+  checkEmail: (email: string) => authApi.get(`/auth/check/email/${email}`),
+  getCorporateCount: () => authApi.get('/auth/stats/corporate-count'),
 };
 
 export const recipeAPI = {
   getAll: (params?: { page?: number; size?: number; category?: string; difficulty?: string }) =>
-    recipeApi.get('/api/recipes', { params }),
+    recipeApi.get('/recipes', { params }),
   getBest: (limit?: number) => 
-    recipeApi.get('/api/recipes/best', { params: { limit } }),
-  getById: (id: number) => recipeApi.get(`/api/recipes/${id}`),
-  create: (data: any) => recipeApi.post('/api/recipes', data),
-  update: (id: number, data: any) => recipeApi.put(`/api/recipes/${id}`, data),
-  delete: (id: number) => recipeApi.delete(`/api/recipes/${id}`),
-  getByAuthor: (authorId: number) => recipeApi.get(`/api/recipes/author/${authorId}`),
+    recipeApi.get('/recipes/best', { params: { limit } }),
+  getById: (id: number) => recipeApi.get(`/recipes/${id}`),
+  create: (data: any) => recipeApi.post('/recipes', data),
+  update: (id: number, data: any) => recipeApi.put(`/recipes/${id}`, data),
+  delete: (id: number) => recipeApi.delete(`/recipes/${id}`),
+  getByAuthor: (authorId: number) => recipeApi.get(`/recipes/author/${authorId}`),
   search: (query: string, filters?: any) => 
-    recipeApi.get('/api/recipes/search', { params: { q: query, ...filters } }),
-  getByCategory: (category: string) => recipeApi.get(`/api/recipes/category/${category}`),
+    recipeApi.get('/recipes/search', { params: { q: query, ...filters } }),
+  getByCategory: (category: string) => recipeApi.get(`/recipes/category/${category}`),
 };
 
 export const ingredientAPI = {
   getAll: (params?: { page?: number; size?: number; category?: string; inStock?: boolean }) =>
-    ingredientApi.get('/api/ingredients', { params }),
-  getById: (id: number) => ingredientApi.get(`/api/ingredients/${id}`),
-  create: (data: any) => ingredientApi.post('/api/ingredients', data),
-  update: (id: number, data: any) => ingredientApi.put(`/api/ingredients/${id}`, data),
-  delete: (id: number) => ingredientApi.delete(`/api/ingredients/${id}`),
+    ingredientApi.get('/ingredients', { params }),
+  getById: (id: number) => ingredientApi.get(`/ingredients/${id}`),
+  create: (data: any) => ingredientApi.post('/ingredients', data),
+  update: (id: number, data: any) => ingredientApi.put(`/ingredients/${id}`, data),
+  delete: (id: number) => ingredientApi.delete(`/ingredients/${id}`),
   search: (query: string) => 
-    ingredientApi.get('/api/ingredients/search', { params: { q: query } }),
-  getByCategory: (category: string) => ingredientApi.get(`/api/ingredients/category/${category}`),
+    ingredientApi.get('/ingredients/search', { params: { q: query } }),
+  getByCategory: (category: string) => ingredientApi.get(`/ingredients/category/${category}`),
   updateStock: (id: number, quantity: number) => 
-    ingredientApi.patch(`/api/ingredients/${id}/stock`, { quantity }),
+    ingredientApi.patch(`/ingredients/${id}/stock`, { quantity }),
 };
 
 export const boardAPI = {
   getAll: (params?: { page?: number; size?: number; type?: string }) =>
-    boardApi.get('/api/board', { params }),
-  getById: (id: number) => boardApi.get(`/api/board/${id}`),
-  create: (data: any) => boardApi.post('/api/board', data),
-  update: (id: number, data: any) => boardApi.put(`/api/board/${id}`, data),
-  delete: (id: number) => boardApi.delete(`/api/board/${id}`),
-  getByAuthor: (authorId: number) => boardApi.get(`/api/board/author/${authorId}`),
-  getCorporateOnly: () => boardApi.get('/api/board/corporate'),
+    boardApi.get('/board', { params }),
+  getById: (id: number) => boardApi.get(`/board/${id}`),
+  create: (data: any) => boardApi.post('/board', data),
+  update: (id: number, data: any) => boardApi.put(`/board/${id}`, data),
+  delete: (id: number) => boardApi.delete(`/board/${id}`),
+  getByAuthor: (authorId: number) => boardApi.get(`/board/author/${authorId}`),
+  getCorporateOnly: () => boardApi.get('/board/corporate'),
   addComment: (postId: number, comment: any) => 
-    boardApi.post(`/api/board/${postId}/comments`, comment),
-  getComments: (postId: number) => boardApi.get(`/api/board/${postId}/comments`),
+    boardApi.post(`/board/${postId}/comments`, comment),
+  getComments: (postId: number) => boardApi.get(`/board/${postId}/comments`),
 };
