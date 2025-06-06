@@ -66,9 +66,13 @@ public class UserService {
         
         // Check cache first
         String cacheKey = USER_CACHE_KEY + "username:" + loginRequestDto.getUsername();
-        User cachedUser = (User) redisTemplate.opsForValue().get(cacheKey);
+        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
         
-        User user = cachedUser;
+        User user = null;
+        if (cachedObject instanceof User) {
+            user = (User) cachedObject;
+        }
+        
         if (user == null) {
             // Fetch from database if not in cache
             user = userRepository.findByUsername(loginRequestDto.getUsername())
@@ -94,9 +98,10 @@ public class UserService {
         
         // Check cache first
         String cacheKey = USER_CACHE_KEY + "id:" + id;
-        User cachedUser = (User) redisTemplate.opsForValue().get(cacheKey);
+        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
         
-        if (cachedUser != null) {
+        if (cachedObject instanceof User) {
+            User cachedUser = (User) cachedObject;
             log.info("User found in cache: {}", id);
             return userMapper.toResponseDto(cachedUser);
         }
@@ -114,9 +119,10 @@ public class UserService {
         
         // Check cache first
         String cacheKey = USER_CACHE_KEY + "username:" + username;
-        User cachedUser = (User) redisTemplate.opsForValue().get(cacheKey);
+        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
         
-        if (cachedUser != null) {
+        if (cachedObject instanceof User) {
+            User cachedUser = (User) cachedObject;
             log.info("User found in cache: {}", username);
             return userMapper.toResponseDto(cachedUser);
         }
