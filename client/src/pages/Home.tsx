@@ -57,7 +57,7 @@ export default function Home() {
   const recipeProducts = recipes.map(recipe => ({
     id: recipe.id,
     title: recipe.title,
-    description: recipe.description,
+    description: recipe.description || 'No description available',
     imageUrl: recipe.imageUrl || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=center',
     type: 'recipe' as const,
     cookingTime: recipe.cookingTime,
@@ -68,7 +68,7 @@ export default function Home() {
   const ingredientProducts = ingredients.map(ingredient => ({
     id: ingredient.id,
     title: ingredient.name,
-    description: ingredient.description,
+    description: ingredient.description || 'No description available',
     imageUrl: ingredient.imageUrl || 'https://picsum.photos/400/300?random=' + ingredient.id,
     type: 'ingredient' as const,
     price: ingredient.price,

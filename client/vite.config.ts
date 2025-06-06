@@ -24,7 +24,7 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    port: 5001,
+    port: 5000,
     proxy: {
       '/api/auth': {
         target: 'http://localhost:8081',
