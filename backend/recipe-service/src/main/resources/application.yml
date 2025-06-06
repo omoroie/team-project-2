@@ -7,8 +7,6 @@ spring:
   
   datasource:
     url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/recipe_db}
-    username: ${PGUSER:recipe_user}
-    password: ${PGPASSWORD:recipe_password}
     driver-class-name: org.postgresql.Driver
   
   jpa:
