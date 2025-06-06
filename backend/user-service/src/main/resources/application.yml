@@ -28,15 +28,16 @@ spring:
     modules:
       - com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 
-  redis:
-    host: ${REDIS_HOST:localhost}
-    port: ${REDIS_PORT:6379}
-    timeout: 2000ms
-    jedis:
-      pool:
-        max-active: 8
-        max-idle: 8
-        min-idle: 0
+  # Redis 설정 비활성화 (JPA와 충돌 방지)
+  # redis:
+  #   host: ${REDIS_HOST:localhost}
+  #   port: ${REDIS_PORT:6379}
+  #   timeout: 2000ms
+  #   jedis:
+  #     pool:
+  #       max-active: 8
+  #       max-idle: 8
+  #       min-idle: 0
 
 jwt:
   secret: ${JWT_SECRET:Secret-key}
