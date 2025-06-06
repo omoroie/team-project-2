@@ -32,25 +32,69 @@ export default function Home() {
   const { data: bestRecipes = [], isLoading: bestRecipesLoading } = useQuery({
     queryKey: ['best-recipes'],
     queryFn: async () => {
-      return []; // 백엔드 연결 전까지 빈 배열 반환
+      try {
+        const response = await recipeAPI.getBest();
+        console.log('Best recipes response:', response.data);
+        const data = response.data;
+        if (Array.isArray(data)) {
+          return data;
+        } else if (data && Array.isArray(data.recipes)) {
+          return data.recipes;
+        } else if (data && Array.isArray(data.data)) {
+          return data.data;
+        }
+        return [];
+      } catch (error) {
+        console.error('Failed to fetch best recipes:', error);
+        return [];
+      }
     },
-    enabled: false, // 백엔드가 준비될 때까지 비활성화
+    retry: 1,
+    retryDelay: 1000,
   });
 
   const { data: recipes = [] } = useQuery<Recipe[]>({
     queryKey: ['/api/recipes'],
     queryFn: async () => {
-      return []; // 백엔드 연결 전까지 빈 배열 반환
+      try {
+        const response = await recipeAPI.getAll();
+        const data = response.data;
+        if (Array.isArray(data)) {
+          return data;
+        } else if (data && Array.isArray(data.recipes)) {
+          return data.recipes;
+        } else if (data && Array.isArray(data.data)) {
+          return data.data;
+        }
+        return [];
+      } catch (error) {
+        console.error('Failed to fetch recipes:', error);
+        return [];
+      }
     },
-    enabled: false, // 백엔드가 준비될 때까지 비활성화
+    retry: 1,
   });
 
   const { data: ingredients = [] } = useQuery<Ingredient[]>({
     queryKey: ['/api/ingredients'],
     queryFn: async () => {
-      return []; // 백엔드 연결 전까지 빈 배열 반환
+      try {
+        const response = await ingredientAPI.getAll();
+        const data = response.data;
+        if (Array.isArray(data)) {
+          return data;
+        } else if (data && Array.isArray(data.ingredients)) {
+          return data.ingredients;
+        } else if (data && Array.isArray(data.data)) {
+          return data.data;
+        }
+        return [];
+      } catch (error) {
+        console.error('Failed to fetch ingredients:', error);
+        return [];
+      }
     },
-    enabled: false, // 백엔드가 준비될 때까지 비활성화
+    retry: 1,
   });
 
   // Transform data for ProductGrid component
