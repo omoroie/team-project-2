@@ -3,8 +3,28 @@ import { ProductGrid } from '@/components/ProductGrid';
 import { BestRecipes } from '@/components/BestRecipes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
-import { Recipe, Ingredient } from '@shared/schema';
-import { recipeAPI } from '@/lib/apiClient';
+import { recipeAPI, ingredientAPI } from '@/lib/apiClient';
+
+// 타입 정의
+interface Recipe {
+  id: number;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  cookingTime?: number;
+  servings?: number;
+  difficulty?: string;
+}
+
+interface Ingredient {
+  id: number;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  price?: number;
+  unit?: string;
+  inStock?: boolean;
+}
 
 export default function Home() {
   const { t } = useLanguage();
@@ -12,25 +32,25 @@ export default function Home() {
   const { data: bestRecipes = [], isLoading: bestRecipesLoading } = useQuery({
     queryKey: ['best-recipes'],
     queryFn: async () => {
-      try {
-        const response = await recipeAPI.getBest();
-        console.log('Best recipes response:', response.data);
-        return response.data;
-      } catch (error) {
-        console.error('Failed to fetch best recipes:', error);
-        return [];
-      }
+      return []; // 백엔드 연결 전까지 빈 배열 반환
     },
-    retry: 3,
-    retryDelay: 1000,
+    enabled: false, // 백엔드가 준비될 때까지 비활성화
   });
 
   const { data: recipes = [] } = useQuery<Recipe[]>({
     queryKey: ['/api/recipes'],
+    queryFn: async () => {
+      return []; // 백엔드 연결 전까지 빈 배열 반환
+    },
+    enabled: false, // 백엔드가 준비될 때까지 비활성화
   });
 
   const { data: ingredients = [] } = useQuery<Ingredient[]>({
     queryKey: ['/api/ingredients'],
+    queryFn: async () => {
+      return []; // 백엔드 연결 전까지 빈 배열 반환
+    },
+    enabled: false, // 백엔드가 준비될 때까지 비활성화
   });
 
   // Transform data for ProductGrid component
