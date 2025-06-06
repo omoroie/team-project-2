@@ -85,19 +85,19 @@ export const apiRequest = async (
 export const authAPI = {
   // 인증 관련
   login: (credentials: { username: string; password: string }) =>
-    authApi.post('/api/auth/login', credentials),
-  register: (userData: any) => authApi.post('/api/auth/register', userData),
-  logout: () => authApi.post('/api/auth/logout'),
-  me: () => authApi.get('/api/auth/me'),
-  refreshToken: () => authApi.post('/api/auth/refresh'),
+    authApi.post('/auth/login', credentials),
+  register: (userData: any) => authApi.post('/auth/register', userData),
+  logout: () => authApi.post('/auth/logout'),
+  me: () => authApi.get('/auth/me'),
+  refreshToken: () => authApi.post('/auth/refresh'),
   
   // 사용자 관리
-  getById: (id: number) => authApi.get(`/api/auth/${id}`),
-  getByUsername: (username: string) => authApi.get(`/api/auth/username/${username}`),
-  getAll: () => authApi.get('/api/auth'),
-  getCorporate: () => authApi.get('/api/auth/corporate'),
-  update: (id: number, data: any) => authApi.put(`/api/auth/${id}`, data),
-  delete: (id: number) => authApi.delete(`/api/auth/${id}`),
+  getById: (id: number) => authApi.get(`/auth/${id}`),
+  getByUsername: (username: string) => authApi.get(`/auth/username/${username}`),
+  getAll: () => authApi.get('/auth'),
+  getCorporate: () => authApi.get('/auth/corporate'),
+  update: (id: number, data: any) => authApi.put(`/auth/${id}`, data),
+  delete: (id: number) => authApi.delete(`/auth/${id}`),
   checkUsername: (username: string) => authApi.get(`/api/auth/check/username/${username}`),
   checkEmail: (email: string) => authApi.get(`/api/auth/check/email/${email}`),
   getCorporateCount: () => authApi.get('/api/auth/stats/corporate-count'),
