@@ -34,7 +34,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/auth/register", "/auth/login").permitAll()
                 .requestMatchers("/auth/check/**").permitAll()
-                .requestMatchers("/actuator/health").permitAll()
+                .requestMatchers("/actuator/**").permitAll()
+                .requestMatchers("/auth/**").permitAll() // 개발 환경에서 모든 auth 엔드포인트 허용
                 .anyRequest().authenticated()
             );
 

@@ -47,6 +47,30 @@ public class RecipeController {
         }
     }
     
+    @GetMapping("/best")
+    public ResponseEntity<Map<String, Object>> getBestRecipes(@RequestParam(defaultValue = "12") int limit) {
+        try {
+            List<RecipeResponseDto> recipes = recipeService.getBestRecipes(limit);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("recipes", recipes);
+            response.put("count", recipes.size());
+            response.put("limit", limit);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("Best recipes fetch failed: {}", e.getMessage());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to fetch best recipes");
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getRecipeById(@PathVariable Long id) {
         try {

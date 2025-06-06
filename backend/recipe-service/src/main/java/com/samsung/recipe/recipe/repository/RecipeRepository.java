@@ -32,4 +32,7 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     
     @Query("SELECT COUNT(r) FROM Recipe r WHERE r.authorId = :authorId")
     Long countByAuthorId(@Param("authorId") Long authorId);
+    
+    @Query("SELECT r FROM Recipe r ORDER BY r.rating DESC, r.viewCount DESC")
+    List<Recipe> findTopRecipes(Pageable pageable);
 }

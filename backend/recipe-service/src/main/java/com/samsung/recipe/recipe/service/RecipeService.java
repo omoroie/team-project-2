@@ -105,6 +105,34 @@ public class RecipeService {
                 .collect(Collectors.toList());
     }
     
+    public List<RecipeResponseDto> getBestRecipes(int limit) {
+        log.info("Fetching best recipes with limit: {}", limit);
+        
+        String cacheKey = "recipes:best:" + limit;
+        
+        // Check cache first
+        @SuppressWarnings("unchecked")
+        List<Recipe> cachedRecipes = (List<Recipe>) redisTemplate.opsForValue().get(cacheKey);
+        
+        if (cachedRecipes != null) {
+            log.info("Best recipes found in cache");
+            return cachedRecipes.stream()
+                    .map(recipeMapper::toResponseDto)
+                    .collect(Collectors.toList());
+        }
+        
+        // Fetch from database - order by rating and view count
+        Pageable pageable = PageRequest.of(0, limit);
+        List<Recipe> recipes = recipeRepository.findTopRecipes(pageable);
+        
+        // Cache the list
+        redisTemplate.opsForValue().set(cacheKey, recipes, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        
+        return recipes.stream()
+                .map(recipeMapper::toResponseDto)
+                .collect(Collectors.toList());
+    }
+    
     public List<RecipeResponseDto> getRecipesByAuthor(Long authorId) {
         log.info("Fetching recipes by author: {}", authorId);
         
