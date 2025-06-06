@@ -6,7 +6,9 @@ spring:
     name: user-service
   
   datasource:
-    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/recipe_db}
+    url: jdbc:postgresql://localhost:5432/recipe_db
+    username: recipe_user
+    password: recipe_password
     driver-class-name: org.postgresql.Driver
   
   jpa:
