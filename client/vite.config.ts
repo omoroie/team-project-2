@@ -24,17 +24,12 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    port: 5000,
+    port: 5001,
     proxy: {
       '/api/auth': {
         target: 'http://localhost:8081',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api\/auth/, '/auth')
-      },
-      '/api/users': {
-        target: 'http://localhost:8081',
-        changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/users/, '/users')
       },
       '/api/recipes': {
         target: 'http://localhost:8082',

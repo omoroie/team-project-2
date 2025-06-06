@@ -28,16 +28,30 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> registerUser(@Valid @RequestBody UserRequestDto userRequestDto) {
         try {
             UserResponseDto userResponse = userService.registerUser(userRequestDto);
-            
+                    // ★ DTO가 제대로 만들어졌는지, 속성값을 println/로그로 확인
+            System.out.println(">>> [REGISTER] UserResponseDto before putting into response: " + userResponse);
+            // 또는 log.info(">>> [REGISTER] DTO = {}", dto);
+
+            // 만약 dto.getCreatedAt() 이 null 이거나 이상하게 찍힌다면 
+            // 여기서 바로 확인할 수 있습니다.
+            System.out.println(">>> createdAt = " + userResponse.getCreatedAt());
+            System.out.println(">>> updatedAt = " + userResponse.getUpdatedAt());
+
             Map<String, Object> response = new HashMap<>();
             response.put("success", true);
             response.put("message", "User registered successfully");
             response.put("user", userResponse);
+            response.put("createdAt", userResponse.getCreatedAt().toString());
+            response.put("updatedAt", userResponse.getUpdatedAt().toString());
+
+                    // ★ 응답 맵을 직렬화하기 직전 상태를 찍어봄
+            System.out.println(">>> [REGISTER] Response Map = " + response);   
             
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
             
         } catch (RuntimeException e) {
             log.error("Registration failed: {}", e.getMessage());
+            System.out.println(">>> [REGISTER] Catch Exception: " + e.getMessage());
             
             Map<String, Object> response = new HashMap<>();
             response.put("success", false);
