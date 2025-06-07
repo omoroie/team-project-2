@@ -14,6 +14,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -85,8 +86,6 @@ public class BoardPostService {
             
             if (cachedBoardPost != null) {
                 log.info("Board post found in cache: {}", id);
-                // Increment view count asynchronously
-                incrementViewCountAsync(id);
                 return boardPostMapper.toResponseDto(cachedBoardPost);
             }
         } catch (Exception e) {
@@ -96,15 +95,24 @@ public class BoardPostService {
         var boardPost = boardPostRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Board post not found"));
         
-        // Increment view count asynchronously
-        incrementViewCountAsync(id);
-        
         cacheBoardPost(boardPost);
-        return boardPostMapper.toResponseDto(boardPost);
+        
+        // Return response and increment view count separately
+        var response = boardPostMapper.toResponseDto(boardPost);
+        
+        // Call increment method directly on repository
+        try {
+            boardPostRepository.incrementViewCount(id);
+            log.info("View count incremented for board post: {}", id);
+        } catch (Exception e) {
+            log.warn("Failed to increment view count: {}", e.getMessage());
+        }
+        
+        return response;
     }
     
-    @Transactional
-    public void incrementViewCount(Long id) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void incrementViewCountAsync(Long id) {
         try {
             boardPostRepository.incrementViewCount(id);
             log.info("View count incremented for board post: {}", id);
