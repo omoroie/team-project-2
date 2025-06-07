@@ -22,6 +22,8 @@ export default function Recipes() {
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [selectedDifficulty, setSelectedDifficulty] = useState(t('all'));
   const [selectedTime, setSelectedTime] = useState(t('all'));
+  const [selectedIngredient, setSelectedIngredient] = useState(t('all'));
+  const [selectedCuisine, setSelectedCuisine] = useState(t('all'));
   const [showFilters, setShowFilters] = useState(false);
   
   // URL 검색어가 변경되면 상태 업데이트
@@ -105,14 +107,36 @@ export default function Recipes() {
       });
     }
 
+    // 재료별 필터링
+    if (selectedIngredient !== t('all')) {
+      filtered = filtered.filter(recipe => {
+        return recipe.title.toLowerCase().includes(selectedIngredient.toLowerCase()) ||
+               recipe.description.toLowerCase().includes(selectedIngredient.toLowerCase());
+      });
+    }
+
+    // 요리 종류 필터링
+    if (selectedCuisine !== t('all')) {
+      filtered = filtered.filter(recipe => {
+        return recipe.title.toLowerCase().includes(selectedCuisine.toLowerCase()) ||
+               recipe.description.toLowerCase().includes(selectedCuisine.toLowerCase());
+      });
+    }
+
     return filtered;
-  }, [recipes, searchQuery, selectedDifficulty, selectedTime, t]);
+  }, [recipes, searchQuery, selectedDifficulty, selectedTime, selectedIngredient, selectedCuisine, t]);
 
   // 필터 옵션들
   const difficultyOptions = [t('all'), t('easy'), t('medium'), t('hard')];
   const timeOptions = [
     t('all'), 
     '15분 이하', '30분 이하', '1시간 이하', '1시간 이상'
+  ];
+  const ingredientOptions = [
+    t('all'), '소고기', '돼지고기', '닭고기', '생선', '두부', '버섯', '채소', '김치'
+  ];
+  const cuisineOptions = [
+    t('all'), '한식', '중식', '일식', '양식', '찌개', '볶음', '구이', '전', '무침'
   ];
 
   if (isLoading) {
@@ -224,6 +248,54 @@ export default function Recipes() {
                   ))}
                 </div>
               </div>
+
+              {/* 재료별 필터 */}
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center">
+                  <Users className="mr-2 h-4 w-4" />
+                  {t('ingredientFilter')}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {ingredientOptions.map((ingredient) => (
+                    <Badge
+                      key={ingredient}
+                      variant={selectedIngredient === ingredient ? 'default' : 'outline'}
+                      className={`cursor-pointer hover:bg-primary/10 ${
+                        selectedIngredient === ingredient 
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'text-foreground hover:text-primary'
+                      }`}
+                      onClick={() => setSelectedIngredient(ingredient)}
+                    >
+                      {ingredient}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* 요리 종류 필터 */}
+              <div>
+                <h3 className="text-sm font-semibold text-foreground mb-3 flex items-center">
+                  <ChefHat className="mr-2 h-4 w-4" />
+                  {t('cuisine')}
+                </h3>
+                <div className="flex flex-wrap gap-2">
+                  {cuisineOptions.map((cuisine) => (
+                    <Badge
+                      key={cuisine}
+                      variant={selectedCuisine === cuisine ? 'default' : 'outline'}
+                      className={`cursor-pointer hover:bg-primary/10 ${
+                        selectedCuisine === cuisine 
+                          ? 'bg-primary text-primary-foreground' 
+                          : 'text-foreground hover:text-primary'
+                      }`}
+                      onClick={() => setSelectedCuisine(cuisine)}
+                    >
+                      {cuisine}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
             </div>
           )}
         </div>
@@ -256,6 +328,8 @@ export default function Recipes() {
               setSearchQuery('');
               setSelectedDifficulty(t('all'));
               setSelectedTime(t('all'));
+              setSelectedIngredient(t('all'));
+              setSelectedCuisine(t('all'));
             }}>
               필터 초기화
             </Button>

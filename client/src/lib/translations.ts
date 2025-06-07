@@ -28,6 +28,9 @@ export const translations: Record<string, Record<string, string>> = {
     easy: '쉬움',
     medium: '보통',
     hard: '어려움',
+    ingredientFilter: '재료별',
+    mealType: '식사 유형',
+    cuisine: '요리 종류',
     
     // Common
     loading: '로딩 중...',
