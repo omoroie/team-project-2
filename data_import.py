@@ -68,36 +68,40 @@ def parse_difficulty(difficulty_str):
 def parse_ingredients(ingredients_str):
     """재료 리스트 파싱"""
     if pd.isna(ingredients_str):
-        return []
+        return ["기본 재료"]
     
     try:
         # JSON 형태로 파싱 시도
         ingredients_list = eval(ingredients_str)
         if isinstance(ingredients_list, list):
-            return [clean_text(item) for item in ingredients_list if clean_text(item)]
+            parsed = [clean_text(item) for item in ingredients_list if clean_text(item)]
+            return parsed if parsed else ["기본 재료"]
     except:
         pass
     
     # 문자열로 분리 시도
     ingredients = str(ingredients_str).replace('[', '').replace(']', '').replace("'", "")
-    return [clean_text(item) for item in ingredients.split(',') if clean_text(item)]
+    parsed = [clean_text(item) for item in ingredients.split(',') if clean_text(item)]
+    return parsed if parsed else ["기본 재료"]
 
 def parse_instructions(instructions_str):
     """조리과정 파싱"""
     if pd.isna(instructions_str):
-        return []
+        return ["기본 조리과정이 제공되지 않았습니다."]
     
     try:
         # JSON 형태로 파싱 시도
         instructions_list = eval(instructions_str)
         if isinstance(instructions_list, list):
-            return [clean_text(item) for item in instructions_list if clean_text(item)]
+            parsed = [clean_text(item) for item in instructions_list if clean_text(item)]
+            return parsed if parsed else ["기본 조리과정이 제공되지 않았습니다."]
     except:
         pass
     
     # 문자열로 분리 시도
     instructions = str(instructions_str).replace('[', '').replace(']', '').replace("'", "")
-    return [clean_text(item) for item in instructions.split(',') if clean_text(item)]
+    parsed = [clean_text(item) for item in instructions.split(',') if clean_text(item)]
+    return parsed if parsed else ["기본 조리과정이 제공되지 않았습니다."]
 
 def get_or_create_user(cursor, author_name):
     """사용자 조회 또는 생성"""
@@ -200,7 +204,11 @@ def main():
         success_count = 0
         error_count = 0
         
-        for idx, row in df.iterrows():
+        # 처음 10개 레시피만 테스트  
+        test_df = df.head(10)
+        print(f"테스트용으로 {len(test_df)}개 레시피를 처리합니다.")
+        
+        for idx, row in test_df.iterrows():
             try:
                 # 데이터 파싱
                 title = clean_text(row.get('RCP_TTL'))
