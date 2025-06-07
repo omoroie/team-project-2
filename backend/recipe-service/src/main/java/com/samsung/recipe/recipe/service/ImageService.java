@@ -40,8 +40,10 @@ public class ImageService {
             throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
         }
 
-        // 업로드 디렉토리 생성 (절대 경로로 변환)
-        Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
+        // 임시 디렉토리 사용 (프로덕션에서는 클라우드 스토리지 사용)
+        String tempDir = System.getProperty("java.io.tmpdir");
+        Path uploadPath = Paths.get(tempDir, "recipe-uploads");
+        
         try {
             if (!Files.exists(uploadPath)) {
                 Files.createDirectories(uploadPath);
@@ -65,7 +67,7 @@ public class ImageService {
         Path filePath = uploadPath.resolve(filename);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // 접근 가능한 URL 반환
-        return uploadUrl + "/" + filename;
+        // 로컬 테스트용 URL 반환 (실제로는 파일명만 저장하고 클라우드 URL 사용)
+        return "https://via.placeholder.com/400x300.png?text=" + filename;
     }
 }
