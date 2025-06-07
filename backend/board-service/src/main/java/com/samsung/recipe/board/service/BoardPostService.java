@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -38,28 +39,30 @@ public class BoardPostService {
     public BoardPostResponseDto createBoardPost(BoardPostRequestDto boardPostRequestDto) {
         log.info("Creating new board post: {}", boardPostRequestDto.getTitle());
         
-        BoardPost boardPost = boardPostMapper.toEntity(boardPostRequestDto);
+        var boardPost = boardPostMapper.toEntity(boardPostRequestDto);
         
-        // Auto-translate content
-        if ("ko".equals(boardPost.getOriginalLanguage())) {
-            String translatedTitleEn = googleTranslateService.translateKoreanToEnglish(boardPost.getTitle());
-            String translatedContentEn = googleTranslateService.translateKoreanToEnglish(boardPost.getContent());
+        // Auto-translate content using more concise approach
+        var isKorean = "ko".equals(boardPost.getOriginalLanguage());
+        
+        if (isKorean) {
+            var titleEn = googleTranslateService.translateKoreanToEnglish(boardPost.getTitle());
+            var contentEn = googleTranslateService.translateKoreanToEnglish(boardPost.getContent());
             
-            boardPost.setTranslatedTitleEn(translatedTitleEn);
-            boardPost.setTranslatedContentEn(translatedContentEn);
+            boardPost.setTranslatedTitleEn(titleEn);
+            boardPost.setTranslatedContentEn(contentEn);
             boardPost.setTranslatedTitleKo(boardPost.getTitle());
             boardPost.setTranslatedContentKo(boardPost.getContent());
         } else {
-            String translatedTitleKo = googleTranslateService.translateEnglishToKorean(boardPost.getTitle());
-            String translatedContentKo = googleTranslateService.translateEnglishToKorean(boardPost.getContent());
+            var titleKo = googleTranslateService.translateEnglishToKorean(boardPost.getTitle());
+            var contentKo = googleTranslateService.translateEnglishToKorean(boardPost.getContent());
             
-            boardPost.setTranslatedTitleKo(translatedTitleKo);
-            boardPost.setTranslatedContentKo(translatedContentKo);
+            boardPost.setTranslatedTitleKo(titleKo);
+            boardPost.setTranslatedContentKo(contentKo);
             boardPost.setTranslatedTitleEn(boardPost.getTitle());
             boardPost.setTranslatedContentEn(boardPost.getContent());
         }
         
-        BoardPost savedBoardPost = boardPostRepository.save(boardPost);
+        var savedBoardPost = boardPostRepository.save(boardPost);
         
         try {
             cacheBoardPost(savedBoardPost);

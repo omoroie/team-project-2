@@ -48,11 +48,11 @@ public class UserService {
         }
         
         // Create user entity
-        User user = userMapper.toEntity(userRequestDto);
+        var user = userMapper.toEntity(userRequestDto);
         user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
         
         // Save user
-        User savedUser = userRepository.save(user);
+        var savedUser = userRepository.save(user);
         
         // Try to cache user data, ignore if Redis fails
         try {
@@ -71,11 +71,11 @@ public class UserService {
         // Try cache first, fallback to database if Redis unavailable
         User user = null;
         try {
-            String cacheKey = USER_CACHE_KEY + "username:" + loginRequestDto.getUsername();
-            Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
+            var cacheKey = USER_CACHE_KEY + "username:" + loginRequestDto.getUsername();
+            var cachedObject = redisTemplate.opsForValue().get(cacheKey);
             
-            if (cachedObject instanceof User) {
-                user = (User) cachedObject;
+            if (cachedObject instanceof User cachedUser) {
+                user = cachedUser;
             }
         } catch (Exception e) {
             log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
