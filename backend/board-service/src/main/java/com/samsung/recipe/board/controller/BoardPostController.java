@@ -3,6 +3,7 @@ package com.samsung.recipe.board.controller;
 import com.samsung.recipe.board.dto.BoardPostRequestDto;
 import com.samsung.recipe.board.dto.BoardPostResponseDto;
 import com.samsung.recipe.board.service.BoardPostService;
+import com.samsung.recipe.board.service.ViewCountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import java.util.Map;
 public class BoardPostController {
     
     private final BoardPostService boardPostService;
+    private final ViewCountService viewCountService;
     
     @PostMapping
     public ResponseEntity<Map<String, Object>> createBoardPost(@Valid @RequestBody BoardPostRequestDto boardPostRequestDto) {
@@ -56,6 +58,25 @@ public class BoardPostController {
         } catch (RuntimeException e) {
             log.error("Board post fetch failed: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+    
+    @PostMapping("/{id}/view")
+    public ResponseEntity<Map<String, Object>> incrementViewCount(@PathVariable Long id) {
+        try {
+            viewCountService.incrementViewCount(id);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("message", "View count incremented");
+            
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", e.getMessage());
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
     

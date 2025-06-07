@@ -30,7 +30,6 @@ public class BoardPostService {
     private final BoardPostMapper boardPostMapper;
     private final GoogleTranslateService googleTranslateService;
     private final RedisTemplate<String, Object> redisTemplate;
-    private final ViewCountService viewCountService;
     
     private static final String BOARD_POST_CACHE_KEY = "board_post:";
     private static final String BOARD_POSTS_LIST_CACHE_KEY = "board_posts:list";
@@ -76,6 +75,7 @@ public class BoardPostService {
         return boardPostMapper.toResponseDto(savedBoardPost);
     }
     
+    @Transactional(readOnly = true)
     public BoardPostResponseDto getBoardPostById(Long id) {
         log.info("Fetching board post by ID: {}", id);
         
@@ -86,8 +86,6 @@ public class BoardPostService {
             
             if (cachedBoardPost != null) {
                 log.info("Board post found in cache: {}", id);
-                // Increment view count for cached posts
-                viewCountService.incrementViewCount(id);
                 return boardPostMapper.toResponseDto(cachedBoardPost);
             }
         } catch (Exception e) {
@@ -98,14 +96,7 @@ public class BoardPostService {
                 .orElseThrow(() -> new RuntimeException("Board post not found"));
         
         cacheBoardPost(boardPost);
-        
-        // Return response and increment view count separately
-        var response = boardPostMapper.toResponseDto(boardPost);
-        
-        // Increment view count using separate service
-        viewCountService.incrementViewCount(id);
-        
-        return response;
+        return boardPostMapper.toResponseDto(boardPost);
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
