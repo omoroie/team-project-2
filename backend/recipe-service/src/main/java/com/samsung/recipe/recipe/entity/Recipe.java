@@ -81,7 +81,33 @@ public class Recipe {
             return new ArrayList<>();
         }
         
-        // PostgreSQL 배열 형태: {"item1","item2","item3"}
+        // 중복 배열 형태 처리: {"['item1', 'item2']"}
+        if (arrayStr.contains("['") && arrayStr.contains("']")) {
+            // 내부 배열 부분 추출
+            int start = arrayStr.indexOf("['");
+            int end = arrayStr.lastIndexOf("']") + 2;
+            if (start >= 0 && end > start) {
+                String innerArray = arrayStr.substring(start, end);
+                // Python 리스트 형태를 파싱
+                innerArray = innerArray.replace("['", "").replace("']", "");
+                String[] items = innerArray.split("',\\s*'");
+                
+                List<String> result = new ArrayList<>();
+                for (String item : items) {
+                    String cleaned = item.trim().replace("'", "");
+                    if (!cleaned.isEmpty() && !cleaned.equals("||")) {
+                        // "재료명 || 수량" 형태에서 재료명만 추출
+                        String[] parts = cleaned.split("\\s*\\|\\|\\s*");
+                        if (parts.length > 0 && !parts[0].trim().isEmpty()) {
+                            result.add(parts[0].trim());
+                        }
+                    }
+                }
+                return result;
+            }
+        }
+        
+        // 표준 PostgreSQL 배열 형태: {"item1","item2","item3"}
         if (arrayStr.startsWith("{") && arrayStr.endsWith("}")) {
             String content = arrayStr.substring(1, arrayStr.length() - 1);
             if (content.trim().isEmpty()) {
@@ -109,6 +135,31 @@ public class Recipe {
     private List<String> parseInstructions(String instructionsStr) {
         if (instructionsStr == null || instructionsStr.trim().isEmpty()) {
             return new ArrayList<>();
+        }
+        
+        // Python 리스트 형태 처리: ['step1', 'step2', 'step3']
+        if (instructionsStr.contains("['") && instructionsStr.contains("']")) {
+            // 내부 배열 부분 추출
+            int start = instructionsStr.indexOf("['");
+            int end = instructionsStr.lastIndexOf("']") + 2;
+            if (start >= 0 && end > start) {
+                String innerArray = instructionsStr.substring(start, end);
+                // Python 리스트 형태를 파싱
+                innerArray = innerArray.replace("['", "").replace("']", "");
+                String[] items = innerArray.split("',\\s*'");
+                
+                List<String> result = new ArrayList<>();
+                for (String item : items) {
+                    String cleaned = item.trim().replace("'", "");
+                    if (!cleaned.isEmpty()) {
+                        // 불필요한 문자 제거 및 정리
+                        cleaned = cleaned.replaceAll("\\\\n", " ");
+                        cleaned = cleaned.replaceAll("\\s+", " ");
+                        result.add(cleaned.trim());
+                    }
+                }
+                return result;
+            }
         }
         
         // 파이프로 구분된 형태: "step1|step2|step3"

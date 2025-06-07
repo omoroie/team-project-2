@@ -235,9 +235,9 @@ def main():
                 break
                 
             try:
-                # 필드 매핑 (CSV 컬럼명에 따라 조정 필요)
-                title = clean_text(row.get('RCP_NM', row.get('title', f'레시피 {index+1}')))
-                description = clean_text(row.get('RCP_SUMMARY', row.get('description', f'{title} 레시피입니다')))
+                # 필드 매핑 (실제 CSV 컬럼명 사용)
+                title = clean_text(row.get('RCP_TTL', f'레시피 {index+1}'))
+                description = f"{title} 레시피입니다"
                 
                 # 재료 파싱
                 ingredients_raw = row.get('CKG_MTRL_CN', row.get('ingredients', ''))

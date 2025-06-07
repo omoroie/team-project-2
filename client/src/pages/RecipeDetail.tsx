@@ -124,7 +124,7 @@ export default function RecipeDetail() {
                       </li>
                     ))
                   ) : (
-                    <li className="text-gray-500 text-sm">재료 정보가 없습니다. {JSON.stringify(recipe.ingredients)}</li>
+                    <li className="text-gray-500 text-sm">재료 정보가 없습니다.</li>
                   )}
                 </ul>
               </CardContent>
@@ -148,7 +148,7 @@ export default function RecipeDetail() {
                         </div>
                       ))
                     ) : (
-                      <p className="text-gray-500">조리법 정보가 없습니다. {JSON.stringify(recipe.instructions)}</p>
+                      <p className="text-gray-500">조리법 정보가 없습니다.</p>
                     )}
                   </div>
                 </div>
