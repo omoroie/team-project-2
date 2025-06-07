@@ -28,6 +28,12 @@ spring:
     modules:
       - com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
   
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+      enabled: true
+  
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
@@ -49,6 +55,11 @@ logging:
     com.samsung.recipe.recipe: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+
+app:
+  upload:
+    dir: ${UPLOAD_DIR:uploads}
+    url: ${UPLOAD_URL:http://localhost:8082/uploads}
 
 management:
   endpoints:

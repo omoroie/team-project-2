@@ -37,13 +37,32 @@ export default function CreateRecipe() {
   
   const [newHashtag, setNewHashtag] = useState('');
 
-  // Image upload function (for now using local storage simulation)
+  // Image upload function
   const uploadImage = async (file: File): Promise<string> => {
-    // Simulate image upload - in production this would upload to S3/GCP Storage
-    const timestamp = Date.now();
-    const fileName = `${timestamp}_${file.name}`;
-    // For now, return a placeholder URL that includes the filename
-    return `/uploads/${fileName}`;
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/images/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`);
+      }
+
+      const result = await response.json();
+      
+      if (result.success && result.imageUrl) {
+        return result.imageUrl;
+      } else {
+        throw new Error(result.error || 'Upload failed');
+      }
+    } catch (error) {
+      console.error('Image upload error:', error);
+      throw error;
+    }
   };
 
   const createRecipeMutation = useMutation({
