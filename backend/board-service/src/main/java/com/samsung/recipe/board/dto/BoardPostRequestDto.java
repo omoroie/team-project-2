@@ -22,7 +22,6 @@ public class BoardPostRequestDto {
     @Size(max = 10000, message = "Content must not exceed 10000 characters")
     private String content;
     
-    @NotNull(message = "Author ID is required")
     private Long authorId;
     
     private String authorName;
