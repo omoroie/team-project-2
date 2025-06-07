@@ -232,7 +232,7 @@ def main():
         error_count = 0
         
         for index, row in df.iterrows():
-            if index >= 100:  # 테스트를 위해 처음 100개만
+            if index >= 20:  # 처음 20개만 임포트
                 break
                 
             try:
