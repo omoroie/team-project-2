@@ -18,7 +18,7 @@ import java.util.Map;
 @Slf4j
 public class JwtService {
     
-    @Value("${jwt.secret:Secret-key}")
+    @Value("${JWT_SECRET:mySecretKeyThatIsLongEnoughForHS256AlgorithmAndIsAtLeast256BitsLong}")
     private String jwtSecret;
     
     @Value("${jwt.expiration:86400000}") // 24 hours
