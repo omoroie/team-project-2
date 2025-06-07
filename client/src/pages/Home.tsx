@@ -54,7 +54,7 @@ export default function Home() {
   });
 
   const { data: recipes = [] } = useQuery<Recipe[]>({
-    queryKey: ['/api/recipes'],
+    queryKey: ['recipes'],
     queryFn: async () => {
       try {
         const response = await recipeAPI.getAll();
@@ -76,7 +76,7 @@ export default function Home() {
   });
 
   const { data: ingredients = [] } = useQuery<Ingredient[]>({
-    queryKey: ['/api/ingredients'],
+    queryKey: ['ingredients'],
     queryFn: async () => {
       try {
         const response = await ingredientAPI.getAll();

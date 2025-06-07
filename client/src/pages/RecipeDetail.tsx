@@ -11,8 +11,17 @@ export default function RecipeDetail() {
   const { t } = useLanguage();
   const { id } = useParams();
 
-  const { data: recipe, isLoading } = useQuery<Recipe>({
-    queryKey: [`/api/recipes/${id}`],
+  const { data: recipe, isLoading, error } = useQuery({
+    queryKey: ['recipes', id],
+    queryFn: async () => {
+      if (!id) throw new Error('Recipe ID is required');
+      const response = await fetch(`/api/recipes/${id}`);
+      if (!response.ok) {
+        throw new Error('레시피를 찾을 수 없습니다');
+      }
+      return response.json();
+    },
+    enabled: !!id,
   });
 
   if (isLoading) {
