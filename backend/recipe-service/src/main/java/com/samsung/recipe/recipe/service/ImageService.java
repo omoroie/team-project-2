@@ -40,8 +40,8 @@ public class ImageService {
             throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
         }
 
-        // 프로젝트 루트의 uploads 디렉토리 사용
-        Path uploadPath = Paths.get("uploads");
+        // 프로젝트 루트의 uploads 디렉토리 사용 (절대 경로)
+        Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads");
         
         try {
             if (!Files.exists(uploadPath)) {
