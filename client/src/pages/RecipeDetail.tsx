@@ -116,12 +116,16 @@ export default function RecipeDetail() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {recipe.ingredients.map((ingredient: string, index: number) => (
-                    <li key={index} className="flex items-center space-x-2">
-                      <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
-                      <span className="text-sm">{ingredient}</span>
-                    </li>
-                  ))}
+                  {recipe.ingredients && recipe.ingredients.length > 0 ? (
+                    recipe.ingredients.map((ingredient: string, index: number) => (
+                      <li key={index} className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <span className="text-sm">{ingredient}</span>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-gray-500 text-sm">재료 정보가 없습니다.</li>
+                  )}
                 </ul>
               </CardContent>
             </Card>
@@ -136,7 +140,20 @@ export default function RecipeDetail() {
               <CardContent>
                 <div className="prose prose-gray max-w-none">
                   <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                    {recipe.instructions}
+                    {recipe.instructions && recipe.instructions.length > 0 ? (
+                      Array.isArray(recipe.instructions) ? (
+                        recipe.instructions.map((instruction: string, index: number) => (
+                          <div key={index} className="mb-3">
+                            <span className="font-medium text-blue-600">{index + 1}. </span>
+                            {instruction}
+                          </div>
+                        ))
+                      ) : (
+                        recipe.instructions
+                      )
+                    ) : (
+                      <p className="text-gray-500">조리법 정보가 없습니다.</p>
+                    )}
                   </div>
                 </div>
               </CardContent>
