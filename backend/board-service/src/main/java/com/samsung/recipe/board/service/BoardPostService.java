@@ -16,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import jakarta.persistence.EntityManager;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -75,28 +76,22 @@ public class BoardPostService {
         return boardPostMapper.toResponseDto(savedBoardPost);
     }
     
-    @Transactional(readOnly = true)
+    @Transactional
     public BoardPostResponseDto getBoardPostById(Long id) {
         log.info("Fetching board post by ID: {}", id);
-        
-        // Try to get from cache first, but continue if cache fails
-        try {
-            var cacheKey = BOARD_POST_CACHE_KEY + id;
-            var cachedBoardPost = (BoardPost) redisTemplate.opsForValue().get(cacheKey);
-            
-            if (cachedBoardPost != null) {
-                log.info("Board post found in cache: {}", id);
-                return boardPostMapper.toResponseDto(cachedBoardPost);
-            }
-        } catch (Exception e) {
-            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
-        }
         
         var boardPost = boardPostRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Board post not found"));
         
-        cacheBoardPost(boardPost);
-        return boardPostMapper.toResponseDto(boardPost);
+        // 조회수 증가
+        boardPostRepository.incrementViewCount(id);
+        
+        // 업데이트된 게시물을 다시 조회
+        var updatedBoardPost = boardPostRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Board post not found"));
+        
+        cacheBoardPost(updatedBoardPost);
+        return boardPostMapper.toResponseDto(updatedBoardPost);
     }
     
     @Transactional(propagation = Propagation.REQUIRES_NEW)
