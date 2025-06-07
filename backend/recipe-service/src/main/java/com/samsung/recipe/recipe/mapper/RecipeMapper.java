@@ -18,6 +18,12 @@ public class RecipeMapper {
     }
     
     public RecipeResponseDto toResponseDto(Recipe recipe) {
-        return modelMapper.map(recipe, RecipeResponseDto.class);
+        RecipeResponseDto dto = modelMapper.map(recipe, RecipeResponseDto.class);
+        // 수동으로 @Transient 필드들 매핑
+        dto.setInstructions(recipe.getInstructions());
+        dto.setIngredients(recipe.getIngredients());
+        dto.setHashtags(recipe.getHashtags());
+        dto.setInstructionImages(recipe.getInstructionImages());
+        return dto;
     }
 }

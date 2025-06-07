@@ -138,19 +138,37 @@ export default function RecipeDetail() {
                 <CardTitle>조리법</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="prose prose-gray max-w-none">
-                  <div className="whitespace-pre-wrap text-gray-700 leading-relaxed">
-                    {Array.isArray(recipe.instructions) && recipe.instructions.length > 0 ? (
-                      recipe.instructions.map((instruction: string, index: number) => (
-                        <div key={index} className="mb-3">
-                          <span className="font-medium text-blue-600">{index + 1}. </span>
-                          {instruction}
+                <div className="space-y-6">
+                  {Array.isArray(recipe.instructions) && recipe.instructions.length > 0 ? (
+                    recipe.instructions.map((instruction: string, index: number) => (
+                      <div key={index} className="space-y-4">
+                        <div className="flex items-start space-x-4">
+                          <div className="flex-shrink-0 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
+                            {index + 1}
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-gray-700 leading-relaxed">{instruction}</p>
+                          </div>
                         </div>
-                      ))
-                    ) : (
-                      <p className="text-gray-500">조리법 정보가 없습니다.</p>
-                    )}
-                  </div>
+                        {/* 조리법 단계별 이미지 */}
+                        {recipe.instructionImages && recipe.instructionImages[index] && (
+                          <div className="ml-12">
+                            <img 
+                              src={recipe.instructionImages[index]} 
+                              alt={`조리 단계 ${index + 1}`}
+                              className="rounded-lg shadow-md max-w-md w-full h-auto"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <p className="text-gray-500">조리법 정보가 없습니다.</p>
+                  )}
                 </div>
               </CardContent>
             </Card>

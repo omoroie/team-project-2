@@ -68,6 +68,12 @@ public class Recipe {
     @Transient
     private List<String> hashtags;
     
+    @Column(name = "instruction_images", columnDefinition = "TEXT")
+    private String instructionImagesRaw;
+    
+    @Transient
+    private List<String> instructionImages;
+    
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -81,6 +87,7 @@ public class Recipe {
         this.ingredients = parsePostgreSQLArray(this.ingredientsRaw);
         this.instructions = parseInstructions(this.instructionsRaw);
         this.hashtags = parsePostgreSQLArray(this.hashtagsRaw);
+        this.instructionImages = parsePostgreSQLArray(this.instructionImagesRaw);
     }
     
     private List<String> parsePostgreSQLArray(String arrayStr) {

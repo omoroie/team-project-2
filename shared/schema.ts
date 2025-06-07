@@ -21,6 +21,7 @@ export interface Recipe {
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
   imageUrl?: string;
   hashtags?: string[];
+  instructionImages?: string[];
   authorId: number;
   viewCount: number;
   createdAt: string;
