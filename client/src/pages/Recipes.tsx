@@ -20,7 +20,31 @@ export default function Recipes() {
   const [selectedDifficulty, setSelectedDifficulty] = useState('전체');
 
   const { data: recipes = [], isLoading } = useQuery<Recipe[]>({
-    queryKey: ['/api/recipes'],
+    queryKey: ['recipes'],
+    queryFn: async () => {
+      try {
+        const response = await fetch('/api/recipes');
+        if (!response.ok) {
+          console.error('Recipes response:', response.status, response.statusText);
+          return [];
+        }
+        const data = await response.json();
+        console.log('Recipes response:', data);
+        // 응답 구조에 따라 적절히 처리
+        if (Array.isArray(data)) {
+          return data;
+        } else if (data && Array.isArray(data.recipes)) {
+          return data.recipes;
+        } else if (data && Array.isArray(data.data)) {
+          return data.data;
+        }
+        return [];
+      } catch (error) {
+        console.error('Failed to fetch recipes:', error);
+        return [];
+      }
+    },
+    retry: 1,
   });
 
   // 카테고리 옵션들
@@ -34,7 +58,7 @@ export default function Recipes() {
   const timeOptions = ['전체', '5분이내', '10분이내', '15분이내', '20분이내', '30분이내', '60분이내', '90분이내', '2시간이내', '2시간이상'];
   const difficultyOptions = ['전체', '아무나', '초급', '중급', '고급'];
 
-  const filteredRecipes = recipes.filter(recipe => {
+  const filteredRecipes = Array.isArray(recipes) ? recipes.filter(recipe => {
     const matchesSearch = recipe.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       recipe.description.toLowerCase().includes(searchQuery.toLowerCase());
     
@@ -57,7 +81,7 @@ export default function Recipes() {
       recipe.difficulty === selectedDifficulty;
 
     return matchesSearch && matchesCategory && matchesType && matchesTime && matchesDifficulty;
-  });
+  }) : [];
 
   if (isLoading) {
     return (

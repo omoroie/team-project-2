@@ -31,6 +31,38 @@ interface BestRecipesProps {
 export function BestRecipes({ recipes }: BestRecipesProps) {
   const { t } = useLanguage();
 
+  // 레시피별 적절한 이미지 생성
+  const getRecipeImage = (recipe: BestRecipe) => {
+    if (recipe.imageUrl) return recipe.imageUrl;
+    
+    const imageMap: { [key: string]: string } = {
+      '김치찌개': 'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400&h=300&fit=crop',
+      '불고기': 'https://images.unsplash.com/photo-1565895405229-71866c7d5bde?w=400&h=300&fit=crop',
+      '삼겹살': 'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400&h=300&fit=crop',
+      '된장찌개': 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop',
+      '비빔밥': 'https://images.unsplash.com/photo-1575932444877-5106bee2a599?w=400&h=300&fit=crop',
+      '갈비': 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop',
+      '치킨': 'https://images.unsplash.com/photo-1569058242253-92a9c755a0ec?w=400&h=300&fit=crop',
+      '볶음밥': 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?w=400&h=300&fit=crop'
+    };
+    
+    for (const [keyword, imageUrl] of Object.entries(imageMap)) {
+      if (recipe.title.includes(keyword)) {
+        return imageUrl;
+      }
+    }
+    
+    const defaultImages = [
+      'https://images.unsplash.com/photo-1589302168068-964664d93dc0?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1565895405229-71866c7d5bde?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1590736969955-71cc94901144?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1569718212165-3a8278d5f624?w=400&h=300&fit=crop',
+      'https://images.unsplash.com/photo-1575932444877-5106bee2a599?w=400&h=300&fit=crop'
+    ];
+    
+    return defaultImages[recipe.id % defaultImages.length];
+  };
+
   return (
     <section className="py-16 bg-gradient-to-b from-background to-muted/30">
       <div className="container mx-auto px-4">
@@ -49,7 +81,7 @@ export function BestRecipes({ recipes }: BestRecipesProps) {
             <Card key={recipe.id} className="group hover:shadow-lg transition-all duration-300 border-0 bg-white dark:bg-gray-800 overflow-hidden">
               <div className="relative">
                 <img
-                  src={recipe.imageUrl}
+                  src={getRecipeImage(recipe)}
                   alt={recipe.title}
                   className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                 />
