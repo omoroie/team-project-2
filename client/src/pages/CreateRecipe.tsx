@@ -43,7 +43,7 @@ export default function CreateRecipe() {
     formData.append('file', file);
 
     try {
-      const response = await fetch('/api/images/upload', {
+      const response = await fetch('http://localhost:8082/api/images/upload', {
         method: 'POST',
         body: formData,
       });
