@@ -26,6 +26,10 @@ export default function Login() {
     mutationFn: (data: { username: string; password: string }) =>
       authAPI.login(data),
     onSuccess: (response: any) => {
+      // 토큰을 localStorage에 저장
+      if (response.data.token) {
+        localStorage.setItem('authToken', response.data.token);
+      }
       dispatch({ type: 'SET_USER', payload: response.data.user });
       queryClient.clear();
       toast({
