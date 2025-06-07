@@ -2,10 +2,10 @@ import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
 // 마이크로서비스 베이스 URL 설정 (Vite proxy 사용)
 const API_ENDPOINTS = {
-  auth: '/api', // Auth API (모든 요청을 auth 경로로 통일)
-  recipe: '/api', // Recipe Service (proxy를 통해 localhost:8082로 라우팅)
-  ingredient: '/api', // Ingredient Service (proxy를 통해 localhost:8083로 라우팅)
-  board: '/api', // Board Service (proxy를 통해 localhost:8084로 라우팅)
+  auth: '/api', // Auth API (프록시를 통해 localhost:8081로 라우팅)
+  recipe: '/api', // Recipe Service (프록시를 통해 localhost:8082로 라우팅)
+  ingredient: '/api', // Ingredient Service (프록시를 통해 localhost:8083로 라우팅)
+  board: '/api', // Board Service (프록시를 통해 localhost:8084로 라우팅)
 };
 
 // 공통 axios 설정

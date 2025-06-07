@@ -104,7 +104,7 @@ export default function CreateRecipe() {
       console.log('Sending recipe data:', recipeData);
       
       try {
-        const response = await apiRequest('POST', '/recipes', recipeData);
+        const response = await recipeAPI.create(recipeData);
         console.log('Recipe creation response:', response);
         return response;
       } catch (error: any) {
