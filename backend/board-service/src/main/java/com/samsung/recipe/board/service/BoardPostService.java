@@ -80,8 +80,8 @@ public class BoardPostService {
         
         // Try to get from cache first, but continue if cache fails
         try {
-            String cacheKey = BOARD_POST_CACHE_KEY + id;
-            BoardPost cachedBoardPost = (BoardPost) redisTemplate.opsForValue().get(cacheKey);
+            var cacheKey = BOARD_POST_CACHE_KEY + id;
+            var cachedBoardPost = (BoardPost) redisTemplate.opsForValue().get(cacheKey);
             
             if (cachedBoardPost != null) {
                 log.info("Board post found in cache: {}", id);
@@ -91,15 +91,20 @@ public class BoardPostService {
             log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
-        BoardPost boardPost = boardPostRepository.findById(id)
+        var boardPost = boardPostRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Board post not found"));
-        
-        // Increment view count
-        boardPostRepository.incrementViewCount(id);
-        boardPost.setViewCount(boardPost.getViewCount() + 1);
         
         cacheBoardPost(boardPost);
         return boardPostMapper.toResponseDto(boardPost);
+    }
+    
+    @Transactional
+    public void incrementViewCountAsync(Long id) {
+        try {
+            boardPostRepository.incrementViewCount(id);
+        } catch (Exception e) {
+            log.warn("Failed to increment view count for post {}: {}", id, e.getMessage());
+        }
     }
     
     public List<BoardPostResponseDto> getAllBoardPosts() {
