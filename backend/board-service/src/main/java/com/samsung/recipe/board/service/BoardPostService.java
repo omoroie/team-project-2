@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -201,8 +200,12 @@ public class BoardPostService {
         
         BoardPost updatedBoardPost = boardPostRepository.save(boardPost);
         
-        cacheBoardPost(updatedBoardPost);
-        evictListCache();
+        try {
+            cacheBoardPost(updatedBoardPost);
+            evictListCache();
+        } catch (Exception e) {
+            log.warn("Failed to cache updated board post, continuing without cache: {}", e.getMessage());
+        }
         
         log.info("Board post updated successfully: {}", id);
         return boardPostMapper.toResponseDto(updatedBoardPost);
@@ -219,8 +222,12 @@ public class BoardPostService {
         
         boardPostRepository.deleteById(id);
         
-        evictBoardPostFromCache(id);
-        evictListCache();
+        try {
+            evictBoardPostFromCache(id);
+            evictListCache();
+        } catch (Exception e) {
+            log.warn("Failed to evict deleted board post from cache, continuing: {}", e.getMessage());
+        }
         
         log.info("Board post deleted successfully: {}", id);
     }
