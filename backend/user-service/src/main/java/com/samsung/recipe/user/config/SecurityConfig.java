@@ -31,12 +31,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/auth/register", "/auth/login").permitAll()
-                .requestMatchers("/auth/check/**").permitAll()
-                .requestMatchers("/actuator/**").permitAll()
-                .requestMatchers("/auth/**").permitAll() // 개발 환경에서 모든 auth 엔드포인트 허용
-                .anyRequest().authenticated()
+                .anyRequest().permitAll() // 개발 환경에서 모든 요청 허용
             );
 
         return http.build();

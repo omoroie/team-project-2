@@ -151,7 +151,7 @@ public class BoardPostService {
         return boardPostRepository.findByAuthorId(authorId)
             .stream()
             .map(boardPostMapper::toResponseDto)
-            .toList();
+            .collect(Collectors.toList());
     }
     
     public List<BoardPostResponseDto> searchBoardPosts(String keyword) {
@@ -160,7 +160,7 @@ public class BoardPostService {
         return boardPostRepository.findByTitleOrContentContainingIgnoreCase(keyword)
             .stream()
             .map(boardPostMapper::toResponseDto)
-            .toList();
+            .collect(Collectors.toList());
     }
     
     public List<BoardPostResponseDto> getPinnedPosts() {
@@ -169,7 +169,7 @@ public class BoardPostService {
         return boardPostRepository.findPinnedPosts()
             .stream()
             .map(boardPostMapper::toResponseDto)
-            .toList();
+            .collect(Collectors.toList());
     }
     
     public Page<BoardPostResponseDto> getBoardPostsOrderedByPinned(int page, int size) {
