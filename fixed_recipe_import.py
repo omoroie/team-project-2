@@ -237,6 +237,56 @@ def parse_hashtags_list(text):
     
     return hashtags[:10]  # 최대 10개까지만
 
+def parse_instruction_images_list(text):
+    """조리법 이미지 리스트 파싱"""
+    if pd.isna(text) or not text:
+        return []
+    
+    text = str(text).strip()
+    if not text:
+        return []
+    
+    # Python 리스트 형식 처리: ['image1.jpg', 'image2.jpg']
+    if text.startswith('[') and text.endswith(']'):
+        try:
+            import ast
+            parsed = ast.literal_eval(text)
+            if isinstance(parsed, list):
+                images = []
+                for img in parsed:
+                    if img and img.strip() and img.strip() != 'nan':
+                        img_url = img.strip()
+                        # 유효한 이미지 URL인지 확인
+                        if img_url.startswith('http') and ('.jpg' in img_url or '.jpeg' in img_url or '.png' in img_url):
+                            images.append(img_url)
+                return images[:15]  # 최대 15개까지만
+        except:
+            pass
+    
+    # 일반 텍스트 처리
+    if ',' in text:
+        images = []
+        for img in text.split(','):
+            if img.strip() and img.strip() != 'nan':
+                img_url = img.strip()
+                if img_url.startswith('http') and ('.jpg' in img_url or '.jpeg' in img_url or '.png' in img_url):
+                    images.append(img_url)
+    elif '\n' in text:
+        images = []
+        for img in text.split('\n'):
+            if img.strip() and img.strip() != 'nan':
+                img_url = img.strip()
+                if img_url.startswith('http') and ('.jpg' in img_url or '.jpeg' in img_url or '.png' in img_url):
+                    images.append(img_url)
+    else:
+        # 단일 이미지
+        if text.startswith('http') and ('.jpg' in text or '.jpeg' in text or '.png' in text):
+            images = [text]
+        else:
+            images = []
+    
+    return images[:15]  # 최대 15개까지만
+
 def get_or_create_user(cursor, author_name):
     """사용자 조회 또는 생성"""
     if not author_name or author_name.strip() == "":
@@ -273,13 +323,16 @@ def insert_recipe_with_proper_arrays(cursor, recipe_data):
         # 해시태그 배열 형식으로 변환
         hashtags_array = '{' + ','.join([f'"{tag}"' for tag in recipe_data.get('hashtags', [])]) + '}' if recipe_data.get('hashtags') else '{}'
         
+        # 조리법 이미지 배열 형식으로 변환
+        instruction_images_array = '{' + ','.join([f'"{img}"' for img in recipe_data.get('instruction_images', [])]) + '}' if recipe_data.get('instruction_images') else '{}'
+        
         # 레시피 삽입
         cursor.execute("""
             INSERT INTO recipes (
                 title, description, ingredients, instructions, 
-                cooking_time, servings, difficulty, image_url, hashtags, author_id, 
+                cooking_time, servings, difficulty, image_url, hashtags, instruction_images, author_id, 
                 view_count, created_at, updated_at
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             RETURNING id
         """, (
             recipe_data['title'],
@@ -291,6 +344,7 @@ def insert_recipe_with_proper_arrays(cursor, recipe_data):
             recipe_data['difficulty'],
             recipe_data.get('image_url'),
             hashtags_array,
+            instruction_images_array,
             recipe_data['author_id'],
             0  # 초기 조회수
         ))
@@ -376,6 +430,10 @@ def main():
                 hashtags_raw = row.get('RCP_HASHTAG', '')
                 hashtags = parse_hashtags_list(hashtags_raw)
                 
+                # 조리법 이미지 파싱
+                instruction_images_raw = row.get('RCP_STEP_IMG', '')
+                instruction_images = parse_instruction_images_list(instruction_images_raw)
+                
                 # 레시피 데이터 준비
                 recipe_data = {
                     'title': title[:255],  # 길이 제한
@@ -387,6 +445,7 @@ def main():
                     'difficulty': parse_difficulty(row.get('CKG_DODF_NM', '')),
                     'image_url': image_url,
                     'hashtags': hashtags,
+                    'instruction_images': instruction_images,
                     'author_id': author_id
                 }
                 
