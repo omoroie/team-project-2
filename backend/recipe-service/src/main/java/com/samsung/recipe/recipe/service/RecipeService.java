@@ -63,13 +63,17 @@ public class RecipeService {
     public RecipeResponseDto getRecipeById(Long id) {
         log.info("Fetching recipe by ID: {}", id);
         
-        // Check cache first
-        String cacheKey = RECIPE_CACHE_KEY + id;
-        Recipe cachedRecipe = (Recipe) redisTemplate.opsForValue().get(cacheKey);
-        
-        if (cachedRecipe != null) {
-            log.info("Recipe found in cache: {}", id);
-            return recipeMapper.toResponseDto(cachedRecipe);
+        // Try to get from cache first, but continue if cache fails
+        try {
+            String cacheKey = RECIPE_CACHE_KEY + id;
+            Recipe cachedRecipe = (Recipe) redisTemplate.opsForValue().get(cacheKey);
+            
+            if (cachedRecipe != null) {
+                log.info("Recipe found in cache: {}", id);
+                return recipeMapper.toResponseDto(cachedRecipe);
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         // Fetch from database
@@ -83,22 +87,30 @@ public class RecipeService {
     public List<RecipeResponseDto> getAllRecipes() {
         log.info("Fetching all recipes");
         
-        // Check cache first
-        @SuppressWarnings("unchecked")
-        List<Recipe> cachedRecipes = (List<Recipe>) redisTemplate.opsForValue().get(RECIPES_LIST_CACHE_KEY);
-        
-        if (cachedRecipes != null) {
-            log.info("Recipes found in cache");
-            return cachedRecipes.stream()
-                    .map(recipeMapper::toResponseDto)
-                    .collect(Collectors.toList());
+        // Try to get from cache first, but continue if cache fails
+        try {
+            @SuppressWarnings("unchecked")
+            List<Recipe> cachedRecipes = (List<Recipe>) redisTemplate.opsForValue().get(RECIPES_LIST_CACHE_KEY);
+            
+            if (cachedRecipes != null) {
+                log.info("Recipes found in cache");
+                return cachedRecipes.stream()
+                        .map(recipeMapper::toResponseDto)
+                        .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         // Fetch from database
         List<Recipe> recipes = recipeRepository.findAll();
         
-        // Cache the list
-        redisTemplate.opsForValue().set(RECIPES_LIST_CACHE_KEY, recipes, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        // Try to cache the list, but don't fail if cache is unavailable
+        try {
+            redisTemplate.opsForValue().set(RECIPES_LIST_CACHE_KEY, recipes, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        } catch (Exception e) {
+            log.warn("Failed to cache recipes list: {}", e.getMessage());
+        }
         
         return recipes.stream()
                 .map(recipeMapper::toResponseDto)
@@ -110,23 +122,31 @@ public class RecipeService {
         
         String cacheKey = "recipes:best:" + limit;
         
-        // Check cache first
-        @SuppressWarnings("unchecked")
-        List<Recipe> cachedRecipes = (List<Recipe>) redisTemplate.opsForValue().get(cacheKey);
-        
-        if (cachedRecipes != null) {
-            log.info("Best recipes found in cache");
-            return cachedRecipes.stream()
-                    .map(recipeMapper::toResponseDto)
-                    .collect(Collectors.toList());
+        // Try to get from cache first, but continue if cache fails
+        try {
+            @SuppressWarnings("unchecked")
+            List<Recipe> cachedRecipes = (List<Recipe>) redisTemplate.opsForValue().get(cacheKey);
+            
+            if (cachedRecipes != null) {
+                log.info("Best recipes found in cache");
+                return cachedRecipes.stream()
+                        .map(recipeMapper::toResponseDto)
+                        .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         // Fetch from database - order by rating and view count
         Pageable pageable = PageRequest.of(0, limit);
         List<Recipe> recipes = recipeRepository.findTopRecipes(pageable);
         
-        // Cache the list
-        redisTemplate.opsForValue().set(cacheKey, recipes, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        // Try to cache the list, but don't fail if cache is unavailable
+        try {
+            redisTemplate.opsForValue().set(cacheKey, recipes, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        } catch (Exception e) {
+            log.warn("Failed to cache best recipes: {}", e.getMessage());
+        }
         
         return recipes.stream()
                 .map(recipeMapper::toResponseDto)
@@ -232,19 +252,31 @@ public class RecipeService {
     }
     
     private void cacheRecipe(Recipe recipe) {
-        String cacheKey = RECIPE_CACHE_KEY + recipe.getId();
-        redisTemplate.opsForValue().set(cacheKey, recipe, CACHE_TTL_HOURS, TimeUnit.HOURS);
-        log.debug("Recipe cached: {}", recipe.getId());
+        try {
+            String cacheKey = RECIPE_CACHE_KEY + recipe.getId();
+            redisTemplate.opsForValue().set(cacheKey, recipe, CACHE_TTL_HOURS, TimeUnit.HOURS);
+            log.debug("Recipe cached: {}", recipe.getId());
+        } catch (Exception e) {
+            log.warn("Failed to cache recipe {}: {}", recipe.getId(), e.getMessage());
+        }
     }
     
     private void evictRecipeFromCache(Long recipeId) {
-        String cacheKey = RECIPE_CACHE_KEY + recipeId;
-        redisTemplate.delete(cacheKey);
-        log.debug("Recipe evicted from cache: {}", recipeId);
+        try {
+            String cacheKey = RECIPE_CACHE_KEY + recipeId;
+            redisTemplate.delete(cacheKey);
+            log.debug("Recipe evicted from cache: {}", recipeId);
+        } catch (Exception e) {
+            log.warn("Failed to evict recipe {} from cache: {}", recipeId, e.getMessage());
+        }
     }
     
     private void evictListCache() {
-        redisTemplate.delete(RECIPES_LIST_CACHE_KEY);
-        log.debug("Recipe list cache evicted");
+        try {
+            redisTemplate.delete(RECIPES_LIST_CACHE_KEY);
+            log.debug("Recipe list cache evicted");
+        } catch (Exception e) {
+            log.warn("Failed to evict recipe list cache: {}", e.getMessage());
+        }
     }
 }
