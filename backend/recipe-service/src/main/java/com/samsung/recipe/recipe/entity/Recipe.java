@@ -80,6 +80,7 @@ public class Recipe {
     private void parseData() {
         this.ingredients = parsePostgreSQLArray(this.ingredientsRaw);
         this.instructions = parseInstructions(this.instructionsRaw);
+        this.hashtags = parsePostgreSQLArray(this.hashtagsRaw);
     }
     
     private List<String> parsePostgreSQLArray(String arrayStr) {

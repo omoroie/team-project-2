@@ -23,6 +23,7 @@ public class RecipeResponseDto {
     private Integer servings;
     private String difficulty;
     private String imageUrl;
+    private List<String> hashtags;
     private Long authorId;
     private Integer viewCount;
     private LocalDateTime createdAt;

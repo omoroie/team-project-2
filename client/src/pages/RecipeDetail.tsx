@@ -154,6 +154,27 @@ export default function RecipeDetail() {
                 </div>
               </CardContent>
             </Card>
+            
+            {/* 해시태그 섹션 */}
+            {recipe.hashtags && recipe.hashtags.length > 0 && (
+              <Card className="mt-6">
+                <CardHeader>
+                  <CardTitle className="text-xl font-bold text-gray-800">태그</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex flex-wrap gap-2">
+                    {recipe.hashtags.map((tag, index) => (
+                      <span 
+                        key={index}
+                        className="inline-block bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full font-medium hover:bg-blue-200 transition-colors cursor-pointer"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </div>

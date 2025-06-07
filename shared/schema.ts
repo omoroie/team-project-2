@@ -20,6 +20,7 @@ export interface Recipe {
   servings: number;
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
   imageUrl?: string;
+  hashtags?: string[];
   authorId: number;
   viewCount: number;
   createdAt: string;
