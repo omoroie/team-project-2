@@ -63,7 +63,7 @@ def parse_difficulty(text):
         return "EASY"
 
 def parse_ingredients_list(text):
-    """재료 리스트 파싱 - 다양한 형식 지원"""
+    """재료 리스트 파싱 - key-value 형식 지원"""
     if pd.isna(text) or not text:
         return []
     
@@ -71,21 +71,73 @@ def parse_ingredients_list(text):
     if not text:
         return []
     
+    # Python 리스트 형식 처리: ['재료1 || 분량1', '재료2 || 분량2']
+    if text.startswith('[') and text.endswith(']'):
+        try:
+            import ast
+            parsed = ast.literal_eval(text)
+            if isinstance(parsed, list):
+                ingredients = []
+                for item in parsed:
+                    if item and item.strip():
+                        # key-value 형식 파싱: "재료명 || 분량"
+                        if ' || ' in item:
+                            name, quantity = item.split(' || ', 1)
+                            ingredients.append(f"{name.strip()} {quantity.strip()}")
+                        else:
+                            ingredients.append(clean_text(item))
+                return ingredients[:20]
+        except:
+            pass
+    
+    # 일반 텍스트 처리
     # 줄바꿈으로 구분된 경우
     if '\n' in text:
-        ingredients = [item.strip() for item in text.split('\n') if item.strip()]
+        ingredients = []
+        for item in text.split('\n'):
+            if item.strip():
+                if ' || ' in item:
+                    name, quantity = item.split(' || ', 1)
+                    ingredients.append(f"{name.strip()} {quantity.strip()}")
+                else:
+                    ingredients.append(item.strip())
     # 쉼표로 구분된 경우
     elif ',' in text:
-        ingredients = [item.strip() for item in text.split(',') if item.strip()]
+        ingredients = []
+        for item in text.split(','):
+            if item.strip():
+                if ' || ' in item:
+                    name, quantity = item.split(' || ', 1)
+                    ingredients.append(f"{name.strip()} {quantity.strip()}")
+                else:
+                    ingredients.append(item.strip())
     # 세미콜론으로 구분된 경우
     elif ';' in text:
-        ingredients = [item.strip() for item in text.split(';') if item.strip()]
+        ingredients = []
+        for item in text.split(';'):
+            if item.strip():
+                if ' || ' in item:
+                    name, quantity = item.split(' || ', 1)
+                    ingredients.append(f"{name.strip()} {quantity.strip()}")
+                else:
+                    ingredients.append(item.strip())
     # 파이프로 구분된 경우
     elif '|' in text:
-        ingredients = [item.strip() for item in text.split('|') if item.strip()]
+        ingredients = []
+        for item in text.split('|'):
+            if item.strip():
+                if ' || ' in item:
+                    name, quantity = item.split(' || ', 1)
+                    ingredients.append(f"{name.strip()} {quantity.strip()}")
+                else:
+                    ingredients.append(item.strip())
     else:
         # 단일 재료인 경우
-        ingredients = [text.strip()]
+        if ' || ' in text:
+            name, quantity = text.split(' || ', 1)
+            ingredients = [f"{name.strip()} {quantity.strip()}"]
+        else:
+            ingredients = [text.strip()]
     
     # 빈 문자열 제거
     ingredients = [ing for ing in ingredients if ing and len(ing.strip()) > 0]
