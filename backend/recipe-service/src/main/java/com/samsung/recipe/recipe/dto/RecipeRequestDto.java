@@ -46,6 +46,5 @@ public class RecipeRequestDto {
     
     private List<String> instructionImages;
     
-    @NotNull(message = "Author ID is required")
     private Long authorId;
 }

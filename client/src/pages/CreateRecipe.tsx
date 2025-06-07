@@ -92,7 +92,7 @@ export default function CreateRecipe() {
       
       const recipeData = {
         ...data,
-        authorId: state.user.id,
+        authorId: state.user?.id || 1, // 기본값 설정
         cookingTime: parseInt(data.cookingTime),
         servings: parseInt(data.servings),
         imageUrl,
