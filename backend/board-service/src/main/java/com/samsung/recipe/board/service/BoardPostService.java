@@ -24,13 +24,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-@Transactional(readOnly = true)
 public class BoardPostService {
     
     private final BoardPostRepository boardPostRepository;
     private final BoardPostMapper boardPostMapper;
     private final GoogleTranslateService googleTranslateService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final ViewCountService viewCountService;
     
     private static final String BOARD_POST_CACHE_KEY = "board_post:";
     private static final String BOARD_POSTS_LIST_CACHE_KEY = "board_posts:list";
@@ -76,6 +76,7 @@ public class BoardPostService {
         return boardPostMapper.toResponseDto(savedBoardPost);
     }
     
+    @Transactional(readOnly = true)
     public BoardPostResponseDto getBoardPostById(Long id) {
         log.info("Fetching board post by ID: {}", id);
         
@@ -100,13 +101,8 @@ public class BoardPostService {
         // Return response and increment view count separately
         var response = boardPostMapper.toResponseDto(boardPost);
         
-        // Call increment method directly on repository
-        try {
-            boardPostRepository.incrementViewCount(id);
-            log.info("View count incremented for board post: {}", id);
-        } catch (Exception e) {
-            log.warn("Failed to increment view count: {}", e.getMessage());
-        }
+        // Increment view count using separate service
+        viewCountService.incrementViewCount(id);
         
         return response;
     }
