@@ -130,6 +130,15 @@ export const recipeAPI = {
   search: (query: string, filters?: any) => 
     recipeApi.get('/recipes/search', { params: { q: query, ...filters } }),
   getByCategory: (category: string) => recipeApi.get(`/recipes/category/${category}`),
+  uploadImage: (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return recipeApi.post('/images/upload', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+  },
 };
 
 export const ingredientAPI = {

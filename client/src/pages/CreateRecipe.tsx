@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { X, Plus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { apiRequest } from '@/lib/queryClient';
+import { recipeAPI } from '@/lib/apiClient';
 import { useApp } from '@/contexts/AppContext';
 
 export default function CreateRecipe() {
@@ -39,25 +40,13 @@ export default function CreateRecipe() {
 
   // Image upload function
   const uploadImage = async (file: File): Promise<string> => {
-    const formData = new FormData();
-    formData.append('file', file);
-
     try {
-      const response = await fetch('http://localhost:8082/api/images/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
+      const response = await recipeAPI.uploadImage(file);
       
-      if (result.success && result.imageUrl) {
-        return result.imageUrl;
+      if (response.data.success && response.data.imageUrl) {
+        return response.data.imageUrl;
       } else {
-        throw new Error(result.error || 'Upload failed');
+        throw new Error(response.data.error || 'Upload failed');
       }
     } catch (error) {
       console.error('Image upload error:', error);
