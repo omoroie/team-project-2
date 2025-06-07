@@ -13,7 +13,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 임시 디렉토리 기반 업로드 경로 설정
+        String tempDir = System.getProperty("java.io.tmpdir");
+        String uploadPath = tempDir + "/recipe-uploads/";
+        
         registry.addResourceHandler("/uploads/**")
-                .addResourceLocations("file:" + uploadDir + "/");
+                .addResourceLocations("file:" + uploadPath);
     }
 }

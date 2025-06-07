@@ -67,7 +67,7 @@ public class ImageService {
         Path filePath = uploadPath.resolve(filename);
         Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-        // 로컬 테스트용 URL 반환 (실제로는 파일명만 저장하고 클라우드 URL 사용)
-        return "https://via.placeholder.com/400x300.png?text=" + filename;
+        // 업로드된 파일의 접근 가능한 URL 반환
+        return "/uploads/" + filename;
     }
 }
