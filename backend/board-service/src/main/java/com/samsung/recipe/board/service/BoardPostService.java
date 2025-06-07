@@ -73,16 +73,20 @@ public class BoardPostService {
         return boardPostMapper.toResponseDto(savedBoardPost);
     }
     
-    @Cacheable(value = "board_posts", key = "#id")
     public BoardPostResponseDto getBoardPostById(Long id) {
         log.info("Fetching board post by ID: {}", id);
         
-        String cacheKey = BOARD_POST_CACHE_KEY + id;
-        BoardPost cachedBoardPost = (BoardPost) redisTemplate.opsForValue().get(cacheKey);
-        
-        if (cachedBoardPost != null) {
-            log.info("Board post found in cache: {}", id);
-            return boardPostMapper.toResponseDto(cachedBoardPost);
+        // Try to get from cache first, but continue if cache fails
+        try {
+            String cacheKey = BOARD_POST_CACHE_KEY + id;
+            BoardPost cachedBoardPost = (BoardPost) redisTemplate.opsForValue().get(cacheKey);
+            
+            if (cachedBoardPost != null) {
+                log.info("Board post found in cache: {}", id);
+                return boardPostMapper.toResponseDto(cachedBoardPost);
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         BoardPost boardPost = boardPostRepository.findById(id)
@@ -99,49 +103,60 @@ public class BoardPostService {
     public List<BoardPostResponseDto> getAllBoardPosts() {
         log.info("Fetching all board posts");
         
-        @SuppressWarnings("unchecked")
-        List<BoardPost> cachedBoardPosts = (List<BoardPost>) redisTemplate.opsForValue().get(BOARD_POSTS_LIST_CACHE_KEY);
-        
-        if (cachedBoardPosts != null) {
-            log.info("Board posts found in cache");
-            return cachedBoardPosts.stream()
+        // Try to get from cache first, but continue if cache fails
+        try {
+            @SuppressWarnings("unchecked")
+            List<BoardPost> cachedBoardPosts = (List<BoardPost>) redisTemplate.opsForValue().get(BOARD_POSTS_LIST_CACHE_KEY);
+            
+            if (cachedBoardPosts != null) {
+                log.info("Board posts found in cache");
+                return cachedBoardPosts.stream()
                     .map(boardPostMapper::toResponseDto)
-                    .collect(Collectors.toList());
+                    .toList();
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         List<BoardPost> boardPosts = boardPostRepository.findAll();
-        redisTemplate.opsForValue().set(BOARD_POSTS_LIST_CACHE_KEY, boardPosts, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        
+        // Try to cache the results, but continue if cache fails
+        try {
+            redisTemplate.opsForValue().set(BOARD_POSTS_LIST_CACHE_KEY, boardPosts, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        } catch (Exception e) {
+            log.warn("Failed to cache board posts list: {}", e.getMessage());
+        }
         
         return boardPosts.stream()
-                .map(boardPostMapper::toResponseDto)
-                .collect(Collectors.toList());
+            .map(boardPostMapper::toResponseDto)
+            .toList();
     }
     
     public List<BoardPostResponseDto> getBoardPostsByAuthor(Long authorId) {
         log.info("Fetching board posts by author: {}", authorId);
         
         return boardPostRepository.findByAuthorId(authorId)
-                .stream()
-                .map(boardPostMapper::toResponseDto)
-                .collect(Collectors.toList());
+            .stream()
+            .map(boardPostMapper::toResponseDto)
+            .toList();
     }
     
     public List<BoardPostResponseDto> searchBoardPosts(String keyword) {
         log.info("Searching board posts with keyword: {}", keyword);
         
         return boardPostRepository.findByTitleOrContentContainingIgnoreCase(keyword)
-                .stream()
-                .map(boardPostMapper::toResponseDto)
-                .collect(Collectors.toList());
+            .stream()
+            .map(boardPostMapper::toResponseDto)
+            .toList();
     }
     
     public List<BoardPostResponseDto> getPinnedPosts() {
         log.info("Fetching pinned posts");
         
         return boardPostRepository.findPinnedPosts()
-                .stream()
-                .map(boardPostMapper::toResponseDto)
-                .collect(Collectors.toList());
+            .stream()
+            .map(boardPostMapper::toResponseDto)
+            .toList();
     }
     
     public Page<BoardPostResponseDto> getBoardPostsOrderedByPinned(int page, int size) {
