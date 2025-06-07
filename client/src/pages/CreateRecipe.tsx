@@ -41,15 +41,20 @@ export default function CreateRecipe() {
   // Image upload function
   const uploadImage = async (file: File): Promise<string> => {
     try {
+      console.log('Uploading image:', file.name, file.type, file.size + ' bytes');
       const response = await recipeAPI.uploadImage(file);
+      console.log('Upload response:', response.data);
       
       if (response.data.success && response.data.imageUrl) {
+        console.log('Image uploaded successfully:', response.data.imageUrl);
         return response.data.imageUrl;
       } else {
+        console.error('Upload failed:', response.data);
         throw new Error(response.data.error || 'Upload failed');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Image upload error:', error);
+      console.error('Error details:', error.response?.data);
       throw error;
     }
   };
@@ -246,6 +251,7 @@ export default function CreateRecipe() {
                     onChange={(e) => {
                       const file = e.target.files?.[0];
                       if (file) {
+                        console.log('Selected main image:', file.name, file.type, file.size);
                         setSelectedImage(file);
                         setFormData(prev => ({ ...prev, imageUrl: '' }));
                       }
