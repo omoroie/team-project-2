@@ -85,6 +85,8 @@ public class BoardPostService {
             
             if (cachedBoardPost != null) {
                 log.info("Board post found in cache: {}", id);
+                // Increment view count for cached posts too
+                incrementViewCount(id);
                 return boardPostMapper.toResponseDto(cachedBoardPost);
             }
         } catch (Exception e) {
@@ -94,14 +96,18 @@ public class BoardPostService {
         var boardPost = boardPostRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Board post not found"));
         
+        // Increment view count in separate transaction
+        incrementViewCount(id);
+        
         cacheBoardPost(boardPost);
         return boardPostMapper.toResponseDto(boardPost);
     }
     
     @Transactional
-    public void incrementViewCountAsync(Long id) {
+    public void incrementViewCount(Long id) {
         try {
             boardPostRepository.incrementViewCount(id);
+            log.info("View count incremented for board post: {}", id);
         } catch (Exception e) {
             log.warn("Failed to increment view count for post {}: {}", id, e.getMessage());
         }
@@ -119,7 +125,7 @@ public class BoardPostService {
                 log.info("Board posts found in cache");
                 return cachedBoardPosts.stream()
                     .map(boardPostMapper::toResponseDto)
-                    .toList();
+                    .collect(Collectors.toList());
             }
         } catch (Exception e) {
             log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
@@ -136,7 +142,7 @@ public class BoardPostService {
         
         return boardPosts.stream()
             .map(boardPostMapper::toResponseDto)
-            .toList();
+            .collect(Collectors.toList());
     }
     
     public List<BoardPostResponseDto> getBoardPostsByAuthor(Long authorId) {

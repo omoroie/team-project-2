@@ -168,7 +168,7 @@ public class UserService {
         return userRepository.findAll()
                 .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
     
     public List<UserResponseDto> getCorporateUsers() {
@@ -177,7 +177,7 @@ public class UserService {
         return userRepository.findByIsCorporate(true)
                 .stream()
                 .map(userMapper::toResponseDto)
-                .toList();
+                .collect(Collectors.toList());
     }
     
     @Transactional
