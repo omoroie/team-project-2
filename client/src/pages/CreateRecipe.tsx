@@ -239,17 +239,27 @@ export default function CreateRecipe() {
             <div>
               <Label>대표 이미지</Label>
               <div className="space-y-2">
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      setSelectedImage(file);
-                      setFormData(prev => ({ ...prev, imageUrl: '' }));
-                    }
-                  }}
-                />
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        setSelectedImage(file);
+                        setFormData(prev => ({ ...prev, imageUrl: '' }));
+                      }
+                    }}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    id="main-image-file"
+                  />
+                  <label 
+                    htmlFor="main-image-file"
+                    className="inline-flex items-center px-4 py-2 bg-green-50 hover:bg-green-100 border border-green-200 rounded-md cursor-pointer transition-colors duration-200 text-sm font-medium text-green-700"
+                  >
+                    파일 선택
+                  </label>
+                </div>
                 {selectedImage && (
                   <div className="text-sm text-gray-600">
                     선택된 파일: {selectedImage.name}
@@ -411,19 +421,29 @@ export default function CreateRecipe() {
                       <span className="text-sm font-medium">단계 {index + 1} 이미지</span>
                     </div>
                     <div className="space-y-2">
-                      <Input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0];
-                          if (file) {
-                            const newImages = [...selectedInstructionImages];
-                            newImages[index] = file;
-                            setSelectedInstructionImages(newImages);
-                            handleArrayChange('instructionImages', index, '');
-                          }
-                        }}
-                      />
+                      <div className="relative">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) {
+                              const newImages = [...selectedInstructionImages];
+                              newImages[index] = file;
+                              setSelectedInstructionImages(newImages);
+                              handleArrayChange('instructionImages', index, '');
+                            }
+                          }}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                          id={`instruction-file-${index}`}
+                        />
+                        <label 
+                          htmlFor={`instruction-file-${index}`}
+                          className="inline-flex items-center px-4 py-2 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-md cursor-pointer transition-colors duration-200 text-sm font-medium text-blue-700"
+                        >
+                          파일 선택
+                        </label>
+                      </div>
                       {selectedInstructionImages[index] && (
                         <div className="text-sm text-gray-600">
                           선택된 파일: {selectedInstructionImages[index]?.name}
