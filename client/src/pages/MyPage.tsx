@@ -110,10 +110,10 @@ export default function MyPage() {
   }
 
   const stats = {
-    totalRecipes: myRecipes?.recipes?.length || 0,
-    totalViews: myRecipes?.recipes?.reduce((sum: number, recipe: Recipe) => sum + recipe.viewCount, 0) || 0,
-    avgCookingTime: myRecipes?.recipes?.length > 0 
-      ? Math.round(myRecipes.recipes.reduce((sum: number, recipe: Recipe) => sum + recipe.cookingTime, 0) / myRecipes.recipes.length)
+    totalRecipes: myRecipes?.data?.recipes?.length || 0,
+    totalViews: myRecipes?.data?.recipes?.reduce((sum: number, recipe: Recipe) => sum + recipe.viewCount, 0) || 0,
+    avgCookingTime: myRecipes?.data?.recipes?.length > 0 
+      ? Math.round(myRecipes.data.recipes.reduce((sum: number, recipe: Recipe) => sum + recipe.cookingTime, 0) / myRecipes.data.recipes.length)
       : 0
   };
 
@@ -256,7 +256,7 @@ export default function MyPage() {
                   <div className="text-center py-8">
                     <p>레시피를 불러오는 중...</p>
                   </div>
-                ) : myRecipes?.recipes?.length === 0 ? (
+                ) : myRecipes?.data?.recipes?.length === 0 ? (
                   <div className="text-center py-8">
                     <ChefHat className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
                     <p className="text-lg text-muted-foreground mb-4">아직 작성한 레시피가 없습니다.</p>
@@ -266,7 +266,7 @@ export default function MyPage() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {myRecipes?.recipes?.map((recipe: Recipe) => (
+                    {myRecipes?.data?.recipes?.map((recipe: Recipe) => (
                       <div key={recipe.id} className="flex items-center space-x-4 p-4 border rounded-lg">
                         <div className="w-16 h-16 bg-muted rounded-lg overflow-hidden">
                           {recipe.imageUrl && (
