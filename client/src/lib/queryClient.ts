@@ -7,7 +7,7 @@ export { recipeAPI, ingredientAPI, boardAPI, authAPI };
 
 // API 요청을 위한 기본 함수
 export const apiRequest = async (method: string, url: string, data?: any) => {
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('authToken');
   const headers = {
     'Content-Type': 'application/json',
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
