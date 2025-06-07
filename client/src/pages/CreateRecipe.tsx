@@ -63,6 +63,9 @@ export default function CreateRecipe() {
     mutationFn: async (data: any) => {
       if (!state.user) throw new Error('사용자 인증이 필요합니다');
       
+      console.log('Creating recipe with user:', state.user);
+      console.log('Token exists:', !!localStorage.getItem('authToken'));
+      
       // Upload main image if selected
       let imageUrl = data.imageUrl;
       if (selectedImage) {
@@ -98,7 +101,18 @@ export default function CreateRecipe() {
         instructionImages
       };
       
-      return await apiRequest('POST', '/recipes', recipeData);
+      console.log('Sending recipe data:', recipeData);
+      
+      try {
+        const response = await apiRequest('POST', '/recipes', recipeData);
+        console.log('Recipe creation response:', response);
+        return response;
+      } catch (error: any) {
+        console.error('Recipe creation failed:', error);
+        console.error('Error response:', error.response?.data);
+        console.error('Error status:', error.response?.status);
+        throw error;
+      }
     },
     onSuccess: (data: any) => {
       toast({
