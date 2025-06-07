@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'wouter';
+import { useLocation } from 'wouter';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -14,10 +14,10 @@ import { apiRequest } from '@/lib/queryClient';
 import { useApp } from '@/contexts/AppContext';
 
 export default function CreateRecipe() {
-  const navigate = useNavigate();
+  const [, setLocation] = useLocation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
-  const { user } = useApp();
+  const { state } = useApp();
   
   const [formData, setFormData] = useState({
     title: '',
@@ -28,7 +28,7 @@ export default function CreateRecipe() {
     imageUrl: '',
     ingredients: [''],
     instructions: [''],
-    hashtags: [],
+    hashtags: [] as string[],
     instructionImages: ['']
   });
   
@@ -36,11 +36,11 @@ export default function CreateRecipe() {
 
   const createRecipeMutation = useMutation({
     mutationFn: async (data: any) => {
-      if (!user) throw new Error('사용자 인증이 필요합니다');
+      if (!state.user) throw new Error('사용자 인증이 필요합니다');
       
       const recipeData = {
         ...data,
-        authorId: user.id,
+        authorId: state.user.id,
         cookingTime: parseInt(data.cookingTime),
         servings: parseInt(data.servings),
         ingredients: data.ingredients.filter((item: string) => item.trim() !== ''),
@@ -50,13 +50,13 @@ export default function CreateRecipe() {
       
       return await apiRequest('POST', '/recipes', recipeData);
     },
-    onSuccess: (data) => {
+    onSuccess: (data: any) => {
       toast({
         title: '성공',
         description: '레시피가 성공적으로 등록되었습니다.'
       });
       queryClient.invalidateQueries({ queryKey: ['/recipes'] });
-      navigate(`/recipes/${data.id}`);
+      setLocation(`/recipes/${data.data?.id || ''}`);
     },
     onError: (error: any) => {
       toast({
@@ -67,25 +67,25 @@ export default function CreateRecipe() {
     }
   });
 
-  const handleInputChange = (field: string, value: string) => {
+  const handleInputChange = (field: keyof typeof formData, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleArrayChange = (field: string, index: number, value: string) => {
+  const handleArrayChange = (field: 'ingredients' | 'instructions' | 'instructionImages', index: number, value: string) => {
     setFormData(prev => ({
       ...prev,
       [field]: prev[field].map((item: string, i: number) => i === index ? value : item)
     }));
   };
 
-  const addArrayItem = (field: string) => {
+  const addArrayItem = (field: 'ingredients' | 'instructions' | 'instructionImages') => {
     setFormData(prev => ({
       ...prev,
       [field]: [...prev[field], '']
     }));
   };
 
-  const removeArrayItem = (field: string, index: number) => {
+  const removeArrayItem = (field: 'ingredients' | 'instructions' | 'instructionImages', index: number) => {
     if (formData[field].length > 1) {
       setFormData(prev => ({
         ...prev,
@@ -114,7 +114,7 @@ export default function CreateRecipe() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) {
+    if (!state.user) {
       toast({
         title: '오류',
         description: '로그인이 필요합니다.',
@@ -125,14 +125,14 @@ export default function CreateRecipe() {
     createRecipeMutation.mutate(formData);
   };
 
-  if (!user) {
+  if (!state.user) {
     return (
       <div className="container mx-auto px-4 py-8">
         <Card>
           <CardContent className="text-center p-8">
             <h2 className="text-xl font-semibold mb-4">로그인이 필요합니다</h2>
             <p className="text-gray-600 mb-4">레시피를 등록하려면 먼저 로그인해주세요.</p>
-            <Button onClick={() => navigate('/login')}>로그인</Button>
+            <Button onClick={() => setLocation('/login')}>로그인</Button>
           </CardContent>
         </Card>
       </div>
@@ -372,7 +372,7 @@ export default function CreateRecipe() {
               <Button 
                 type="button" 
                 variant="outline" 
-                onClick={() => navigate('/recipes')}
+                onClick={() => setLocation('/recipes')}
                 className="flex-1"
               >
                 취소

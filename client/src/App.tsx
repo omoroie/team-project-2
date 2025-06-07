@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import Home from "@/pages/Home";
 import Recipes from "@/pages/Recipes";
 import RecipeDetail from "@/pages/RecipeDetail";
+import CreateRecipe from "@/pages/CreateRecipe";
 import Ingredients from "@/pages/Ingredients";
 import Board from "@/pages/Board";
 import Login from "@/pages/Login";
@@ -33,6 +34,7 @@ function Router() {
       <Switch>
         <Route path="/" component={Home} />
         <Route path="/recipes" component={Recipes} />
+        <Route path="/recipes/create" component={CreateRecipe} />
         <Route path="/recipes/:id" component={RecipeDetail} />
         <Route path="/ingredients" component={Ingredients} />
         <Route path="/board" component={Board} />
