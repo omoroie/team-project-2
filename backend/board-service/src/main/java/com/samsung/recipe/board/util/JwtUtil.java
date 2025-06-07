@@ -16,9 +16,12 @@ public class JwtUtil {
     private final SecretKey key;
     private final int jwtExpirationInMs;
 
-    public JwtUtil(@Value("${jwt.secret:mySecretKey}") String secret,
+    public JwtUtil(@Value("${jwt.secret:mySecretKeyThatIsLongEnoughForHS256AlgorithmAndIsAtLeast256BitsLong}") String secret,
                    @Value("${jwt.expiration:86400000}") int jwtExpirationInMs) {
-        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+        // JWT 키는 최소 256비트(32바이트)여야 합니다
+        String finalSecret = secret.length() < 32 ? 
+            secret + "0123456789abcdef0123456789abcdef" : secret;
+        this.key = Keys.hmacShaKeyFor(finalSecret.getBytes());
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
 
