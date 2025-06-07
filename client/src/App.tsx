@@ -19,7 +19,6 @@ import Ingredients from "@/pages/Ingredients";
 import Board from "@/pages/Board";
 import Login from "@/pages/Login";
 import Register from "@/pages/Register";
-import MyPage from "@/pages/MyPage";
 import NotFound from "@/pages/not-found";
 
 function AuthChecker() {
@@ -41,7 +40,6 @@ function Router() {
         <Route path="/board" component={Board} />
         <Route path="/login" component={Login} />
         <Route path="/register" component={Register} />
-        <Route path="/mypage" component={MyPage} />
         <Route component={NotFound} />
       </Switch>
     </div>

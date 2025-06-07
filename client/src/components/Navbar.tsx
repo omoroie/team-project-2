@@ -101,11 +101,9 @@ export function Navbar() {
 
             {state.isAuthenticated ? (
               <div className="flex items-center space-x-2">
-                <Link href="/mypage">
-                  <Button variant="ghost" size="icon">
-                    <User className="h-4 w-4" />
-                  </Button>
-                </Link>
+                <Button variant="ghost" size="icon">
+                  <User className="h-4 w-4" />
+                </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 

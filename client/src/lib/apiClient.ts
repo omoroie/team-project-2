@@ -110,7 +110,6 @@ export const authAPI = {
   getAll: () => authApi.get('/auth'),
   getCorporate: () => authApi.get('/auth/corporate'),
   update: (id: number, data: any) => authApi.put(`/auth/${id}`, data),
-  updateProfile: (data: { username: string; email: string }) => authApi.put('/auth/profile', data),
   delete: (id: number) => authApi.delete(`/auth/${id}`),
   checkUsername: (username: string) => authApi.get(`/auth/check/username/${username}`),
   checkEmail: (email: string) => authApi.get(`/auth/check/email/${email}`),
@@ -127,7 +126,6 @@ export const recipeAPI = {
   update: (id: number, data: any) => recipeApi.put(`/recipes/${id}`, data),
   delete: (id: number) => recipeApi.delete(`/recipes/${id}`),
   getByAuthor: (authorId: number) => recipeApi.get(`/recipes/author/${authorId}`),
-  getMyRecipes: () => recipeApi.get('/recipes/my'),
   search: (query: string, filters?: any) => 
     recipeApi.get('/recipes/search', { params: { q: query, ...filters } }),
   getByCategory: (category: string) => recipeApi.get(`/recipes/category/${category}`),
