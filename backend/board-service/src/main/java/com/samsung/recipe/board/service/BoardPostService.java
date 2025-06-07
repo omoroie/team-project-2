@@ -85,8 +85,8 @@ public class BoardPostService {
             
             if (cachedBoardPost != null) {
                 log.info("Board post found in cache: {}", id);
-                // Increment view count for cached posts too
-                incrementViewCount(id);
+                // Increment view count asynchronously
+                incrementViewCountAsync(id);
                 return boardPostMapper.toResponseDto(cachedBoardPost);
             }
         } catch (Exception e) {
@@ -96,8 +96,8 @@ public class BoardPostService {
         var boardPost = boardPostRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Board post not found"));
         
-        // Increment view count in separate transaction
-        incrementViewCount(id);
+        // Increment view count asynchronously
+        incrementViewCountAsync(id);
         
         cacheBoardPost(boardPost);
         return boardPostMapper.toResponseDto(boardPost);
