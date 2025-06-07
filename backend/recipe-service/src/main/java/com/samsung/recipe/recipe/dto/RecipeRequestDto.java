@@ -42,6 +42,10 @@ public class RecipeRequestDto {
     
     private String imageUrl;
     
+    private List<String> hashtags;
+    
+    private List<String> instructionImages;
+    
     @NotNull(message = "Author ID is required")
     private Long authorId;
 }

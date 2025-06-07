@@ -41,6 +41,23 @@ public class RecipeService {
         
         Recipe recipe = recipeMapper.toEntity(recipeRequestDto);
         
+        // Convert lists to PostgreSQL array format
+        if (recipeRequestDto.getIngredients() != null) {
+            recipe.setIngredientsRaw(convertListToPostgreSQLArray(recipeRequestDto.getIngredients()));
+        }
+        
+        if (recipeRequestDto.getInstructions() != null) {
+            recipe.setInstructionsRaw(String.join("|", recipeRequestDto.getInstructions()));
+        }
+        
+        if (recipeRequestDto.getHashtags() != null) {
+            recipe.setHashtagsRaw(convertListToPostgreSQLArray(recipeRequestDto.getHashtags()));
+        }
+        
+        if (recipeRequestDto.getInstructionImages() != null) {
+            recipe.setInstructionImagesRaw(convertListToPostgreSQLArray(recipeRequestDto.getInstructionImages()));
+        }
+        
         // Generate image if not provided
         if (recipe.getImageUrl() == null || recipe.getImageUrl().isEmpty()) {
             String imageUrl = unsplashService.getRecipeImage(recipe.getTitle());
@@ -203,6 +220,15 @@ public class RecipeService {
         return recipePage.map(recipeMapper::toResponseDto);
     }
     
+    private String convertListToPostgreSQLArray(List<String> list) {
+        if (list == null || list.isEmpty()) {
+            return "{}";
+        }
+        return "{" + list.stream()
+                .map(item -> "\"" + item.replace("\"", "\\\"") + "\"")
+                .collect(Collectors.joining(",")) + "}";
+    }
+    
     @Transactional
     @CacheEvict(value = "recipes", key = "#id")
     public RecipeResponseDto updateRecipe(Long id, RecipeRequestDto recipeRequestDto) {
@@ -214,11 +240,26 @@ public class RecipeService {
         // Update fields
         recipe.setTitle(recipeRequestDto.getTitle());
         recipe.setDescription(recipeRequestDto.getDescription());
-        recipe.setInstructions(recipeRequestDto.getInstructions());
-        recipe.setIngredients(recipeRequestDto.getIngredients());
         recipe.setCookingTime(recipeRequestDto.getCookingTime());
         recipe.setServings(recipeRequestDto.getServings());
         recipe.setDifficulty(recipeRequestDto.getDifficulty());
+        
+        // Convert lists to PostgreSQL array format
+        if (recipeRequestDto.getIngredients() != null) {
+            recipe.setIngredientsRaw(convertListToPostgreSQLArray(recipeRequestDto.getIngredients()));
+        }
+        
+        if (recipeRequestDto.getInstructions() != null) {
+            recipe.setInstructionsRaw(String.join("|", recipeRequestDto.getInstructions()));
+        }
+        
+        if (recipeRequestDto.getHashtags() != null) {
+            recipe.setHashtagsRaw(convertListToPostgreSQLArray(recipeRequestDto.getHashtags()));
+        }
+        
+        if (recipeRequestDto.getInstructionImages() != null) {
+            recipe.setInstructionImagesRaw(convertListToPostgreSQLArray(recipeRequestDto.getInstructionImages()));
+        }
         
         if (recipeRequestDto.getImageUrl() != null && !recipeRequestDto.getImageUrl().isEmpty()) {
             recipe.setImageUrl(recipeRequestDto.getImageUrl());
