@@ -31,6 +31,7 @@ public class BoardPostService {
     private final BoardPostMapper boardPostMapper;
     private final GoogleTranslateService googleTranslateService;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final EntityManager entityManager;
     
     private static final String BOARD_POST_CACHE_KEY = "board_post:";
     private static final String BOARD_POSTS_LIST_CACHE_KEY = "board_posts:list";
@@ -85,6 +86,7 @@ public class BoardPostService {
         
         // 조회수 증가
         boardPostRepository.incrementViewCount(id);
+        entityManager.flush();
         
         // 업데이트된 게시물을 다시 조회
         var updatedBoardPost = boardPostRepository.findById(id)
