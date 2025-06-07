@@ -76,7 +76,6 @@ public class BoardPostService {
         return boardPostMapper.toResponseDto(savedBoardPost);
     }
     
-    @Transactional(readOnly = true)
     public BoardPostResponseDto getBoardPostById(Long id) {
         log.info("Fetching board post by ID: {}", id);
         
@@ -87,6 +86,8 @@ public class BoardPostService {
             
             if (cachedBoardPost != null) {
                 log.info("Board post found in cache: {}", id);
+                // Increment view count for cached posts
+                viewCountService.incrementViewCount(id);
                 return boardPostMapper.toResponseDto(cachedBoardPost);
             }
         } catch (Exception e) {
