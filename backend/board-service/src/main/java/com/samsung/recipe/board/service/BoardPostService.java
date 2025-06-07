@@ -62,8 +62,12 @@ public class BoardPostService {
         
         BoardPost savedBoardPost = boardPostRepository.save(boardPost);
         
-        cacheBoardPost(savedBoardPost);
-        evictListCache();
+        try {
+            cacheBoardPost(savedBoardPost);
+            evictListCache();
+        } catch (Exception e) {
+            log.warn("Failed to cache board post, continuing without cache: {}", e.getMessage());
+        }
         
         log.info("Board post created successfully: {}", savedBoardPost.getId());
         return boardPostMapper.toResponseDto(savedBoardPost);
@@ -211,19 +215,31 @@ public class BoardPostService {
     }
     
     private void cacheBoardPost(BoardPost boardPost) {
-        String cacheKey = BOARD_POST_CACHE_KEY + boardPost.getId();
-        redisTemplate.opsForValue().set(cacheKey, boardPost, CACHE_TTL_HOURS, TimeUnit.HOURS);
-        log.debug("Board post cached: {}", boardPost.getId());
+        try {
+            String cacheKey = BOARD_POST_CACHE_KEY + boardPost.getId();
+            redisTemplate.opsForValue().set(cacheKey, boardPost, CACHE_TTL_HOURS, TimeUnit.HOURS);
+            log.debug("Board post cached: {}", boardPost.getId());
+        } catch (Exception e) {
+            log.warn("Failed to cache board post {}: {}", boardPost.getId(), e.getMessage());
+        }
     }
     
     private void evictBoardPostFromCache(Long boardPostId) {
-        String cacheKey = BOARD_POST_CACHE_KEY + boardPostId;
-        redisTemplate.delete(cacheKey);
-        log.debug("Board post evicted from cache: {}", boardPostId);
+        try {
+            String cacheKey = BOARD_POST_CACHE_KEY + boardPostId;
+            redisTemplate.delete(cacheKey);
+            log.debug("Board post evicted from cache: {}", boardPostId);
+        } catch (Exception e) {
+            log.warn("Failed to evict board post {} from cache: {}", boardPostId, e.getMessage());
+        }
     }
     
     private void evictListCache() {
-        redisTemplate.delete(BOARD_POSTS_LIST_CACHE_KEY);
-        log.debug("Board post list cache evicted");
+        try {
+            redisTemplate.delete(BOARD_POSTS_LIST_CACHE_KEY);
+            log.debug("Board post list cache evicted");
+        } catch (Exception e) {
+            log.warn("Failed to evict list cache: {}", e.getMessage());
+        }
     }
 }
