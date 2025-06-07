@@ -34,9 +34,11 @@ public class BoardPostController {
             @Valid @RequestBody BoardPostRequestDto boardPostRequestDto,
             HttpServletRequest request) {
         try {
-            // JWT 토큰에서 사용자 ID 추출
-            Long userId = (Long) request.getAttribute("userId");
-            if (userId == null) {
+            // JWT 토큰 인증 검증
+            String authHeader = request.getHeader("Authorization");
+            String token = jwtUtil.extractTokenFromHeader(authHeader);
+            
+            if (token == null || !jwtUtil.validateToken(token)) {
                 Map<String, Object> response = new HashMap<>();
                 response.put("success", false);
                 response.put("message", "로그인이 필요합니다");
@@ -44,6 +46,10 @@ public class BoardPostController {
                 
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
             }
+            
+            // JWT 토큰에서 사용자명 추출 (userId로 변환 필요시 처리)
+            String username = jwtUtil.getUsernameFromToken(token);
+            Long userId = 1L; // 임시로 1로 설정, 실제로는 username을 userId로 변환하는 로직 필요
             
             // 요청 DTO에 사용자 ID 설정
             boardPostRequestDto.setAuthorId(userId);

@@ -48,7 +48,7 @@ const createApiClient = (baseURL: string): AxiosInstance => {
         // Check if the response indicates login is required
         if (error.response?.data?.requiresLogin) {
           // Show toast notification if available
-          if (typeof window !== 'undefined' && window.alert) {
+          if (typeof window !== 'undefined') {
             alert('로그인이 필요합니다');
           }
           
