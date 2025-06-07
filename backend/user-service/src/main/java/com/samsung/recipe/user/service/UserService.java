@@ -64,20 +64,30 @@ public class UserService {
     public String authenticateUser(LoginRequestDto loginRequestDto) {
         log.info("Authenticating user: {}", loginRequestDto.getUsername());
         
-        // Check cache first
-        String cacheKey = USER_CACHE_KEY + "username:" + loginRequestDto.getUsername();
-        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
-        
+        // Try cache first, fallback to database if Redis unavailable
         User user = null;
-        if (cachedObject instanceof User) {
-            user = (User) cachedObject;
+        try {
+            String cacheKey = USER_CACHE_KEY + "username:" + loginRequestDto.getUsername();
+            Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
+            
+            if (cachedObject instanceof User) {
+                user = (User) cachedObject;
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         if (user == null) {
-            // Fetch from database if not in cache
+            // Fetch from database
             user = userRepository.findByUsername(loginRequestDto.getUsername())
                     .orElseThrow(() -> new RuntimeException("Invalid username or password"));
-            cacheUser(user);
+            
+            // Try to cache the user, ignore if Redis fails
+            try {
+                cacheUser(user);
+            } catch (Exception e) {
+                log.warn("Failed to cache user, continuing without cache: {}", e.getMessage());
+            }
         }
         
         // Verify password
@@ -96,42 +106,58 @@ public class UserService {
     public UserResponseDto getUserById(Long id) {
         log.info("Fetching user by ID: {}", id);
         
-        // Check cache first
-        String cacheKey = USER_CACHE_KEY + "id:" + id;
-        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
-        
-        if (cachedObject instanceof User) {
-            User cachedUser = (User) cachedObject;
-            log.info("User found in cache: {}", id);
-            return userMapper.toResponseDto(cachedUser);
+        // Try cache first, fallback to database if Redis unavailable
+        try {
+            String cacheKey = USER_CACHE_KEY + "id:" + id;
+            Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
+            
+            if (cachedObject instanceof User) {
+                User cachedUser = (User) cachedObject;
+                log.info("User found in cache: {}", id);
+                return userMapper.toResponseDto(cachedUser);
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         // Fetch from database
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        cacheUser(user);
+        try {
+            cacheUser(user);
+        } catch (Exception e) {
+            log.warn("Failed to cache user, continuing without cache: {}", e.getMessage());
+        }
         return userMapper.toResponseDto(user);
     }
     
     public UserResponseDto getUserByUsername(String username) {
         log.info("Fetching user by username: {}", username);
         
-        // Check cache first
-        String cacheKey = USER_CACHE_KEY + "username:" + username;
-        Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
-        
-        if (cachedObject instanceof User) {
-            User cachedUser = (User) cachedObject;
-            log.info("User found in cache: {}", username);
-            return userMapper.toResponseDto(cachedUser);
+        // Try cache first, fallback to database if Redis unavailable
+        try {
+            String cacheKey = USER_CACHE_KEY + "username:" + username;
+            Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
+            
+            if (cachedObject instanceof User) {
+                User cachedUser = (User) cachedObject;
+                log.info("User found in cache: {}", username);
+                return userMapper.toResponseDto(cachedUser);
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         // Fetch from database
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        cacheUser(user);
+        try {
+            cacheUser(user);
+        } catch (Exception e) {
+            log.warn("Failed to cache user, continuing without cache: {}", e.getMessage());
+        }
         return userMapper.toResponseDto(user);
     }
     
