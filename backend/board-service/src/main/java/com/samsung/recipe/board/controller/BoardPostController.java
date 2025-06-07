@@ -167,7 +167,7 @@ public class BoardPostController {
             
             return ResponseEntity.ok(response);
             
-        } catch (RuntimeException e) {
+        } catch (Exception e) {
             log.error("Board post update failed: {}", e.getMessage());
             
             Map<String, Object> response = new HashMap<>();
