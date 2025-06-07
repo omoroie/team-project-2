@@ -4,6 +4,7 @@ import com.samsung.recipe.board.dto.BoardPostRequestDto;
 import com.samsung.recipe.board.dto.BoardPostResponseDto;
 import com.samsung.recipe.board.service.BoardPostService;
 import com.samsung.recipe.board.service.ViewCountService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,8 +28,24 @@ public class BoardPostController {
     private final ViewCountService viewCountService;
     
     @PostMapping
-    public ResponseEntity<Map<String, Object>> createBoardPost(@Valid @RequestBody BoardPostRequestDto boardPostRequestDto) {
+    public ResponseEntity<Map<String, Object>> createBoardPost(
+            @Valid @RequestBody BoardPostRequestDto boardPostRequestDto,
+            HttpServletRequest request) {
         try {
+            // JWT 토큰에서 사용자 ID 추출
+            Long userId = (Long) request.getAttribute("userId");
+            if (userId == null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다");
+                response.put("requiresLogin", true);
+                
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+            
+            // 요청 DTO에 사용자 ID 설정
+            boardPostRequestDto.setAuthorId(userId);
+            
             BoardPostResponseDto boardPost = boardPostService.createBoardPost(boardPostRequestDto);
             
             Map<String, Object> response = new HashMap<>();
@@ -156,8 +173,33 @@ public class BoardPostController {
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> updateBoardPost(@PathVariable Long id, @Valid @RequestBody BoardPostRequestDto boardPostRequestDto) {
+    public ResponseEntity<Map<String, Object>> updateBoardPost(
+            @PathVariable Long id, 
+            @Valid @RequestBody BoardPostRequestDto boardPostRequestDto,
+            HttpServletRequest request) {
         try {
+            // JWT 토큰에서 사용자 ID 추출
+            Long userId = (Long) request.getAttribute("userId");
+            if (userId == null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다");
+                response.put("requiresLogin", true);
+                
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+            
+            // 게시글 작성자 확인
+            BoardPostResponseDto existingPost = boardPostService.getBoardPostById(id);
+            if (!existingPost.getAuthorId().equals(userId)) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "본인이 작성한 게시글만 수정할 수 있습니다");
+                
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+            
+            boardPostRequestDto.setAuthorId(userId);
             BoardPostResponseDto updatedBoardPost = boardPostService.updateBoardPost(id, boardPostRequestDto);
             
             Map<String, Object> response = new HashMap<>();
@@ -179,8 +221,29 @@ public class BoardPostController {
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> deleteBoardPost(@PathVariable Long id) {
+    public ResponseEntity<Map<String, Object>> deleteBoardPost(@PathVariable Long id, HttpServletRequest request) {
         try {
+            // JWT 토큰에서 사용자 ID 추출
+            Long userId = (Long) request.getAttribute("userId");
+            if (userId == null) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "로그인이 필요합니다");
+                response.put("requiresLogin", true);
+                
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+            
+            // 게시글 작성자 확인
+            BoardPostResponseDto existingPost = boardPostService.getBoardPostById(id);
+            if (!existingPost.getAuthorId().equals(userId)) {
+                Map<String, Object> response = new HashMap<>();
+                response.put("success", false);
+                response.put("message", "본인이 작성한 게시글만 삭제할 수 있습니다");
+                
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+            }
+            
             boardPostService.deleteBoardPost(id);
             
             Map<String, Object> response = new HashMap<>();
