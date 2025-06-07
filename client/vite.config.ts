@@ -27,7 +27,12 @@ export default defineConfig({
     },
     port: 5000,
     host: "0.0.0.0",
-    allowedHosts: ["all"],
+    allowedHosts: [
+      "all",
+      ".replit.dev",
+      ".riker.replit.dev",
+      "5c663142-396c-4162-b66a-4f109913be33-00-14bgusdh9244e.riker.replit.dev"
+    ],
     proxy: {
       '/api/auth': {
         target: 'http://localhost:8081',
