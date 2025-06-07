@@ -40,10 +40,14 @@ public class ImageService {
             throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
         }
 
-        // 업로드 디렉토리 생성
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
+        // 업로드 디렉토리 생성 (절대 경로로 변환)
+        Path uploadPath = Paths.get(uploadDir).toAbsolutePath();
+        try {
+            if (!Files.exists(uploadPath)) {
+                Files.createDirectories(uploadPath);
+            }
+        } catch (Exception e) {
+            throw new IOException("업로드 디렉토리 생성 실패: " + e.getMessage());
         }
 
         // 고유한 파일명 생성
