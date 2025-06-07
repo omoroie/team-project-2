@@ -100,23 +100,21 @@ public class UserService {
         }
         
         // Generate JWT token
-        String token = jwtService.generateToken(user);
+        var token = jwtService.generateToken(user);
         
         log.info("User authenticated successfully: {}", user.getId());
         return token;
     }
     
-    @Cacheable(value = "users", key = "#id")
     public UserResponseDto getUserById(Long id) {
         log.info("Fetching user by ID: {}", id);
         
         // Try cache first, fallback to database if Redis unavailable
         try {
-            String cacheKey = USER_CACHE_KEY + "id:" + id;
-            Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
+            var cacheKey = USER_CACHE_KEY + "id:" + id;
+            var cachedObject = redisTemplate.opsForValue().get(cacheKey);
             
-            if (cachedObject instanceof User) {
-                User cachedUser = (User) cachedObject;
+            if (cachedObject instanceof User cachedUser) {
                 log.info("User found in cache: {}", id);
                 return userMapper.toResponseDto(cachedUser);
             }
@@ -125,7 +123,7 @@ public class UserService {
         }
         
         // Fetch from database
-        User user = userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         try {
@@ -141,11 +139,10 @@ public class UserService {
         
         // Try cache first, fallback to database if Redis unavailable
         try {
-            String cacheKey = USER_CACHE_KEY + "username:" + username;
-            Object cachedObject = redisTemplate.opsForValue().get(cacheKey);
+            var cacheKey = USER_CACHE_KEY + "username:" + username;
+            var cachedObject = redisTemplate.opsForValue().get(cacheKey);
             
-            if (cachedObject instanceof User) {
-                User cachedUser = (User) cachedObject;
+            if (cachedObject instanceof User cachedUser) {
                 log.info("User found in cache: {}", username);
                 return userMapper.toResponseDto(cachedUser);
             }
@@ -154,7 +151,7 @@ public class UserService {
         }
         
         // Fetch from database
-        User user = userRepository.findByUsername(username)
+        var user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         try {
@@ -171,7 +168,7 @@ public class UserService {
         return userRepository.findAll()
                 .stream()
                 .map(userMapper::toResponseDto)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     public List<UserResponseDto> getCorporateUsers() {
@@ -180,15 +177,14 @@ public class UserService {
         return userRepository.findByIsCorporate(true)
                 .stream()
                 .map(userMapper::toResponseDto)
-                .collect(Collectors.toList());
+                .toList();
     }
     
     @Transactional
-    @CacheEvict(value = "users", key = "#id")
     public UserResponseDto updateUser(Long id, UserRequestDto userRequestDto) {
         log.info("Updating user: {}", id);
         
-        User user = userRepository.findById(id)
+        var user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
         // Update user fields
