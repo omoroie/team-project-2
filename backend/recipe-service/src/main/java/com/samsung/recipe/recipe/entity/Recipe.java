@@ -62,6 +62,12 @@ public class Recipe {
     @Builder.Default
     private Integer viewCount = 0;
     
+    @Column(name = "hashtags", columnDefinition = "TEXT")
+    private String hashtagsRaw;
+    
+    @Transient
+    private List<String> hashtags;
+    
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

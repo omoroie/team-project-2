@@ -184,6 +184,59 @@ def parse_instructions_list(text):
     
     return cleaned_instructions[:15]  # 최대 15단계까지
 
+def parse_hashtags_list(text):
+    """해시태그 리스트 파싱"""
+    if pd.isna(text) or not text:
+        return []
+    
+    text = str(text).strip()
+    if not text:
+        return []
+    
+    # Python 리스트 형식 처리: ['태그1', '태그2']
+    if text.startswith('[') and text.endswith(']'):
+        try:
+            import ast
+            parsed = ast.literal_eval(text)
+            if isinstance(parsed, list):
+                hashtags = []
+                for tag in parsed:
+                    if tag and tag.strip():
+                        # #이 없으면 추가
+                        clean_tag = tag.strip()
+                        if not clean_tag.startswith('#'):
+                            clean_tag = '#' + clean_tag
+                        hashtags.append(clean_tag)
+                return hashtags[:10]  # 최대 10개까지만
+        except:
+            pass
+    
+    # 일반 텍스트 처리
+    if ',' in text:
+        hashtags = []
+        for tag in text.split(','):
+            if tag.strip():
+                clean_tag = tag.strip()
+                if not clean_tag.startswith('#'):
+                    clean_tag = '#' + clean_tag
+                hashtags.append(clean_tag)
+    elif '\n' in text:
+        hashtags = []
+        for tag in text.split('\n'):
+            if tag.strip():
+                clean_tag = tag.strip()
+                if not clean_tag.startswith('#'):
+                    clean_tag = '#' + clean_tag
+                hashtags.append(clean_tag)
+    else:
+        # 단일 태그
+        clean_tag = text.strip()
+        if not clean_tag.startswith('#'):
+            clean_tag = '#' + clean_tag
+        hashtags = [clean_tag]
+    
+    return hashtags[:10]  # 최대 10개까지만
+
 def get_or_create_user(cursor, author_name):
     """사용자 조회 또는 생성"""
     if not author_name or author_name.strip() == "":
@@ -217,13 +270,16 @@ def insert_recipe_with_proper_arrays(cursor, recipe_data):
         ingredients_array = '{' + ','.join([f'"{ing}"' for ing in recipe_data['ingredients']]) + '}'
         instructions_str = '|'.join(recipe_data['instructions'])
         
+        # 해시태그 배열 형식으로 변환
+        hashtags_array = '{' + ','.join([f'"{tag}"' for tag in recipe_data.get('hashtags', [])]) + '}' if recipe_data.get('hashtags') else '{}'
+        
         # 레시피 삽입
         cursor.execute("""
             INSERT INTO recipes (
                 title, description, ingredients, instructions, 
-                cooking_time, servings, difficulty, image_url, author_id, 
+                cooking_time, servings, difficulty, image_url, hashtags, author_id, 
                 view_count, created_at, updated_at
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             RETURNING id
         """, (
             recipe_data['title'],
@@ -234,6 +290,7 @@ def insert_recipe_with_proper_arrays(cursor, recipe_data):
             recipe_data['servings'],
             recipe_data['difficulty'],
             recipe_data.get('image_url'),
+            hashtags_array,
             recipe_data['author_id'],
             0  # 초기 조회수
         ))
@@ -315,6 +372,10 @@ def main():
                 if not image_url or image_url == 'nan' or image_url == '':
                     image_url = None
                 
+                # 해시태그 파싱
+                hashtags_raw = row.get('RCP_HASHTAG', '')
+                hashtags = parse_hashtags_list(hashtags_raw)
+                
                 # 레시피 데이터 준비
                 recipe_data = {
                     'title': title[:255],  # 길이 제한
@@ -325,6 +386,7 @@ def main():
                     'servings': parse_servings(row.get('CKG_INBUN_NM', '')),
                     'difficulty': parse_difficulty(row.get('CKG_DODF_NM', '')),
                     'image_url': image_url,
+                    'hashtags': hashtags,
                     'author_id': author_id
                 }
                 
