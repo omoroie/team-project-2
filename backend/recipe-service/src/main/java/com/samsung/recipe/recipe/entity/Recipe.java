@@ -55,6 +55,10 @@ public class Recipe {
     @Column(name = "author_id", nullable = false)
     private Long authorId;
     
+    @Column(name = "view_count")
+    @Builder.Default
+    private Integer viewCount = 0;
+    
     @CreatedDate
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;

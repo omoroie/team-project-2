@@ -24,6 +24,7 @@ public class RecipeResponseDto {
     private String difficulty;
     private String imageUrl;
     private Long authorId;
+    private Integer viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
