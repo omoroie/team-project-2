@@ -101,12 +101,6 @@ export function Navbar() {
 
             {state.isAuthenticated ? (
               <div className="flex items-center space-x-2">
-                <Link href="/recipes/create">
-                  <Button variant="default" size="sm" className="bg-red-500 hover:bg-red-600 text-white">
-                    <Plus className="h-4 w-4 mr-2" />
-                    레시피 등록
-                  </Button>
-                </Link>
                 <Button variant="ghost" size="icon">
                   <User className="h-4 w-4" />
                 </Button>
