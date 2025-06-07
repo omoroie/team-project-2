@@ -54,8 +54,12 @@ public class UserService {
         // Save user
         User savedUser = userRepository.save(user);
         
-        // Cache user data
-        cacheUser(savedUser);
+        // Try to cache user data, ignore if Redis fails
+        try {
+            cacheUser(savedUser);
+        } catch (Exception e) {
+            log.warn("Failed to cache user during registration, continuing without cache: {}", e.getMessage());
+        }
         
         log.info("User registered successfully: {}", savedUser.getId());
         return userMapper.toResponseDto(savedUser);
