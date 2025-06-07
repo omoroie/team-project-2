@@ -44,7 +44,21 @@ const createApiClient = (baseURL: string): AxiosInstance => {
       if (error.response?.status === 401) {
         // 인증 오류시 로그인 페이지로 리다이렉트
         localStorage.removeItem('authToken');
-        window.location.href = '/login';
+        
+        // Check if the response indicates login is required
+        if (error.response?.data?.requiresLogin) {
+          // Show toast notification if available
+          if (typeof window !== 'undefined' && window.alert) {
+            alert('로그인이 필요합니다');
+          }
+          
+          // Redirect to login page after a short delay
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 1000);
+        } else {
+          window.location.href = '/login';
+        }
       }
       return Promise.reject(error);
     }
