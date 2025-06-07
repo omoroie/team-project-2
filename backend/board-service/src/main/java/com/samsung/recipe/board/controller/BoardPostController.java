@@ -4,6 +4,7 @@ import com.samsung.recipe.board.dto.BoardPostRequestDto;
 import com.samsung.recipe.board.dto.BoardPostResponseDto;
 import com.samsung.recipe.board.service.BoardPostService;
 import com.samsung.recipe.board.service.ViewCountService;
+import com.samsung.recipe.board.util.JwtUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class BoardPostController {
     
     private final BoardPostService boardPostService;
     private final ViewCountService viewCountService;
+    private final JwtUtil jwtUtil;
     
     @PostMapping
     public ResponseEntity<Map<String, Object>> createBoardPost(
