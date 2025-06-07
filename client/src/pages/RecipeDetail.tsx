@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
-import { Recipe } from '@shared/schema';
+import type { Recipe } from '@shared/schema';
 import { Clock, Users, ChefHat, ArrowLeft } from 'lucide-react';
 import { Link, useParams } from 'wouter';
 
@@ -107,7 +107,7 @@ export default function RecipeDetail() {
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
-                  {recipe.ingredients.map((ingredient, index) => (
+                  {recipe.ingredients.map((ingredient: string, index: number) => (
                     <li key={index} className="flex items-center space-x-2">
                       <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
                       <span className="text-sm">{ingredient}</span>
