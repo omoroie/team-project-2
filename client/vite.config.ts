@@ -37,26 +37,31 @@ export default defineConfig({
       '/api/auth': {
         target: 'http://localhost:8081',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/auth/, '/auth')
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/api/recipes': {
         target: 'http://localhost:8082',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/recipes/, '/recipes')
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/api/images': {
         target: 'http://localhost:8082',
-        changeOrigin: true
+        changeOrigin: true,
+        secure: false
       },
       '/api/ingredients': {
         target: 'http://localhost:8083',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/ingredients/, '/ingredients')
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/api/board': {
         target: 'http://localhost:8084',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/board/, '/board')
+        secure: false,
+        rewrite: (path) => path.replace(/^\/api/, '')
       }
     }
   },
