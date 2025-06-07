@@ -68,18 +68,27 @@ public class IngredientService {
     public List<IngredientResponseDto> getAllIngredients() {
         log.info("Fetching all ingredients");
         
-        @SuppressWarnings("unchecked")
-        List<Ingredient> cachedIngredients = (List<Ingredient>) redisTemplate.opsForValue().get(INGREDIENTS_LIST_CACHE_KEY);
-        
-        if (cachedIngredients != null) {
-            log.info("Ingredients found in cache");
-            return cachedIngredients.stream()
-                    .map(ingredientMapper::toResponseDto)
-                    .collect(Collectors.toList());
+        try {
+            @SuppressWarnings("unchecked")
+            List<Ingredient> cachedIngredients = (List<Ingredient>) redisTemplate.opsForValue().get(INGREDIENTS_LIST_CACHE_KEY);
+            
+            if (cachedIngredients != null) {
+                log.info("Ingredients found in cache");
+                return cachedIngredients.stream()
+                        .map(ingredientMapper::toResponseDto)
+                        .collect(Collectors.toList());
+            }
+        } catch (Exception e) {
+            log.warn("Redis cache unavailable, fetching from database: {}", e.getMessage());
         }
         
         List<Ingredient> ingredients = ingredientRepository.findAll();
-        redisTemplate.opsForValue().set(INGREDIENTS_LIST_CACHE_KEY, ingredients, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        
+        try {
+            redisTemplate.opsForValue().set(INGREDIENTS_LIST_CACHE_KEY, ingredients, CACHE_TTL_HOURS, TimeUnit.HOURS);
+        } catch (Exception e) {
+            log.warn("Failed to cache ingredients list: {}", e.getMessage());
+        }
         
         return ingredients.stream()
                 .map(ingredientMapper::toResponseDto)

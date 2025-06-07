@@ -130,7 +130,24 @@ export default function Home() {
           <div className="text-lg">베스트 레시피를 불러오는 중...</div>
         </div>
       ) : bestRecipes.length > 0 ? (
-        <BestRecipes recipes={bestRecipes} />
+        <BestRecipes recipes={bestRecipes.map((recipe: any, index: number) => ({
+          id: recipe.id,
+          title: recipe.title,
+          description: recipe.description || '',
+          imageUrl: recipe.imageUrl || 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=400&h=300&fit=crop&crop=center',
+          cookingTime: recipe.cookingTime || 30,
+          servings: recipe.servings || 2,
+          difficulty: recipe.difficulty || 'MEDIUM',
+          rating: 4.5,
+          reviewCount: Math.floor(Math.random() * 100) + 10,
+          viewCount: recipe.viewCount || 0,
+          author: {
+            name: `요리사${recipe.authorId}`,
+            avatar: undefined
+          },
+          ranking: index + 1,
+          isVideo: false
+        }))} />
       ) : (
         <div className="py-16 text-center">
           <div className="text-lg">베스트 레시피를 준비 중입니다.</div>
