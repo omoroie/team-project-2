@@ -19,7 +19,16 @@ export default function RecipeDetail() {
       if (!response.ok) {
         throw new Error('레시피를 찾을 수 없습니다');
       }
-      return response.json();
+      const data = await response.json();
+      // 백엔드 응답 구조에 따라 레시피 데이터 추출
+      if (data.success && data.recipe) {
+        return data.recipe;
+      } else if (data.recipe) {
+        return data.recipe;
+      } else if (Array.isArray(data)) {
+        return data[0];
+      }
+      return data;
     },
     enabled: !!id,
   });

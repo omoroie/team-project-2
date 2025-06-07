@@ -59,7 +59,6 @@ public class RecipeService {
         return recipeMapper.toResponseDto(savedRecipe);
     }
     
-    @Cacheable(value = "recipes", key = "#id")
     public RecipeResponseDto getRecipeById(Long id) {
         log.info("Fetching recipe by ID: {}", id);
         
@@ -80,7 +79,13 @@ public class RecipeService {
         Recipe recipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Recipe not found"));
         
-        cacheRecipe(recipe);
+        // Try to cache, but don't fail if caching fails
+        try {
+            cacheRecipe(recipe);
+        } catch (Exception e) {
+            log.warn("Failed to cache recipe: {}", e.getMessage());
+        }
+        
         return recipeMapper.toResponseDto(recipe);
     }
     
