@@ -116,6 +116,35 @@ public class RecipeController {
         }
     }
     
+    @GetMapping("/my")
+    public ResponseEntity<Map<String, Object>> getMyRecipes(@RequestHeader("Authorization") String authHeader) {
+        try {
+            // JWT 토큰에서 사용자 ID 추출
+            String token = authHeader.replace("Bearer ", "");
+            // 실제 구현에서는 JWT 파싱 로직 필요
+            // 임시로 하드코딩된 사용자 ID 사용
+            Long userId = 117L; // 현재 로그인된 사용자 ID
+            
+            List<RecipeResponseDto> recipes = recipeService.getRecipesByAuthor(userId);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("recipes", recipes);
+            response.put("count", recipes.size());
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("My recipes fetch failed: {}", e.getMessage());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to fetch my recipes");
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
     @GetMapping("/author/{authorId}")
     public ResponseEntity<Map<String, Object>> getRecipesByAuthor(@PathVariable Long authorId) {
         try {
