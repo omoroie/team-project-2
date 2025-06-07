@@ -169,9 +169,9 @@ def insert_recipe_with_proper_arrays(cursor, recipe_data):
         cursor.execute("""
             INSERT INTO recipes (
                 title, description, ingredients, instructions, 
-                cooking_time, servings, difficulty, author_id, 
+                cooking_time, servings, difficulty, image_url, author_id, 
                 view_count, created_at, updated_at
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), NOW())
             RETURNING id
         """, (
             recipe_data['title'],
@@ -181,6 +181,7 @@ def insert_recipe_with_proper_arrays(cursor, recipe_data):
             recipe_data['cooking_time'],
             recipe_data['servings'],
             recipe_data['difficulty'],
+            recipe_data.get('image_url'),
             recipe_data['author_id'],
             0  # 초기 조회수
         ))
@@ -257,15 +258,21 @@ def main():
                 author_name = clean_text(row.get('author', '레시피 제공자'))
                 author_id = get_or_create_user(cursor, author_name)
                 
+                # 이미지 URL 파싱
+                image_url = row.get('RCP_IMG_URL', '').strip()
+                if not image_url or image_url == 'nan' or image_url == '':
+                    image_url = None
+                
                 # 레시피 데이터 준비
                 recipe_data = {
                     'title': title[:255],  # 길이 제한
                     'description': description[:2000],  # 길이 제한
                     'ingredients': ingredients,
                     'instructions': instructions,
-                    'cooking_time': parse_cooking_time(row.get('CKG_TIME', '')),
+                    'cooking_time': parse_cooking_time(row.get('CKG_TIME_NM', '')),
                     'servings': parse_servings(row.get('CKG_INBUN_NM', '')),
                     'difficulty': parse_difficulty(row.get('CKG_DODF_NM', '')),
+                    'image_url': image_url,
                     'author_id': author_id
                 }
                 
