@@ -40,9 +40,8 @@ public class ImageService {
             throw new IllegalArgumentException("파일 크기는 10MB를 초과할 수 없습니다.");
         }
 
-        // 임시 디렉토리 사용 (WebConfig와 동일한 경로)
-        String tempDir = System.getProperty("java.io.tmpdir");
-        Path uploadPath = Paths.get(tempDir, "recipe-uploads");
+        // 프로젝트 루트의 uploads 디렉토리 사용
+        Path uploadPath = Paths.get("uploads");
         
         try {
             if (!Files.exists(uploadPath)) {
