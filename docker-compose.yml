@@ -43,7 +43,7 @@ services:
       context: ./backend/user-service
       dockerfile: Dockerfile
     platform: linux/amd64
-    image: asia-northeast3-docker.pkg.dev/formidable-byte-461400-t1/dev-asia-northeast3-repo/user-service:latest
+    image: ${GCP_REGISTRY_URL}/user-service:${IMAGE_TAG:-latest}
     container_name: recipe-user-service
     environment:
       - DB_HOST=${DB_HOST}
@@ -70,7 +70,7 @@ services:
       context: ./backend/recipe-service
       dockerfile: Dockerfile
     platform: linux/amd64
-    image: asia-northeast3-docker.pkg.dev/formidable-byte-461400-t1/dev-asia-northeast3-repo/recipe-service:latest
+    image: ${GCP_REGISTRY_URL}/recipe-service:${IMAGE_TAG:-latest}
     container_name: recipe-recipe-service
     environment:
       - DB_HOST=${DB_HOST}
@@ -97,7 +97,7 @@ services:
       context: ./backend/ingredient-service
       dockerfile: Dockerfile
     platform: linux/amd64
-    image: asia-northeast3-docker.pkg.dev/formidable-byte-461400-t1/dev-asia-northeast3-repo/ingredient-service:latest
+    image: ${GCP_REGISTRY_URL}/ingredient-service:${IMAGE_TAG:-latest}
     container_name: recipe-ingredient-service
     environment:
       - DB_HOST=${DB_HOST}
@@ -123,7 +123,7 @@ services:
       context: ./backend/board-service
       dockerfile: Dockerfile
     platform: linux/amd64
-    image: asia-northeast3-docker.pkg.dev/formidable-byte-461400-t1/dev-asia-northeast3-repo/board-service:latest
+    image: ${GCP_REGISTRY_URL}/board-service:${IMAGE_TAG:-latest}
     container_name: recipe-board-service
     environment:
       - DB_HOST=${DB_HOST}
@@ -150,7 +150,7 @@ services:
       args:
         - NODE_ENV=${NODE_ENV}
     platform: linux/amd64
-    image: asia-northeast3-docker.pkg.dev/formidable-byte-461400-t1/dev-asia-northeast3-repo/frontend:latest
+    image: ${GCP_REGISTRY_URL}/frontend:${IMAGE_TAG:-latest}
     container_name: recipe-frontend
     ports:
       - "5000:80"
