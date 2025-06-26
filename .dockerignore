@@ -1,0 +1,10 @@
+.git
+.gitignore
+node_modules
+uploads
+dist
+k8s
+Dockerfile.*
+*.log
+*.zip
+.env

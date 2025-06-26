@@ -25,7 +25,7 @@ export default defineConfig({
       strict: true,
       deny: ["**/.*"],
     },
-    port: 5001,
+    port: 5000,
     host: "0.0.0.0",
     allowedHosts: [
       "all",
@@ -35,37 +35,37 @@ export default defineConfig({
     ],
     proxy: {
       '/api/auth': {
-        target: 'http://localhost:8081',
+        target: 'http://user-service:8081',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/api/recipes': {
-        target: 'http://localhost:8082',
+        target: 'http://recipe-service:8082',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/api/images': {
-        target: 'http://localhost:8082',
+        target: 'http://recipe-service:8082',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/api/ingredients': {
-        target: 'http://localhost:8083',
+        target: 'http://ingredient-service:8083',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/api/board': {
-        target: 'http://localhost:8084',
+        target: 'http://board-service:8084',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, '')
       },
       '/uploads': {
-        target: 'http://localhost:8082',
+        target: 'http://recipe-service:8082',
         changeOrigin: true,
         secure: false
       }

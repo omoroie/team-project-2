@@ -19,6 +19,8 @@
     "build:backend": "concurrently \"npm run build:user-service\" \"npm run build:recipe-service\" \"npm run build:ingredient-service\" \"npm run build:board-service\"",
     "build": "concurrently \"npm run build:backend\" \"npm run build:frontend\"",
     "install:all": "npm install && cd client && npm install",
+    "docker:build-base": "docker build -t my-openjdk-maven:17 -f Dockerfile.base .",
+    "docker:build-all": "npm run docker:build-base && docker-compose build --no-cache",
     "docker:up": "docker-compose up --build",
     "docker:down": "docker-compose down"
   },
