@@ -71,5 +71,7 @@ jobs:
             cd ../../
           done
 
-          docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f Dockerfile.frontend .
+      - name: Build and push frontend
+        run: |
+          docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f client/Dockerfile ./client
           docker push $FULL_REPO/frontend:$IMAGE_TAG
