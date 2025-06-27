@@ -40,7 +40,7 @@ jobs:
 
       - name: Run Maven tests
         run: |
-          for service in user-service recipe-service ingredient-service board-service; do
+          for service in user-service recipe-service; do
             cd backend/$service
             mvn clean test
             cd ../../
@@ -61,7 +61,7 @@ jobs:
         if: github.ref == 'refs/heads/main'
         run: |
           FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
-          for service in user-service recipe-service ingredient-service board-service; do
+          for service in user-service recipe-service; do
             docker build -t $FULL_REPO/$service:$IMAGE_TAG ./backend/$service
             docker push $FULL_REPO/$service:$IMAGE_TAG
           done
