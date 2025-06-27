@@ -38,11 +38,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Run Maven tests
+      - name: Run Maven tests and package JARs
         run: |
+          set -e
           for service in user-service recipe-service; do
             cd backend/$service
-            mvn clean test
+            mvn clean package -DskipTests=false
+            echo "=== Listing JARs for $service ==="
+            ls -lh target/*.jar || echo "❌ JAR not found for $service"
             cd ../../
           done
 
