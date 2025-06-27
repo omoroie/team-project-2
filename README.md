@@ -38,7 +38,7 @@
 # PostgreSQL 데이터베이스 생성
 createdb recipe_db
 
-# Redis 서버 실행
+# Redis 서버 실행 ㅇ
 redis-server
 ```
 
