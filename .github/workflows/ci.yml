@@ -60,13 +60,15 @@ jobs:
         run: |
           gcloud auth configure-docker $GCP_REGISTRY_DOMAIN
 
-      - name: Docker Build & Push (Backend + Frontend)
+      - name: Docker Build & Push (Backend)
         if: github.ref == 'refs/heads/main'
         run: |
           FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
           for service in user-service recipe-service; do
-            docker build -t $FULL_REPO/$service:$IMAGE_TAG ./backend/$service
+            cd backend/$service
+            docker build -t $FULL_REPO/$service:$IMAGE_TAG .
             docker push $FULL_REPO/$service:$IMAGE_TAG
+            cd ../../
           done
 
           docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f Dockerfile.frontend .
