@@ -73,5 +73,6 @@ jobs:
 
       - name: Build and push frontend
         run: |
+          FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
           docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f client/Dockerfile ./client
           docker push $FULL_REPO/frontend:$IMAGE_TAG
