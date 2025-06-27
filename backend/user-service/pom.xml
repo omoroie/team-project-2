@@ -106,12 +106,6 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Jackson JSR310 Module for LocalDateTime -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-        </dependency>
-
         <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
