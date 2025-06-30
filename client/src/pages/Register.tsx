@@ -10,6 +10,7 @@ import { authAPI } from '@/lib/apiClient';
 import { useToast } from '@/hooks/use-toast';
 import { Link, useLocation } from 'wouter';
 import { useState } from 'react';
+import { RegisterRequest } from '@shared/schema';
 
 export default function Register() {
   const { t } = useLanguage();
@@ -17,7 +18,7 @@ export default function Register() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<RegisterRequest>({
     username: '',
     email: '',
     password: '',
@@ -25,13 +26,14 @@ export default function Register() {
   });
 
   const registerMutation = useMutation({
-    mutationFn: (data: { username: string; email: string; password: string; isCorporate: boolean }) =>
+    mutationFn: (data: RegisterRequest) =>
       authAPI.register(data),
-    onSuccess: (response: any) => {
-      if (response.data.user) {
-        localStorage.setItem('currentUser', JSON.stringify(response.data.user));
+    onSuccess: (response) => {
+      const user = response.data?.user || response.data?.data?.user;
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
       }
-      dispatch({ type: 'SET_USER', payload: response.data.user });
+      dispatch({ type: 'SET_USER', payload: user || null });
       queryClient.clear();
       toast({
         title: 'Success',
@@ -39,10 +41,10 @@ export default function Register() {
       });
       setLocation('/');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       let message = 'Registration failed';
-      if (error.response?.data?.message) {
-        message = error.response.data.message;
+      if ((error as { response?: { data?: { message?: string } } })?.response?.data?.message) {
+        message = (error as { response: { data: { message: string } } }).response.data.message;
       }
       
       toast({

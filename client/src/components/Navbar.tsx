@@ -4,7 +4,7 @@ import { useApp } from '@/contexts/AppContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { LanguageToggle } from './LanguageToggle';
 import { Search, ShoppingCart, User, Plus } from 'lucide-react';
-import { authAPI } from '@/lib/queryClient';
+import { authAPI } from '@/lib/apiClient';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useToast } from '@/hooks/use-toast';
 

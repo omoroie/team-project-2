@@ -28,10 +28,10 @@ export function IngredientCard({ ingredient }: IngredientCardProps) {
 
         <div className="flex items-center justify-between">
           <span className="text-lg font-bold text-accent">
-            ₩{ingredient.price.toLocaleString()}
+            ₩{ingredient.price?.toLocaleString() || '0'}
           </span>
           <span className="text-sm text-muted-foreground ingredient-badge">
-            /{ingredient.unit}
+            /{ingredient.unit || '개'}
           </span>
         </div>
       </CardContent>
@@ -39,9 +39,9 @@ export function IngredientCard({ ingredient }: IngredientCardProps) {
       <CardFooter className="p-4 pt-0">
         <Button 
           className="w-full" 
-          disabled={!ingredient.inStock}
+          disabled={ingredient.inStock === false}
         >
-          {ingredient.inStock ? t('addToCart') : '품절'}
+          {ingredient.inStock !== false ? t('addToCart') : '품절'}
         </Button>
       </CardFooter>
     </Card>

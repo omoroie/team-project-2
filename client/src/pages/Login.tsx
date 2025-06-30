@@ -10,6 +10,7 @@ import { authAPI } from '@/lib/apiClient';
 import { useToast } from '@/hooks/use-toast';
 import { Link, useLocation } from 'wouter';
 import { useState } from 'react';
+import { LoginRequest } from '@shared/schema';
 
 export default function Login() {
   const { t } = useLanguage();
@@ -17,20 +18,21 @@ export default function Login() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [, setLocation] = useLocation();
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LoginRequest>({
     username: '',
     password: '',
   });
 
   const loginMutation = useMutation({
-    mutationFn: (data: { username: string; password: string }) =>
+    mutationFn: (data: LoginRequest) =>
       authAPI.login(data),
-    onSuccess: (response: any) => {
-      // 사용자 정보를 localStorage에 저장
-      if (response.data.user) {
-        localStorage.setItem('currentUser', JSON.stringify(response.data.user));
+    onSuccess: (response) => {
+      // API 응답 구조에 따라 사용자 정보 추출
+      const user = response.data?.user || response.data?.data?.user;
+      if (user) {
+        localStorage.setItem('currentUser', JSON.stringify(user));
       }
-      dispatch({ type: 'SET_USER', payload: response.data.user });
+      dispatch({ type: 'SET_USER', payload: user || null });
       queryClient.clear();
       toast({
         title: 'Success',

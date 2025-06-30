@@ -31,9 +31,9 @@ export function ProductGrid({ title, products, viewAllHref }: ProductGridProps) 
         <div className="flex justify-between items-center mb-8">
           <h2 className="text-3xl font-bold text-foreground">{title}</h2>
           <Button variant="outline" asChild>
-            <a href={viewAllHref}>
+            <Link href={viewAllHref}>
               {t('viewAllRecipes')}
-            </a>
+            </Link>
           </Button>
         </div>
 

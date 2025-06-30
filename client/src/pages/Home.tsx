@@ -4,9 +4,10 @@ import { BestRecipes } from '@/components/BestRecipes';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useQuery } from '@tanstack/react-query';
 import { recipeAPI } from '@/lib/apiClient';
+import { Recipe } from '@shared/schema';
 
-// 타입 정의
-interface Recipe {
+// 베스트 레시피 타입 정의
+interface BestRecipe {
   id: number;
   title: string;
   description: string;
@@ -14,6 +15,8 @@ interface Recipe {
   cookingTime?: number;
   servings?: number;
   difficulty?: string;
+  viewCount?: number;
+  writerId?: string;
 }
 
 export default function Home() {
@@ -21,17 +24,18 @@ export default function Home() {
 
   const { data: bestRecipes = [], isLoading: bestRecipesLoading } = useQuery({
     queryKey: ['best-recipes'],
-    queryFn: async () => {
+    queryFn: async (): Promise<any[]> => {
       try {
         const response = await recipeAPI.getBest();
         console.log('Best recipes response:', response.data);
         const data = response.data;
-        if (Array.isArray(data)) {
-          return data;
-        } else if (data && Array.isArray(data.recipes)) {
+        // API 응답 구조에 따라 데이터 추출
+        if (data?.recipes && Array.isArray(data.recipes)) {
           return data.recipes;
-        } else if (data && Array.isArray(data.data)) {
+        } else if (data?.data && Array.isArray(data.data)) {
           return data.data;
+        } else if (Array.isArray(data)) {
+          return data;
         }
         return [];
       } catch (error) {
@@ -43,18 +47,19 @@ export default function Home() {
     retryDelay: 1000,
   });
 
-  const { data: recipes = [] } = useQuery<Recipe[]>({
+  const { data: recipes = [] } = useQuery({
     queryKey: ['recipes'],
-    queryFn: async () => {
+    queryFn: async (): Promise<any[]> => {
       try {
         const response = await recipeAPI.getAll();
         const data = response.data;
-        if (Array.isArray(data)) {
-          return data;
-        } else if (data && Array.isArray(data.recipes)) {
+        // API 응답 구조에 따라 데이터 추출
+        if (data?.recipes && Array.isArray(data.recipes)) {
           return data.recipes;
-        } else if (data && Array.isArray(data.data)) {
+        } else if (data?.data && Array.isArray(data.data)) {
           return data.data;
+        } else if (Array.isArray(data)) {
+          return data;
         }
         return [];
       } catch (error) {
@@ -66,7 +71,7 @@ export default function Home() {
   });
 
   // Transform data for ProductGrid component
-  const recipeProducts = recipes.map(recipe => ({
+  const recipeProducts = recipes.map((recipe: any) => ({
     id: recipe.id,
     title: recipe.title,
     description: recipe.description || 'No description available',

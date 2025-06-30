@@ -1,10 +1,27 @@
-import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import { User, Recipe, LoginRequest, RegisterRequest, CreateRecipeRequest } from '@shared/schema';
 
 // 마이크로서비스 베이스 URL 설정 (Nginx를 통해 직접 라우팅)
 const API_ENDPOINTS = {
   auth: '/auth', // Auth API (Nginx를 통해 user-service:8081로 라우팅)
   recipe: '/recipes', // Recipe Service (Nginx를 통해 recipe-service:8082로 라우팅)
 };
+
+// API 응답 타입 정의 - 백엔드 실제 응답 구조에 맞춤
+interface ApiResponse<T> {
+  success: boolean;
+  data?: T;
+  message?: string;
+  error?: string;
+  recipes?: T[];
+  user?: T;
+  recipe?: T;
+}
+
+interface LoginResponse {
+  user: User;
+  token?: string;
+}
 
 // 공통 axios 설정
 const createApiClient = (baseURL: string): AxiosInstance => {
@@ -31,7 +48,8 @@ const createApiClient = (baseURL: string): AxiosInstance => {
         if (error.response?.data?.requiresLogin) {
           // Show toast notification if available
           if (typeof window !== 'undefined') {
-            alert('로그인이 필요합니다');
+            // alert 대신 console.warn 사용
+            console.warn('로그인이 필요합니다');
           }
           
           // Redirect to login page after a short delay
@@ -54,13 +72,13 @@ export const authApi = createApiClient(API_ENDPOINTS.auth);
 export const recipeApi = createApiClient(API_ENDPOINTS.recipe);
 
 // API 요청 헬퍼 함수
-export const apiRequest = async (
+export const apiRequest = async <T>(
   client: AxiosInstance,
   method: 'GET' | 'POST' | 'PUT' | 'DELETE',
   url: string,
-  data?: any,
+  data?: unknown,
   config?: AxiosRequestConfig
-) => {
+): Promise<AxiosResponse<T>> => {
   try {
     const response = await client.request({
       method,
@@ -78,42 +96,43 @@ export const apiRequest = async (
 // Auth API - 모든 사용자/인증 관련 요청 통합
 export const authAPI = {
   // 인증 관련
-  login: (credentials: { username: string; password: string }) =>
-    authApi.post('/auth/login', credentials),
-  register: (userData: any) => authApi.post('/auth/register', userData),
-  logout: () => authApi.post('/auth/logout'),
-  me: () => authApi.get('/auth/me'),
-  refreshToken: () => authApi.post('/auth/refresh'),
+  login: (credentials: LoginRequest) =>
+    authApi.post<ApiResponse<LoginResponse>>('/auth/login', credentials),
+  register: (userData: RegisterRequest) => 
+    authApi.post<ApiResponse<LoginResponse>>('/auth/register', userData),
+  logout: () => authApi.post<ApiResponse<void>>('/auth/logout'),
+  me: () => authApi.get<ApiResponse<User>>('/auth/me'),
+  refreshToken: () => authApi.post<ApiResponse<{ token: string }>>('/auth/refresh'),
   
   // 사용자 관리
-  getById: (id: number) => authApi.get(`/auth/${id}`),
-  getByUsername: (username: string) => authApi.get(`/auth/username/${username}`),
-  getAll: () => authApi.get('/auth'),
-  getCorporate: () => authApi.get('/auth/corporate'),
-  update: (id: number, data: any) => authApi.put(`/auth/${id}`, data),
-  delete: (id: number) => authApi.delete(`/auth/${id}`),
-  checkUsername: (username: string) => authApi.get(`/auth/check/username/${username}`),
-  checkEmail: (email: string) => authApi.get(`/auth/check/email/${email}`),
-  getCorporateCount: () => authApi.get('/auth/stats/corporate-count'),
+  getById: (id: number) => authApi.get<ApiResponse<User>>(`/auth/${id}`),
+  getByUsername: (username: string) => authApi.get<ApiResponse<User>>(`/auth/username/${username}`),
+  getAll: () => authApi.get<ApiResponse<User[]>>('/auth'),
+  getCorporate: () => authApi.get<ApiResponse<User[]>>('/auth/corporate'),
+  update: (id: number, data: Partial<User>) => authApi.put<ApiResponse<User>>(`/auth/${id}`, data),
+  delete: (id: number) => authApi.delete<ApiResponse<void>>(`/auth/${id}`),
+  checkUsername: (username: string) => authApi.get<ApiResponse<{ available: boolean }>>(`/auth/check/username/${username}`),
+  checkEmail: (email: string) => authApi.get<ApiResponse<{ available: boolean }>>(`/auth/check/email/${email}`),
+  getCorporateCount: () => authApi.get<ApiResponse<{ count: number }>>('/auth/stats/corporate-count'),
 };
 
 export const recipeAPI = {
   getAll: (params?: { page?: number; size?: number; category?: string; difficulty?: string }) =>
-    recipeApi.get('/recipes', { params }),
+    recipeApi.get<ApiResponse<Recipe[]>>('/recipes', { params }),
   getBest: (limit?: number) => 
-    recipeApi.get('/recipes/best', { params: { limit } }),
-  getById: (id: number) => recipeApi.get(`/recipes/${id}`),
-  create: (data: any) => recipeApi.post('/recipes', data),
-  update: (id: number, data: any) => recipeApi.put(`/recipes/${id}`, data),
-  delete: (id: number) => recipeApi.delete(`/recipes/${id}`),
-  getByAuthor: (authorId: number) => recipeApi.get(`/recipes/author/${authorId}`),
-  search: (query: string, filters?: any) => 
-    recipeApi.get('/recipes/search', { params: { q: query, ...filters } }),
-  getByCategory: (category: string) => recipeApi.get(`/recipes/category/${category}`),
+    recipeApi.get<ApiResponse<Recipe[]>>('/recipes/best', { params: { limit } }),
+  getById: (id: number) => recipeApi.get<ApiResponse<Recipe>>(`/recipes/${id}`),
+  create: (data: CreateRecipeRequest) => recipeApi.post<ApiResponse<Recipe>>('/recipes', data),
+  update: (id: number, data: Partial<CreateRecipeRequest>) => recipeApi.put<ApiResponse<Recipe>>(`/recipes/${id}`, data),
+  delete: (id: number) => recipeApi.delete<ApiResponse<void>>(`/recipes/${id}`),
+  getByAuthor: (authorId: number) => recipeApi.get<ApiResponse<Recipe[]>>(`/recipes/author/${authorId}`),
+  search: (query: string, filters?: Record<string, unknown>) => 
+    recipeApi.get<ApiResponse<Recipe[]>>('/recipes/search', { params: { q: query, ...filters } }),
+  getByCategory: (category: string) => recipeApi.get<ApiResponse<Recipe[]>>(`/recipes/category/${category}`),
   uploadImage: (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
-    return recipeApi.post('/images/upload', formData, {
+    return recipeApi.post<ApiResponse<{ imageUrl: string }>>('/images/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

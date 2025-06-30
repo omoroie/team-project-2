@@ -20,6 +20,11 @@ export interface RecipeStep {
 export interface Ingredient {
   id: number;
   name: string;
+  description?: string;
+  price?: number;
+  unit?: string;
+  inStock?: boolean;
+  imageUrl?: string;
 }
 
 export interface RecipeIngredient {
@@ -50,6 +55,7 @@ export interface Recipe {
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
   imageUrl?: string;
   tags: Tag[];
+  hashtags?: string[];
   ingredientsCount: number;
   kind?: string;
   situation?: string;
@@ -62,12 +68,16 @@ export interface Recipe {
   author?: User;
 }
 
-// API 응답 타입
+// API 응답 타입 - 백엔드 실제 응답 구조에 맞춤
 export interface ApiResponse<T> {
   success: boolean;
   data?: T;
   message?: string;
   error?: string;
+  recipes?: T[];
+  user?: T;
+  recipe?: T;
+  imageUrl?: string;
 }
 
 // 로그인/회원가입 요청 타입
@@ -101,4 +111,10 @@ export interface CreateRecipeRequest {
   writerId?: string;
   instructions: string[];
   instructionImages?: string[];
+}
+
+// 로그인 응답 타입
+export interface LoginResponse {
+  user: User;
+  token?: string;
 }

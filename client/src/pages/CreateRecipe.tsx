@@ -45,16 +45,18 @@ export default function CreateRecipe() {
       const response = await recipeAPI.uploadImage(file);
       console.log('Upload response:', response.data);
       
-      if (response.data.success && response.data.imageUrl) {
-        console.log('Image uploaded successfully:', response.data.imageUrl);
-        return response.data.imageUrl;
+      // API 응답 구조에 따라 이미지 URL 추출
+      const imageUrl = response.data?.data?.imageUrl || response.data?.imageUrl;
+      if (imageUrl) {
+        console.log('Image uploaded successfully:', imageUrl);
+        return imageUrl;
       } else {
         console.error('Upload failed:', response.data);
-        throw new Error(response.data.error || 'Upload failed');
+        throw new Error(response.data?.error || 'Upload failed');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Image upload error:', error);
-      console.error('Error details:', error.response?.data);
+      console.error('Error details:', (error as any).response?.data);
       throw error;
     }
   };
@@ -123,7 +125,9 @@ export default function CreateRecipe() {
         cookingMethod: data.cookingMethod || '',
         ingredients: recipeIngredients,
         steps: recipeSteps,
-        tags: recipeTags
+        tags: recipeTags,
+        instructions: data.instructions.filter((item: string) => item.trim() !== ''),
+        instructionImages: data.instructionImages.filter((item: string) => item.trim() !== '')
       };
       
       console.log('Sending recipe data:', recipeData);
