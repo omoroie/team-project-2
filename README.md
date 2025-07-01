@@ -391,4 +391,4 @@ docker-compose up -d
 3. Docker 실행 시 포트 충돌을 주의해야 합니다
 4. Database, JWT, Redis 관련 환경변수는 반드시 설정해야 합니다.
 
-모르겠다.
+yolo
