@@ -5,7 +5,7 @@ import re
 from datetime import datetime
 
 # ✅ CSV 로드
-df = pd.read_csv("recipe_02_final.csv", encoding="cp949")
+df = pd.read_csv("recipe_03_final.csv", encoding="utf-8")
 
 # ✅ 안전 파싱 함수
 def safe_eval(x):
