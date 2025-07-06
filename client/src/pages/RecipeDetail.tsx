@@ -138,23 +138,23 @@ export default function RecipeDetail() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  {Array.isArray(recipe.instructions) && recipe.instructions.length > 0 ? (
-                    recipe.instructions.map((instruction: string, index: number) => (
+                  {Array.isArray(recipe.steps) && recipe.steps.length > 0 ? (
+                    recipe.steps.map((step: any, index: number) => (
                       <div key={index} className="space-y-4">
                         <div className="flex items-start space-x-4">
                           <div className="flex-shrink-0 w-8 h-8 bg-red-500 text-white rounded-full flex items-center justify-center font-bold text-sm">
-                            {index + 1}
+                            {step.stepIndex}
                           </div>
                           <div className="flex-1">
-                            <p className="text-gray-700 leading-relaxed">{instruction}</p>
+                            <p className="text-gray-700 leading-relaxed">{step.description}</p>
                           </div>
                         </div>
                         {/* 조리법 단계별 이미지 */}
-                        {recipe.instructionImages && recipe.instructionImages[index] && (
+                        {step.imageUrl && (
                           <div className="ml-12">
                             <img 
-                              src={recipe.instructionImages[index]} 
-                              alt={`조리 단계 ${index + 1}`}
+                              src={step.imageUrl}
+                              alt={`조리 단계 ${step.stepIndex}`}
                               className="rounded-lg shadow-md max-w-md w-full h-auto"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement;
