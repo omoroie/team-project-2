@@ -55,4 +55,10 @@ public class RecipeRequestDto {
     
     // 태그 정보
     private List<TagDto> tags;
+    
+    // 조리법 문자열 배열 (프론트엔드 호환성)
+    private List<String> instructions;
+    
+    // 조리법 이미지 배열 (프론트엔드 호환성)
+    private List<String> instructionImages;
 }
