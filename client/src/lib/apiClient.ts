@@ -3,8 +3,8 @@ import { User, Recipe, LoginRequest, RegisterRequest, CreateRecipeRequest } from
 
 // 마이크로서비스 베이스 URL 설정 (Nginx를 통해 직접 라우팅)
 const API_ENDPOINTS = {
-  auth: '/auth', // Auth API (Nginx를 통해 user-service:8081로 라우팅)
-  recipe: '/recipes', // Recipe Service (Nginx를 통해 recipe-service:8082로 라우팅)
+  auth: '', // Auth API (Nginx를 통해 user-service:8081로 라우팅)
+  recipe: '', // Recipe Service (Nginx를 통해 recipe-service:8082로 라우팅)
 };
 
 // API 응답 타입 정의 - 백엔드 실제 응답 구조에 맞춤
