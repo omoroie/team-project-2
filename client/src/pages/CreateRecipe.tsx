@@ -46,7 +46,8 @@ export default function CreateRecipe() {
       console.log('Upload response:', response.data);
       
       // API 응답 구조에 따라 이미지 URL 추출
-      const imageUrl = response.data?.data?.imageUrl || response.data?.imageUrl;
+      // const imageUrl = response.data?.data?.imageUrl || response.data?.imageUrl;
+      const imageUrl = response.data?.data?.imageUrl || (response.data as any)?.imageUrl;
       if (imageUrl) {
         console.log('Image uploaded successfully:', imageUrl);
         return imageUrl;
