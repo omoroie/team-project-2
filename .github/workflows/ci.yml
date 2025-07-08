@@ -12,6 +12,8 @@ env:
   GCP_REPO_NAME: ${{ secrets.GCP_REPO_NAME }}
   # GCP_REGION: ${{ secrets.GCP_REGION }}
   IMAGE_TAG: ${{ github.sha }}
+  TOKEN: ${{ secrets.GITLAB_TOKEN }}
+  REPO_PATH: ${{ secrets.GITLAB_REPO_PATH }}
 
 jobs:
   build-and-push:
@@ -77,3 +79,23 @@ jobs:
           FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
           docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f Dockerfile.frontend .
           docker push $FULL_REPO/frontend:$IMAGE_TAG
+          
+      - name: Update Helm values in GitLab (Backend & Frontend)
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config --global user.name "GitHub CI Bot"
+          git config --global user.email "ci-bot@example.com"
+          
+          # Clone GitLab Helm repo
+          git clone "https://oauth2:${TOKEN}@gitlab.com/${REPO_PATH}" helm-repo
+          cd helm-repo
+
+          # 파일들에 태그 반영
+          sed -i "s|\(image:.*user-service:\).*|\1${IMAGE_TAG}|" charts/my-service/values-user-service.yaml
+          sed -i "s|\(image:.*recipe-service:\).*|\1${IMAGE_TAG}|" charts/my-service/values-recipe-service.yaml
+          sed -i "s|\(image:.*frontend:\).*|\1${IMAGE_TAG}|" charts/my-service/values-frontend.yaml
+
+          git add charts/my-service/*.yaml
+          git commit -m "ci: update image tag to $IMAGE_TAG"
+          git push origin main
+
