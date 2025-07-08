@@ -46,12 +46,12 @@ def get_int(row, col):
     except:
         return extract_number(val)
 
-# ✅ PostgreSQL 연결
+# ✅ GCP Cloud SQL 연결 (로컬 개발용 - Cloud SQL Proxy 필요)
 conn = psycopg2.connect(
     dbname="recipe_db",
-    user="recipe_user",
-    password="recipe_password",
-    host="localhost",
+    user="p646626910485-oprfkm@gcp-sa-cloud-sql.iam.gserviceaccount.com",
+    password="실제_GCP_SQL_비밀번호_여기에_입력",
+    host="localhost",  # Cloud SQL Proxy가 5432 포트로 포워딩
     port="5432"
 )
 cur = conn.cursor()

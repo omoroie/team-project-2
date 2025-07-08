@@ -19,12 +19,35 @@ spec:
         ports:
         - containerPort: 8081
         env:
-        - name: DATABASE_URL
-          value: "jdbc:postgresql://postgres-service:5432/samsung_recipe"
-        - name: PGUSER
-          value: "postgres"
-        - name: PGPASSWORD
-          value: "password"
+        # 기존 PostgreSQL 연결 (주석 처리)
+        # - name: DATABASE_URL
+        #   value: "jdbc:postgresql://postgres-service:5432/samsung_recipe"
+        # - name: PGUSER
+        #   value: "postgres"
+        # - name: PGPASSWORD
+        #   value: "password"
+        
+        # GCP Cloud SQL 연결 (새로 추가)
+        - name: DB_HOST
+          valueFrom:
+            secretKeyRef:
+              name: gcp-cloud-sql-secret
+              key: gcp-sql-connection-name
+        - name: DB_NAME
+          valueFrom:
+            secretKeyRef:
+              name: gcp-cloud-sql-secret
+              key: db-name
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: gcp-cloud-sql-secret
+              key: db-user
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: gcp-cloud-sql-secret
+              key: db-password
         - name: REDIS_HOST
           value: "redis-service"
         - name: REDIS_PORT

@@ -6,9 +6,16 @@ spring:
     name: recipe-service
   
   datasource:
-    url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:recipe_db}
-    username: ${DB_USER:recipe_user}
-    password: ${DB_PASSWORD:recipe_password}
+    # 로컬 PostgreSQL 연결 (주석 처리)
+    # url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:recipe_db}
+    # username: ${DB_USER:recipe_user}
+    # password: ${DB_PASSWORD:recipe_password}
+    # driver-class-name: org.postgresql.Driver
+    
+    # GCP Cloud SQL 직접 연결 (쿠버네티스에서 실행 시)
+    url: jdbc:postgresql:///${DB_NAME}?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance=${DB_HOST}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   
   jpa:
