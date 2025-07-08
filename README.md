@@ -17,8 +17,14 @@
 - **Recipe Service** (포트: 8082) - 레시피 관리
 
 ### 데이터베이스
-- **PostgreSQL** - 메인 데이터베이스
+- **Google Cloud SQL (PostgreSQL)** - 메인 데이터베이스
 - **Redis** - 세션 및 캐시 관리
+
+### 클라우드 인프라
+- **Google Cloud Platform (GCP)** - 클라우드 인프라
+- **Kubernetes** - 컨테이너 오케스트레이션
+- **Terraform** - 인프라 자동화
+- **Cloud SQL Proxy** - 로컬 개발용 데이터베이스 연결
 
 ## 🚀 빠른 시작
 
@@ -27,10 +33,11 @@
 # 필수 설치 항목
 - Java 17+
 - Node.js 18+
-- PostgreSQL 12+
 - Redis 6+
 - Maven 3.8+
 - Docker & Docker Compose (선택사항)
+- Google Cloud SDK
+- kubectl (Kubernetes 배포용)
 ```
 
 ### 2. 프로젝트 클론 및 의존성 설치
@@ -44,14 +51,15 @@ npm run install:all
 ```
 
 ### 3. 환경변수 설정
+
 프로젝트 루트에 `.env` 파일을 생성하고 다음 환경변수를 설정하세요:
 
 ```bash
-# Database 설정
-DB_HOST=localhost
+# GCP Cloud SQL 설정
+DB_HOST=127.0.0.1  # Cloud SQL Proxy 사용 시
 DB_NAME=recipe_db
 DB_USER=recipe_user
-DB_PASSWORD=recipe_password
+DB_PASSWORD=${DB_PASSWORD}  # Kubernetes Secret에서 주입
 
 # JWT 설정
 JWT_SECRET=your_jwt_secret_key_here
@@ -60,16 +68,27 @@ JWT_SECRET=your_jwt_secret_key_here
 REDIS_HOST=localhost
 REDIS_PORT=6379
 
+# GCP 프로젝트 설정
+GCP_PROJECT_ID=your-project-id
+GCP_REGION=asia-northeast3
+
 # Node 환경
 NODE_ENV=development
 ```
 
 ### 4. 데이터베이스 설정
-```bash
-# PostgreSQL 데이터베이스 생성
-createdb recipe_db
 
-# Redis 서버 실행
+```bash
+# Cloud SQL Proxy 설치 및 실행
+# https://cloud.google.com/sql/docs/postgres/connect-admin-proxy
+
+# 프로젝트 설정
+gcloud config set project your-project-id
+
+# Cloud SQL Proxy 실행
+cloud_sql_proxy -instances=your-project-id:asia-northeast3:recipe-db=tcp:5432
+
+# Redis 서버 실행 (로컬)
 redis-server
 ```
 
@@ -162,6 +181,7 @@ pj-1/
 │   └── recipe-service/    # 레시피 서비스
 ├── k8s/                   # Kubernetes 설정
 ├── shared/                # 공유 스키마
+├── terraform/             # Terraform 인프라 코드
 └── docker-compose.yml
 ```
 
@@ -170,11 +190,12 @@ pj-1/
 - 페이지는 `client/src/pages/` 에 위치
 - API 클라이언트는 `client/src/lib/apiClient.ts` 에서 관리
 - 다국어 지원: 한국어/영어 (`client/src/lib/translations.ts`)
+- 레시피 생성 시 조리법 단계별 이미지 업로드 지원
 
 ### 백엔드 개발
 - 각 서비스는 독립적인 Maven 프로젝트
 - Spring Boot 3.2.0 + Java 17 사용
-- JPA + PostgreSQL 사용
+- JPA + Google Cloud SQL 사용
 - Redis를 통한 세션 관리
 
 ### 빌드 및 배포
@@ -192,20 +213,33 @@ npm run build
 
 ## ☸️ Kubernetes 배포
 
-### 1. 네임스페이스 생성
+### 1. GCP 클러스터 설정
+```bash
+# GKE 클러스터 생성 (Terraform 사용 권장)
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+### 2. 네임스페이스 생성
 ```bash
 kubectl apply -f k8s/namespace.yaml
 ```
 
-### 2. 시크릿 생성
+### 3. 시크릿 생성
 ```bash
-kubectl apply -f k8s/secrets.yaml
+# Terraform에서 생성된 DB 비밀번호를 Kubernetes Secret으로 생성
+kubectl create secret generic gcp-cloud-sql-secret \
+  --from-literal=db-password="$(terraform output -raw db_password)" \
+  --from-literal=db-user="recipe_user" \
+  --from-literal=db-name="recipe_db" \
+  --namespace=samsung-recipe
 ```
 
-### 3. 서비스 배포
+### 4. 서비스 배포
 ```bash
-# 데이터베이스 및 Redis
-kubectl apply -f k8s/postgres.yaml
+# Redis
 kubectl apply -f k8s/redis.yaml
 
 # 백엔드 서비스
@@ -223,7 +257,9 @@ kubectl apply -f k8s/frontend-config-dev.yaml  # 또는 frontend-config-prod.yam
 각 백엔드 서비스에서 `http://localhost:5000` 을 허용하도록 설정됨
 
 ### 데이터베이스 연결 오류
-PostgreSQL 서비스가 실행 중인지 확인하고 연결 정보를 점검하세요
+- Cloud SQL Proxy가 실행 중인지 확인
+- GCP 인증이 올바른지 확인
+- 연결 정보를 점검하세요
 
 ### 포트 충돌
 각 서비스가 지정된 포트를 사용하는지 확인하세요:
@@ -241,6 +277,17 @@ npm install
 cd client && rm -rf node_modules package-lock.json && npm install
 ```
 
+### GCP 관련 오류
+```bash
+# GCP 인증 확인
+gcloud auth login
+gcloud config set project your-project-id
+
+# Cloud SQL Proxy 재시작
+pkill cloud_sql_proxy
+cloud_sql_proxy -instances=your-project-id:asia-northeast3:recipe-db=tcp:5432
+```
+
 ## 📝 주요 기능
 
 ### 사용자 관리
@@ -251,6 +298,7 @@ cd client && rm -rf node_modules package-lock.json && npm install
 ### 레시피 관리
 - 레시피 CRUD 작업
 - 재료 및 조리 단계 관리
+- 조리법 단계별 이미지 업로드
 - 이미지 업로드 (Unsplash API 연동)
 - 태그 시스템
 - 조회수 추적
@@ -261,18 +309,34 @@ cd client && rm -rf node_modules package-lock.json && npm install
 - 실시간 검색
 - 무한 스크롤
 - 이미지 갤러리
+- 조리법 단계별 이미지 표시
 
 ## 🚀 배포 환경
 
 ### 개발 환경
-- 로컬 PostgreSQL/Redis 사용
+- GCP Cloud SQL + 로컬 Redis 사용
+- Cloud SQL Proxy를 통한 데이터베이스 연결
 - 핫 리로드 지원
 - 디버깅 모드
 
 ### 프로덕션 환경
-- 클러스터 환경의 데이터베이스 서비스 사용
+- GCP Cloud SQL 사용
+- Kubernetes 클러스터 환경
+- Terraform을 통한 인프라 자동화
 - 코드 최적화 및 압축
 - 보안 강화
+
+## 🔐 보안
+
+### 데이터베이스 보안
+- Terraform을 통한 DB 비밀번호 자동 생성
+- Kubernetes Secrets를 통한 민감 정보 관리
+- GCP Cloud SQL의 네트워크 보안 설정
+
+### 인증 및 권한
+- JWT 기반 인증
+- 세션 관리 (Redis)
+- API 엔드포인트 보안
 
 ## 📄 라이센스
 

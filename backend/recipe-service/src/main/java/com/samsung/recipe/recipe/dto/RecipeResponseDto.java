@@ -32,4 +32,10 @@ public class RecipeResponseDto {
     private Integer viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    
+    // 조리법 문자열 배열 (프론트엔드 호환성)
+    private List<String> instructions;
+    
+    // 조리법 이미지 배열 (프론트엔드 호환성)
+    private List<String> instructionImages;
 }

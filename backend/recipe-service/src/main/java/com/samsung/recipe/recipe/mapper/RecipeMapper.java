@@ -74,6 +74,22 @@ public class RecipeMapper {
 
     // 엔티티 → Response DTO 변환
     public RecipeResponseDto toResponseDto(Recipe recipe, List<RecipeStep> steps, List<RecipeIngredient> recipeIngredients, List<Ingredient> ingredients, List<RecipeTag> recipeTags, List<Tag> tags) {
+        // steps를 instructions와 instructionImages로 변환
+        List<String> instructions = null;
+        List<String> instructionImages = null;
+        
+        if (steps != null && !steps.isEmpty()) {
+            instructions = steps.stream()
+                    .sorted((s1, s2) -> Integer.compare(s1.getStepIndex(), s2.getStepIndex()))
+                    .map(RecipeStep::getDescription)
+                    .collect(Collectors.toList());
+            
+            instructionImages = steps.stream()
+                    .sorted((s1, s2) -> Integer.compare(s1.getStepIndex(), s2.getStepIndex()))
+                    .map(RecipeStep::getImageUrl)
+                    .collect(Collectors.toList());
+        }
+        
         return RecipeResponseDto.builder()
                 .id(recipe.getId())
                 .title(recipe.getTitle())
@@ -94,6 +110,8 @@ public class RecipeMapper {
                 .steps(steps == null ? null : steps.stream().map(this::toStepDto).collect(Collectors.toList()))
                 .ingredients(recipeIngredients == null ? null : recipeIngredients.stream().map(ri -> toIngredientDetailDto(ri, ingredients)).collect(Collectors.toList()))
                 .tags(recipeTags == null ? null : recipeTags.stream().map(rt -> toTagDto(rt, tags)).collect(Collectors.toList()))
+                .instructions(instructions)
+                .instructionImages(instructionImages)
                 .build();
     }
 

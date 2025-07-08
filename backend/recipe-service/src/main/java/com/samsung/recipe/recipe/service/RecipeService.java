@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -85,9 +86,12 @@ public class RecipeService {
             recipeIngredientRepository.saveAll(recipeIngredients);
         }
 
-        // 3. 조리법 저장
+        // 3. 조리법 저장 (instructions 필드를 steps로 변환)
+        List<RecipeStep> steps = new ArrayList<>();
+        
+        // steps 필드가 있으면 사용
         if (recipeRequestDto.getSteps() != null && !recipeRequestDto.getSteps().isEmpty()) {
-            List<RecipeStep> steps = recipeRequestDto.getSteps().stream()
+            steps = recipeRequestDto.getSteps().stream()
                     .map(dto -> RecipeStep.builder()
                             .recipeId(recipeId)
                             .stepIndex(dto.getStepIndex())
@@ -95,7 +99,25 @@ public class RecipeService {
                             .imageUrl(dto.getImageUrl())
                             .build())
                     .collect(Collectors.toList());
-            
+        }
+        // instructions 필드가 있으면 steps로 변환
+        else if (recipeRequestDto.getInstructions() != null && !recipeRequestDto.getInstructions().isEmpty()) {
+            List<String> instructionImages = recipeRequestDto.getInstructionImages();
+            steps = IntStream.range(0, recipeRequestDto.getInstructions().size())
+                    .mapToObj(index -> {
+                        String instruction = recipeRequestDto.getInstructions().get(index);
+                        String imageUrl = instructionImages != null && index < instructionImages.size() ? instructionImages.get(index) : null;
+                        return RecipeStep.builder()
+                                .recipeId(recipeId)
+                                .stepIndex(index + 1)
+                                .description(instruction)
+                                .imageUrl(imageUrl)
+                                .build();
+                    })
+                    .collect(Collectors.toList());
+        }
+        
+        if (!steps.isEmpty()) {
             recipeStepRepository.saveAll(steps);
         }
 
