@@ -10,7 +10,6 @@ env:
   GCP_REGISTRY_DOMAIN: ${{ secrets.GCP_REGISTRY_DOMAIN }}
   GCP_PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   GCP_REPO_NAME: ${{ secrets.GCP_REPO_NAME }}
-  # GCP_REGION: ${{ secrets.GCP_REGION }}
   IMAGE_TAG: ${{ github.sha }}
   TOKEN: ${{ secrets.GITLAB_TOKEN }}
   REPO_PATH: ${{ secrets.GITLAB_REPO_PATH }}
