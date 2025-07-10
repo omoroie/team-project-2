@@ -39,17 +39,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Run Maven tests and package JARs
-        run: |
-          set -e
-          for service in user-service recipe-service; do
-            cd backend/$service
-            mvn clean package -DskipTests=false
-            echo "=== Listing JARs for $service ==="
-            ls -lh target/*.jar || echo "❌ JAR not found for $service"
-            cd ../../
-          done
-
       - name: Authenticate to Google Cloud
         if: github.ref == 'refs/heads/main'
         uses: google-github-actions/auth@v2
@@ -61,30 +50,48 @@ jobs:
         run: |
           gcloud auth configure-docker $GCP_REGISTRY_DOMAIN
 
-      - name: Docker Build & Push (Backend)
+      - name: Build & Push Backend Services (if changed)
         if: github.ref == 'refs/heads/main'
         run: |
+          set -e
           FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
+
           for service in user-service recipe-service; do
-            cd backend/$service
-            docker build -t $FULL_REPO/$service:$IMAGE_TAG .
-            docker push $FULL_REPO/$service:$IMAGE_TAG
-            cd ../../
+            if git diff --name-only HEAD^ HEAD | grep -q "backend/$service/"; then
+              echo "🔨 Building $service (changes detected)"
+              cd backend/$service
+              mvn clean package -DskipTests=false
+              docker build -t $FULL_REPO/$service:$IMAGE_TAG .
+              docker push $FULL_REPO/$service:$IMAGE_TAG
+              cd ../../
+            else
+              echo "✅ Skipping $service (no changes)"
+            fi
           done
-          
-      - name: Docker Build & Push (Frontend)
+
+      - name: Build & Push Frontend (if changed)
         if: github.ref == 'refs/heads/main'
         run: |
+          set -e
           FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
-          docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f Dockerfile.frontend .
-          docker push $FULL_REPO/frontend:$IMAGE_TAG
-          
+
+          if git diff --name-only HEAD^ HEAD | grep -q "frontend/"; then
+            echo "🔨 Building frontend (changes detected)"
+            docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f Dockerfile.frontend .
+            docker push $FULL_REPO/frontend:$IMAGE_TAG
+          else
+            echo "✅ Skipping frontend (no changes)"
+          fi
+
+      - name: Install yq
+        run: sudo apt-get install -y yq
+
       - name: Update Helm values in GitLab (Backend & Frontend)
         if: github.ref == 'refs/heads/main'
         run: |
           git config --global user.name "GitHub CI Bot"
           git config --global user.email "ci-bot@example.com"
-          
+
           # Clone GitLab Helm repo
           git clone "https://oauth2:${TOKEN}@gitlab.com/${REPO_PATH}" helm-repo
           cd helm-repo/my-helm-chart
@@ -95,7 +102,10 @@ jobs:
           yq eval ".frontendService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
 
           cd ..
-          git add my-helm-chart/values.yaml
-          git commit -m "ci: update image tag to $IMAGE_TAG"
-          git push origin main
-
+          if ! git diff --quiet; then
+            git add my-helm-chart/values.yaml
+            git commit -m "ci: update image tag to ${IMAGE_TAG}"
+            git push origin main
+          else
+            echo "No changes to commit."
+          fi
