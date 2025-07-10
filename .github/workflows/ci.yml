@@ -39,6 +39,17 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Run Maven tests and package JARs
+        run: |
+          set -e
+          for service in user-service recipe-service; do
+            cd backend/$service
+            mvn clean package -DskipTests=false
+            echo "=== Listing JARs for $service ==="
+            ls -lh target/*.jar || echo "❌ JAR not found for $service"
+            cd ../../
+          done
+
       - name: Authenticate to Google Cloud
         if: github.ref == 'refs/heads/main'
         uses: google-github-actions/auth@v2
@@ -50,70 +61,40 @@ jobs:
         run: |
           gcloud auth configure-docker $GCP_REGISTRY_DOMAIN
 
-      - name: Build & Push Backend Services (if changed)
+      - name: Docker Build & Push (Backend)
         if: github.ref == 'refs/heads/main'
         run: |
-          set -e
           FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
-
           for service in user-service recipe-service; do
-            if git diff --name-only HEAD^ HEAD | grep -q "backend/$service/"; then
-              echo "🔨 Building $service (changes detected)"
-              cd backend/$service
-              mvn clean package -DskipTests=false
-              docker build -t $FULL_REPO/$service:$IMAGE_TAG .
-              docker push $FULL_REPO/$service:$IMAGE_TAG
-              cd ../../
-            else
-              echo "✅ Skipping $service (no changes)"
-            fi
+            cd backend/$service
+            docker build -t $FULL_REPO/$service:$IMAGE_TAG .
+            docker push $FULL_REPO/$service:$IMAGE_TAG
+            cd ../../
           done
-
-      - name: Build & Push Frontend (if changed)
+          
+      - name: Docker Build & Push (Frontend)
         if: github.ref == 'refs/heads/main'
         run: |
-          set -e
           FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
-
-          if git diff --name-only HEAD^ HEAD | grep -q "frontend/"; then
-            echo "🔨 Building frontend (changes detected)"
-            docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f Dockerfile.frontend .
-            docker push $FULL_REPO/frontend:$IMAGE_TAG
-          else
-            echo "✅ Skipping frontend (no changes)"
-          fi
+          docker build -t $FULL_REPO/frontend:$IMAGE_TAG -f Dockerfile.frontend .
+          docker push $FULL_REPO/frontend:$IMAGE_TAG
           
-      - name: Track changes and update Helm values
+      - name: Update Helm values in GitLab (Backend & Frontend)
         if: github.ref == 'refs/heads/main'
         run: |
           git config --global user.name "GitHub CI Bot"
           git config --global user.email "ci-bot@example.com"
-
+          
+          # Clone GitLab Helm repo
           git clone "https://oauth2:${TOKEN}@gitlab.com/${REPO_PATH}" helm-repo
           cd helm-repo/my-helm-chart
 
-          CHANGED=false
-
-          if git diff --name-only HEAD^ HEAD | grep -q "backend/user-service/"; then
-            yq eval ".userService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
-            CHANGED=true
-          fi
-
-          if git diff --name-only HEAD^ HEAD | grep -q "backend/recipe-service/"; then
-            yq eval ".recipeService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
-            CHANGED=true
-          fi
-
-          if git diff --name-only HEAD^ HEAD | grep -q "frontend/"; then
-            yq eval ".frontendService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
-            CHANGED=true
-          fi
+          # values.yaml에서 태그 치환 (모든 서비스)
+          yq eval ".userService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
+          yq eval ".recipeService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
+          yq eval ".frontendService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
 
           cd ..
-          if [ "$CHANGED" = true ] && ! git diff --quiet; then
-            git add my-helm-chart/values.yaml
-            git commit -m "ci: update image tag to ${IMAGE_TAG}"
-            git push origin main
-          else
-            echo "✅ No Helm tag updates needed."
-          fi
+          git add my-helm-chart/values.yaml
+          git commit -m "ci: update image tag to $IMAGE_TAG"
+          git push origin main
