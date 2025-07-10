@@ -83,22 +83,37 @@ jobs:
             echo "✅ Skipping frontend (no changes)"
           fi
           
-      - name: Update Helm values in GitLab (Backend & Frontend)
+      - name: Track changes and update Helm values
         if: github.ref == 'refs/heads/main'
         run: |
           git config --global user.name "GitHub CI Bot"
           git config --global user.email "ci-bot@example.com"
-          
-          # Clone GitLab Helm repo
+
           git clone "https://oauth2:${TOKEN}@gitlab.com/${REPO_PATH}" helm-repo
           cd helm-repo/my-helm-chart
 
-          # values.yaml에서 태그 치환 (모든 서비스)
-          yq eval ".userService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
-          yq eval ".recipeService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
-          yq eval ".frontendService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
+          CHANGED=false
+
+          if git diff --name-only HEAD^ HEAD | grep -q "backend/user-service/"; then
+            yq eval ".userService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
+            CHANGED=true
+          fi
+
+          if git diff --name-only HEAD^ HEAD | grep -q "backend/recipe-service/"; then
+            yq eval ".recipeService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
+            CHANGED=true
+          fi
+
+          if git diff --name-only HEAD^ HEAD | grep -q "frontend/"; then
+            yq eval ".frontendService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
+            CHANGED=true
+          fi
 
           cd ..
-          git add my-helm-chart/values.yaml
-          git commit -m "ci: update image tag to $IMAGE_TAG"
-          git push origin main
+          if [ "$CHANGED" = true ] && ! git diff --quiet; then
+            git add my-helm-chart/values.yaml
+            git commit -m "ci: update image tag to ${IMAGE_TAG}"
+            git push origin main
+          else
+            echo "✅ No Helm tag updates needed."
+          fi
