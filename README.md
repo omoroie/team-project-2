@@ -2,6 +2,20 @@
 
 한국 요리 전문 레시피 공유 플랫폼입니다. 마이크로서비스 아키텍처로 구성되어 있으며, React 프론트엔드와 Spring Boot 백엔드 서비스들로 구성됩니다.
 
+## 📸 이미지 저장 방식
+
+이 프로젝트는 **Google Cloud Storage**를 사용하여 이미지를 저장합니다:
+
+### 저장 방식
+- **GCP Cloud Storage**: Google Cloud Storage에 저장
+- **환경변수 기반**: `GCP_STORAGE_FOLDER`로 폴더명 설정 가능
+
+### 기능
+- 레시피 대표 이미지 및 조리 단계별 이미지
+- 데이터베이스에는 이미지 URL만 저장
+- 자동 이미지 생성 (Unsplash API 연동)
+- 이미지 삭제 기능
+
 ## 🏗️ 아키텍처
 
 ### 프론트엔드
@@ -22,6 +36,7 @@
 
 ### 클라우드 인프라
 - **Google Cloud Platform (GCP)** - 클라우드 인프라
+- **Google Cloud Storage** - 이미지 저장소
 - **Kubernetes** - 컨테이너 오케스트레이션
 - **Terraform** - 인프라 자동화
 - **Cloud SQL Proxy** - 로컬 개발용 데이터베이스 연결
@@ -72,18 +87,50 @@ REDIS_PORT=6379
 GCP_PROJECT_ID=your-project-id
 GCP_REGION=asia-northeast3
 
+# GCP Cloud Storage 설정
+GCP_STORAGE_BUCKET=your-storage-bucket-name
+GCP_STORAGE_FOLDER=dev-recipe-assets
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
+
 # Node 환경
 NODE_ENV=development
 ```
 
-### 4. 데이터베이스 설정
+### 4. GCP Cloud Storage 설정
+```bash
+# GCP 프로젝트 설정
+gcloud config set project your-project-id
+
+# Cloud Storage 버킷 생성
+gsutil mb -l asia-northeast3 gs://your-storage-bucket-name
+
+# 버킷을 공개로 설정 (이미지 접근용)
+gsutil iam ch allUsers:objectViewer gs://your-storage-bucket-name
+
+# 서비스 계정 생성 및 권한 부여
+gcloud iam service-accounts create recipe-storage-sa \
+    --display-name="Recipe Storage Service Account"
+
+# Storage Admin 권한 부여
+gcloud projects add-iam-policy-binding your-project-id \
+    --member="serviceAccount:recipe-storage-sa@your-project-id.iam.gserviceaccount.com" \
+    --role="roles/storage.admin"
+
+# 서비스 계정 키 생성
+gcloud iam service-accounts keys create service-account-key.json \
+    --iam-account=recipe-storage-sa@your-project-id.iam.gserviceaccount.com
+
+# .env 파일에서 설정
+GCP_STORAGE_BUCKET=your-storage-bucket-name
+GCP_STORAGE_FOLDER=dev-recipe-assets
+GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
+```
+
+### 5. 데이터베이스 설정
 
 ```bash
 # Cloud SQL Proxy 설치 및 실행
 # https://cloud.google.com/sql/docs/postgres/connect-admin-proxy
-
-# 프로젝트 설정
-gcloud config set project your-project-id
 
 # Cloud SQL Proxy 실행
 cloud_sql_proxy -instances=your-project-id:asia-northeast3:recipe-db=tcp:5432
@@ -92,7 +139,7 @@ cloud_sql_proxy -instances=your-project-id:asia-northeast3:recipe-db=tcp:5432
 redis-server
 ```
 
-### 5. 서비스 실행
+### 6. 서비스 실행
 
 #### 전체 서비스 동시 실행 (권장)
 ```bash
@@ -113,7 +160,7 @@ npm run dev:user-service
 npm run dev:recipe-service
 ```
 
-### 6. 서비스 확인
+### 7. 서비스 확인
 - **프론트엔드**: http://localhost:5000
 - **User Service**: http://localhost:8081/actuator/health
 - **Recipe Service**: http://localhost:8082/actuator/health
@@ -162,6 +209,7 @@ docker build -f Dockerfile.frontend -t recipe-platform/frontend .
 - `PUT /recipes/{id}` - 레시피 수정
 - `DELETE /recipes/{id}` - 레시피 삭제
 - `POST /images/upload` - 이미지 업로드
+- `DELETE /images/delete` - 이미지 삭제
 
 ## 🛠️ 개발 가이드
 
@@ -353,5 +401,3 @@ cloud_sql_proxy -instances=your-project-id:asia-northeast3:recipe-db=tcp:5432
 ## 📞 문의
 
 프로젝트에 대한 문의사항이 있으시면 이슈를 생성해 주세요.
-
-

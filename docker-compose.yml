@@ -1,27 +1,6 @@
-version: '3'
+version: '3.8'
 
 services:
-  # Database (GCP Cloud SQL 사용으로 제거됨)
-  # postgres:
-  #   image: postgres:latest
-  #   container_name: recipe-postgres
-  #   environment:
-  #     - POSTGRES_DB=${DB_NAME}
-  #     - POSTGRES_USER=${DB_USER}
-  #     - POSTGRES_PASSWORD=${DB_PASSWORD}
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #     - ./init.sql:/docker-entrypoint-initdb.d/init.sql
-  #   networks:
-  #     - recipe-network
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
-  #     interval: 30s
-  #     timeout: 10s
-  #     retries: 3
-
   # Redis Cache
   redis:
     image: redis:latest
@@ -55,8 +34,6 @@ services:
     ports:
       - "8081:8081"
     depends_on:
-      # postgres:
-      #   condition: service_healthy
       redis:
         condition: service_healthy
     networks:
@@ -77,13 +54,15 @@ services:
       - JWT_SECRET=${JWT_SECRET}
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
+      - GCP_PROJECT_ID=${GCP_PROJECT_ID}
+      - GCP_STORAGE_BUCKET=${GCP_STORAGE_BUCKET}
+      - GCP_STORAGE_FOLDER=${GCP_STORAGE_FOLDER}
+      - GOOGLE_APPLICATION_CREDENTIALS=${GOOGLE_APPLICATION_CREDENTIALS}
     ports:
       - "8082:8082"
-    volumes:
-      - recipe_uploads:/app/uploads
     depends_on:
-      # postgres:
-      #   condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - recipe-network
     restart: unless-stopped
@@ -106,9 +85,7 @@ services:
     restart: unless-stopped
 
 volumes:
-  # postgres_data:  # GCP Cloud SQL 사용으로 제거됨
   redis_data:
-  recipe_uploads:
 
 networks:
   recipe-network:

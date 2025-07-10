@@ -1,5 +1,7 @@
 package com.samsung.recipe.recipe.config;
 
+import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.StorageOptions;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
@@ -38,5 +40,13 @@ public class AppConfig {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
+    }
+    
+    /**
+     * GCP Cloud Storage Bean
+     */
+    @Bean
+    public Storage gcpStorage() {
+        return StorageOptions.getDefaultInstance().getService();
     }
 }

@@ -2,6 +2,7 @@ import pandas as pd
 import psycopg2
 import ast
 import re
+import os
 from datetime import datetime
 
 # ✅ CSV 로드
@@ -47,11 +48,14 @@ def get_int(row, col):
         return extract_number(val)
 
 # ✅ GCP Cloud SQL 연결 (로컬 개발용 - Cloud SQL Proxy 필요)
+# 환경변수에서 비밀번호를 가져오거나, 직접 입력
+DB_PASSWORD = os.getenv('DB_PASSWORD', '실제_GCP_SQL_비밀번호_여기에_입력')
+
 conn = psycopg2.connect(
     dbname="recipe_db",
     user="p646626910485-oprfkm@gcp-sa-cloud-sql.iam.gserviceaccount.com",
-    password="실제_GCP_SQL_비밀번호_여기에_입력",
-    host="localhost",  # Cloud SQL Proxy가 5432 포트로 포워딩
+    password=DB_PASSWORD,
+    host="127.0.0.1",  # Cloud SQL Proxy가 5432 포트로 포워딩
     port="5432"
 )
 cur = conn.cursor()

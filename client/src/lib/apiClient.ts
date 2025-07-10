@@ -1,10 +1,19 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
 import { User, Recipe, LoginRequest, RegisterRequest, CreateRecipeRequest } from '@shared/schema';
 
-// 마이크로서비스 베이스 URL 설정 (Nginx를 통해 직접 라우팅)
+// 마이크로서비스 베이스 URL 설정 (환경에 따라 동적 설정)
+const getBaseUrl = () => {
+  // 개발 환경에서는 상대 경로 사용 (Vite proxy 사용)
+  if (import.meta.env.DEV) {
+    return '';
+  }
+  // 프로덕션 환경에서는 현재 도메인 사용
+  return window.location.origin;
+};
+
 const API_ENDPOINTS = {
-  auth: '', // Auth API (Nginx를 통해 user-service:8081로 라우팅)
-  recipe: '', // Recipe Service (Nginx를 통해 recipe-service:8082로 라우팅)
+  auth: getBaseUrl(), // Auth API (Nginx를 통해 user-service:8081로 라우팅)
+  recipe: getBaseUrl(), // Recipe Service (Nginx를 통해 recipe-service:8082로 라우팅)
 };
 
 // API 응답 타입 정의 - 백엔드 실제 응답 구조에 맞춤
@@ -138,4 +147,6 @@ export const recipeAPI = {
       },
     });
   },
+  deleteImage: (imageUrl: string) => 
+    recipeApi.delete<ApiResponse<void>>('/images/delete', { params: { imageUrl } }),
 };

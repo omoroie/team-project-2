@@ -45,19 +45,26 @@ export default function CreateRecipe() {
       const response = await recipeAPI.uploadImage(file);
       console.log('Upload response:', response.data);
       
-      // API 응답 구조에 따라 이미지 URL 추출
-      // const imageUrl = response.data?.data?.imageUrl || response.data?.imageUrl;
-      const imageUrl = response.data?.data?.imageUrl || (response.data as any)?.imageUrl;
+      // 백엔드 응답 구조에 맞춰 이미지 URL 추출
+      const responseData = response.data;
+      let imageUrl = null;
+      
+      if (responseData?.data?.imageUrl) {
+        imageUrl = responseData.data.imageUrl;
+      }
+      
       if (imageUrl) {
         console.log('Image uploaded successfully:', imageUrl);
         return imageUrl;
       } else {
-        console.error('Upload failed:', response.data);
-        throw new Error(response.data?.error || 'Upload failed');
+        console.error('Upload failed - no imageUrl in response:', responseData);
+        throw new Error(responseData?.error || responseData?.message || 'Upload failed');
       }
     } catch (error: unknown) {
       console.error('Image upload error:', error);
-      console.error('Error details:', (error as any).response?.data);
+      if ((error as any).response?.data) {
+        console.error('Error details:', (error as any).response.data);
+      }
       throw error;
     }
   };
@@ -75,15 +82,18 @@ export default function CreateRecipe() {
       }
       
       // Upload instruction images if selected
-      let instructionImages = data.instructionImages.filter((item: string) => item.trim() !== '');
+      let instructionImages = [...data.instructionImages.filter((item: string) => item.trim() !== '')];
       for (let i = 0; i < selectedInstructionImages.length; i++) {
         if (selectedInstructionImages[i]) {
+          console.log(`Uploading instruction image ${i + 1}:`, selectedInstructionImages[i]!.name);
           const uploadedUrl = await uploadImage(selectedInstructionImages[i]!);
-          if (i < instructionImages.length) {
-            instructionImages[i] = uploadedUrl;
-          } else {
-            instructionImages.push(uploadedUrl);
+          console.log(`Instruction image ${i + 1} uploaded:`, uploadedUrl);
+          
+          // 배열 크기를 맞춰주기 위해 필요시 확장
+          while (instructionImages.length <= i) {
+            instructionImages.push('');
           }
+          instructionImages[i] = uploadedUrl;
         }
       }
       

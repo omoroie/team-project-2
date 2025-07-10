@@ -64,6 +64,33 @@ spec:
             secretKeyRef:
               name: external-api-secrets
               key: unsplash-access-key
+        - name: STORAGE_TYPE
+          value: "gcp"  # "local" 또는 "gcp"
+        - name: GCP_PROJECT_ID
+          valueFrom:
+            secretKeyRef:
+              name: gcp-storage-secrets
+              key: gcp-project-id
+        - name: GCP_STORAGE_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: gcp-storage-secrets
+              key: gcp-storage-bucket
+        - name: GCP_STORAGE_FOLDER
+          value: "dev-recipe-assets"  # 환경별로 다른 폴더 사용 가능
+        - name: GOOGLE_APPLICATION_CREDENTIALS
+          value: "/etc/gcp/credentials/service-account-key.json"
+        volumeMounts:
+        - name: gcp-credentials
+          mountPath: "/etc/gcp/credentials"
+          readOnly: true
+      volumes:
+      - name: gcp-credentials
+        secret:
+          secretName: gcp-storage-secrets
+          items:
+          - key: gcp-service-account-key
+            path: service-account-key.json
         livenessProbe:
           httpGet:
             path: /actuator/health
