@@ -7,7 +7,7 @@ spring:
     
   datasource:
     # 로컬 PostgreSQL 연결 (주석 처리)
-    url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:recipe_db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/recipe_db}
     username: ${DB_USER:recipe_user}
     password: ${DB_PASSWORD:recipe_password}
     driver-class-name: org.postgresql.Driver
