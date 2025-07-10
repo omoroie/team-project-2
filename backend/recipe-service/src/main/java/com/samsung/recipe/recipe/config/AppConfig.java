@@ -1,7 +1,7 @@
 package com.samsung.recipe.recipe.config;
 
-import com.google.cloud.storage.Storage;
-import com.google.cloud.storage.StorageOptions;
+// import com.google.cloud.storage.Storage;
+// import com.google.cloud.storage.StorageOptions;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
