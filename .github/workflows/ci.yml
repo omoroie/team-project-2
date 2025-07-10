@@ -87,14 +87,13 @@ jobs:
           
           # Clone GitLab Helm repo
           git clone "https://oauth2:${TOKEN}@gitlab.com/${REPO_PATH}" helm-repo
-          cd helm-repo
+          cd helm-repo/my-helm-chart
 
-          # 파일들에 태그 반영
-          sed -i "s|\(image:.*user-service:\).*|\1${IMAGE_TAG}|" charts/my-service/values-user-service.yaml
-          sed -i "s|\(image:.*recipe-service:\).*|\1${IMAGE_TAG}|" charts/my-service/values-recipe-service.yaml
-          sed -i "s|\(image:.*frontend:\).*|\1${IMAGE_TAG}|" charts/my-service/values-frontend.yaml
+          # values.yaml에서 태그 치환 (모든 서비스)
+          sed -i "s|tag: latest|tag: ${IMAGE_TAG}|g" values.yaml
 
-          git add charts/my-service/*.yaml
+          cd ..
+          git add my-helm-chart/values.yaml
           git commit -m "ci: update image tag to $IMAGE_TAG"
           git push origin main
 
