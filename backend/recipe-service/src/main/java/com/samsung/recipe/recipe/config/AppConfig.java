@@ -45,8 +45,8 @@ public class AppConfig {
     /**
      * GCP Cloud Storage Bean
      */
-    @Bean
-    public Storage gcpStorage() {
-        return StorageOptions.getDefaultInstance().getService();
-    }
+    // @Bean
+    // public Storage gcpStorage() {
+    //     return StorageOptions.getDefaultInstance().getService();
+    // }
 }
