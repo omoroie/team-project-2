@@ -90,9 +90,9 @@ jobs:
           cd helm-repo/my-helm-chart
 
           # values.yaml에서 태그 치환 (모든 서비스)
-          sed -i "s|\(userService.*tag:\).*|\1 ${IMAGE_TAG}|" values.yaml
-          sed -i "s|\(recipeService.*tag:\).*|\1 ${IMAGE_TAG}|" values.yaml
-          sed -i "s|\(frontendService.*tag:\).*|\1 ${IMAGE_TAG}|" values.yaml
+          yq eval ".userService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
+          yq eval ".recipeService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
+          yq eval ".frontendService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
 
           cd ..
           git add my-helm-chart/values.yaml
