@@ -82,16 +82,13 @@ jobs:
           else
             echo "✅ Skipping frontend (no changes)"
           fi
-
-      - name: Install yq
-        run: sudo apt-get install -y yq
-
+          
       - name: Update Helm values in GitLab (Backend & Frontend)
         if: github.ref == 'refs/heads/main'
         run: |
           git config --global user.name "GitHub CI Bot"
           git config --global user.email "ci-bot@example.com"
-
+          
           # Clone GitLab Helm repo
           git clone "https://oauth2:${TOKEN}@gitlab.com/${REPO_PATH}" helm-repo
           cd helm-repo/my-helm-chart
@@ -102,10 +99,6 @@ jobs:
           yq eval ".frontendService.image.tag = \"${IMAGE_TAG}\"" -i values.yaml
 
           cd ..
-          if ! git diff --quiet; then
-            git add my-helm-chart/values.yaml
-            git commit -m "ci: update image tag to ${IMAGE_TAG}"
-            git push origin main
-          else
-            echo "No changes to commit."
-          fi
+          git add my-helm-chart/values.yaml
+          git commit -m "ci: update image tag to $IMAGE_TAG"
+          git push origin main
