@@ -12,8 +12,10 @@ const getBaseUrl = () => {
 };
 
 const API_ENDPOINTS = {
-  auth: getBaseUrl(), // Auth API (Nginx를 통해 user-service:8081로 라우팅)
-  recipe: getBaseUrl(), // Recipe Service (Nginx를 통해 recipe-service:8082로 라우팅)
+  // auth: getBaseUrl(), // Auth API (Nginx를 통해 user-service:8081로 라우팅)
+  auth: "http://user-service.samsung-recipe.svc.cluster.local:8081",
+  // recipe: getBaseUrl(), // Recipe Service (Nginx를 통해 recipe-service:8082로 라우팅)
+  recipe: "http://recipe-service.samsung-recipe.svc.cluster.local:8082",
 };
 
 // API 응답 타입 정의 - 백엔드 실제 응답 구조에 맞춤
