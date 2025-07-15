@@ -74,7 +74,7 @@ export default function Login() {
         <CardHeader className="text-center">
           <div className="mx-auto w-12 h-12 recipe-gradient rounded-lg mb-4"></div>
           <CardTitle className="text-2xl font-bold text-foreground">{t('login')}</CardTitle>
-          <p className="text-muted-foreground">만개의레시피에 오신 것을 환영합니다</p>
+          <p className="text-muted-foreground">우리들의 레시피에 오신 것을 환영합니다</p>
         </CardHeader>
         <CardContent>
           {/* 직접 입력 폼을 위쪽으로 이동 */}
