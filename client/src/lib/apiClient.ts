@@ -140,7 +140,7 @@ export const recipeAPI = {
   delete: (id: number) => recipeApi.delete<ApiResponse<void>>(`/recipes/${id}`),
   getByAuthor: (authorId: number) => recipeApi.get<ApiResponse<Recipe[]>>(`/recipes/author/${authorId}`),
   search: (query: string, filters?: Record<string, unknown>) => 
-    recipeApi.get<ApiResponse<Recipe[]>>('/recipes/search', { params: { q: query, ...filters } }),
+    recipeApi.get<ApiResponse<Recipe[]>>('/recipes/search', { params: { keyword: query, ...filters } }),
   getByCategory: (category: string) => recipeApi.get<ApiResponse<Recipe[]>>(`/recipes/category/${category}`),
   uploadImage: (file: File) => {
     const formData = new FormData();

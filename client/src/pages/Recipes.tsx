@@ -7,7 +7,7 @@ import { useApp } from '@/contexts/AppContext';
 import { useQuery } from '@tanstack/react-query';
 import { Recipe } from '@shared/schema';
 import { Search, Plus, Filter, Clock, Users, ChefHat, ChevronLeft, ChevronRight } from 'lucide-react';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Link, useLocation } from 'wouter';
 import { recipeAPI } from '@/lib/apiClient';
 import { useImagePreload } from '@/hooks/useImagePreload';
@@ -22,6 +22,8 @@ export default function Recipes() {
   const initialSearch = urlParams.get('search') || '';
   
   const [searchQuery, setSearchQuery] = useState(initialSearch);
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState(initialSearch);
+  const [isComposing, setIsComposing] = useState(false);
   const [selectedDifficulty, setSelectedDifficulty] = useState(t('all'));
   const [selectedTime, setSelectedTime] = useState(t('all'));
   const [selectedIngredient, setSelectedIngredient] = useState(t('all'));
@@ -36,14 +38,25 @@ export default function Recipes() {
     setCurrentPage(0); // 검색어 변경시 첫 페이지로
   }, [location]);
 
+  // 디바운싱된 검색어 설정 (한글 조합 완료 후에만 API 호출)
+  useEffect(() => {
+    if (isComposing) return; // 조합 중이면 API 호출하지 않음
+    
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery);
+    }, 500); // 500ms 딜레이
+
+    return () => clearTimeout(timer);
+  }, [searchQuery, isComposing]);
+
   // 페이징된 레시피 데이터 로드
   const { data: recipeResponse, isLoading } = useQuery({
-    queryKey: ['recipes', currentPage, pageSize, searchQuery, selectedDifficulty, selectedTime, selectedIngredient],
+    queryKey: ['recipes', currentPage, pageSize, debouncedSearchQuery, selectedDifficulty, selectedTime, selectedIngredient],
     queryFn: async () => {
       try {
         // 검색어가 있으면 검색 API 사용, 없으면 페이징된 전체 데이터 사용
-        if (searchQuery.trim()) {
-          const response = await recipeAPI.search(searchQuery);
+        if (debouncedSearchQuery.trim()) {
+          const response = await recipeAPI.search(debouncedSearchQuery);
           return {
             recipes: response.data.recipes || response.data.data || [],
             currentPage: 0,
@@ -206,6 +219,8 @@ export default function Recipes() {
               placeholder={t('searchRecipes')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
+              onCompositionStart={() => setIsComposing(true)}
+              onCompositionEnd={() => setIsComposing(false)}
               className="pl-10"
             />
           </div>
