@@ -89,7 +89,7 @@ GCP_REGION=asia-northeast3
 
 # GCP Cloud Storage 설정
 GCP_STORAGE_BUCKET=your-storage-bucket-name
-GCP_STORAGE_FOLDER=dev-recipe-assets
+GCP_STORAGE_FOLDER=test-recipe-assets
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
 
 # Node 환경
@@ -122,7 +122,7 @@ gcloud iam service-accounts keys create service-account-key.json \
 
 # .env 파일에서 설정
 GCP_STORAGE_BUCKET=your-storage-bucket-name
-GCP_STORAGE_FOLDER=dev-recipe-assets
+GCP_STORAGE_FOLDER=test-recipe-assets
 GOOGLE_APPLICATION_CREDENTIALS=/path/to/service-account-key.json
 ```
 

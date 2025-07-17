@@ -77,7 +77,7 @@ spec:
               name: gcp-storage-secrets
               key: gcp-storage-bucket
         - name: GCP_STORAGE_FOLDER
-          value: "dev-recipe-assets"  # 환경별로 다른 폴더 사용 가능
+          value: "test-recipe-assets"  # 환경별로 다른 폴더 사용 가능
         - name: GOOGLE_APPLICATION_CREDENTIALS
           value: "/etc/gcp/credentials/service-account-key.json"
         volumeMounts:
