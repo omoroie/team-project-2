@@ -111,7 +111,7 @@ export default function CreateRecipe() {
         .map((instruction: string, index: number) => ({
           stepIndex: index + 1,
           description: instruction.trim(),
-          imageUrl: data.instructionImages[index] || null
+          imageUrl: instructionImages[index] || null
         }));
       
       // Convert hashtags to Tag format for backend
