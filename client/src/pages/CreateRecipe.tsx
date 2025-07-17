@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
@@ -37,6 +37,20 @@ export default function CreateRecipe() {
   const [selectedInstructionImages, setSelectedInstructionImages] = useState<(File | null)[]>([null]);
   
   const [newHashtag, setNewHashtag] = useState('');
+
+  // instructions 배열과 selectedInstructionImages 배열 동기화
+  useEffect(() => {
+    const newLength = formData.instructions.length;
+    const currentLength = selectedInstructionImages.length;
+    
+    if (newLength > currentLength) {
+      // 배열이 늘어난 경우 null 추가
+      setSelectedInstructionImages(prev => [...prev, ...Array(newLength - currentLength).fill(null)]);
+    } else if (newLength < currentLength) {
+      // 배열이 줄어든 경우 뒤에서부터 제거
+      setSelectedInstructionImages(prev => prev.slice(0, newLength));
+    }
+  }, [formData.instructions.length]);
 
   // Image upload function
   const uploadImage = async (file: File): Promise<string> => {
