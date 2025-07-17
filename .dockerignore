@@ -2,7 +2,7 @@
 .gitignore
 node_modules
 uploads
-# dist
+# dist!
 k8s
 Dockerfile.*
 *.log
