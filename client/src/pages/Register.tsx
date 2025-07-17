@@ -66,7 +66,7 @@ export default function Register() {
         <CardHeader className="text-center">
           <div className="mx-auto w-12 h-12 recipe-gradient rounded-lg mb-4"></div>
           <CardTitle className="text-2xl font-bold text-foreground">{t('register')}</CardTitle>
-          <p className="text-muted-foreground">만개의레시피 계정을 만들어보세요</p>
+          <p className="text-muted-foreground">우리들의 레시피 계정을 만들어보세요</p>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">

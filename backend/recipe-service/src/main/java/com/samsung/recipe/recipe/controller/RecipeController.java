@@ -48,7 +48,7 @@ public class RecipeController {
     }
     
     @GetMapping("/best")
-    public ResponseEntity<Map<String, Object>> getBestRecipes(@RequestParam(defaultValue = "12") int limit) {
+    public ResponseEntity<Map<String, Object>> getBestRecipes(@RequestParam(defaultValue = "15") int limit) {
         try {
             List<RecipeResponseDto> recipes = recipeService.getBestRecipes(limit);
             
