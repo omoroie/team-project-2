@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -176,18 +178,103 @@ public class RecipeService {
     public List<RecipeResponseDto> getAllRecipes() {
         log.info("Fetching all recipes");
         
+        // 페이징 없이 모든 레시피를 가져오는 경우 (기존 방식 유지)
         List<Recipe> recipes = recipeRepository.findAll();
+        
+        // 모든 재료와 태그를 한 번에 가져오기
         List<Ingredient> allIngredients = ingredientRepository.findAll();
         List<Tag> allTags = tagRepository.findAll();
         
+        // 배치 처리를 위한 레시피 ID 목록
+        List<Long> recipeIds = recipes.stream()
+                .map(Recipe::getId)
+                .collect(Collectors.toList());
+        
+        // 모든 관련 데이터를 한 번에 가져와서 맵으로 구성 (final로 선언)
+        final Map<Long, List<RecipeStep>> stepsMap;
+        final Map<Long, List<RecipeIngredient>> ingredientsMap;
+        final Map<Long, List<RecipeTag>> tagsMap;
+        
+        if (!recipeIds.isEmpty()) {
+            // 모든 스텝을 한 번에 가져와서 맵으로 구성
+            List<RecipeStep> allSteps = recipeStepRepository.findByRecipeIdInOrderByRecipeIdAscStepIndexAsc(recipeIds);
+            stepsMap = allSteps.stream()
+                    .collect(Collectors.groupingBy(RecipeStep::getRecipeId));
+            
+            // 모든 재료 연결을 한 번에 가져와서 맵으로 구성
+            List<RecipeIngredient> allRecipeIngredients = recipeIngredientRepository.findByRecipeIdIn(recipeIds);
+            ingredientsMap = allRecipeIngredients.stream()
+                    .collect(Collectors.groupingBy(RecipeIngredient::getRecipeId));
+            
+            // 모든 태그 연결을 한 번에 가져와서 맵으로 구성
+            List<RecipeTag> allRecipeTags = recipeTagRepository.findByRecipeIdIn(recipeIds);
+            tagsMap = allRecipeTags.stream()
+                    .collect(Collectors.groupingBy(RecipeTag::getRecipeId));
+        } else {
+            // 빈 맵으로 초기화
+            stepsMap = new HashMap<>();
+            ingredientsMap = new HashMap<>();
+            tagsMap = new HashMap<>();
+        }
+        
         return recipes.stream()
                 .map(recipe -> {
-                    List<RecipeStep> steps = recipeStepRepository.findByRecipeIdOrderByStepIndex(recipe.getId());
-                    List<RecipeIngredient> recipeIngredients = recipeIngredientRepository.findByRecipeId(recipe.getId());
-                    List<RecipeTag> recipeTags = recipeTagRepository.findByRecipeId(recipe.getId());
+                    List<RecipeStep> steps = stepsMap.getOrDefault(recipe.getId(), new ArrayList<>());
+                    List<RecipeIngredient> recipeIngredients = ingredientsMap.getOrDefault(recipe.getId(), new ArrayList<>());
+                    List<RecipeTag> recipeTags = tagsMap.getOrDefault(recipe.getId(), new ArrayList<>());
                     return recipeMapper.toResponseDto(recipe, steps, recipeIngredients, allIngredients, recipeTags, allTags);
                 })
                 .collect(Collectors.toList());
+    }
+    
+    public Page<RecipeResponseDto> getAllRecipesPaged(int page, int size) {
+        log.info("Fetching recipes with pagination: page={}, size={}", page, size);
+        
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Recipe> recipePage = recipeRepository.findAllOrderByCreatedAtDesc(pageable);
+        
+        // 모든 재료와 태그를 한 번에 가져오기
+        List<Ingredient> allIngredients = ingredientRepository.findAll();
+        List<Tag> allTags = tagRepository.findAll();
+        
+        // 배치 처리를 위한 레시피 ID 목록
+        List<Long> recipeIds = recipePage.getContent().stream()
+                .map(Recipe::getId)
+                .collect(Collectors.toList());
+        
+        // 모든 관련 데이터를 한 번에 가져와서 맵으로 구성 (final로 선언)
+        final Map<Long, List<RecipeStep>> stepsMap;
+        final Map<Long, List<RecipeIngredient>> ingredientsMap;
+        final Map<Long, List<RecipeTag>> tagsMap;
+        
+        if (!recipeIds.isEmpty()) {
+            // 모든 스텝을 한 번에 가져와서 맵으로 구성
+            List<RecipeStep> allSteps = recipeStepRepository.findByRecipeIdInOrderByRecipeIdAscStepIndexAsc(recipeIds);
+            stepsMap = allSteps.stream()
+                    .collect(Collectors.groupingBy(RecipeStep::getRecipeId));
+            
+            // 모든 재료 연결을 한 번에 가져와서 맵으로 구성
+            List<RecipeIngredient> allRecipeIngredients = recipeIngredientRepository.findByRecipeIdIn(recipeIds);
+            ingredientsMap = allRecipeIngredients.stream()
+                    .collect(Collectors.groupingBy(RecipeIngredient::getRecipeId));
+            
+            // 모든 태그 연결을 한 번에 가져와서 맵으로 구성
+            List<RecipeTag> allRecipeTags = recipeTagRepository.findByRecipeIdIn(recipeIds);
+            tagsMap = allRecipeTags.stream()
+                    .collect(Collectors.groupingBy(RecipeTag::getRecipeId));
+        } else {
+            // 빈 맵으로 초기화
+            stepsMap = new HashMap<>();
+            ingredientsMap = new HashMap<>();
+            tagsMap = new HashMap<>();
+        }
+        
+        return recipePage.map(recipe -> {
+            List<RecipeStep> steps = stepsMap.getOrDefault(recipe.getId(), new ArrayList<>());
+            List<RecipeIngredient> recipeIngredients = ingredientsMap.getOrDefault(recipe.getId(), new ArrayList<>());
+            List<RecipeTag> recipeTags = tagsMap.getOrDefault(recipe.getId(), new ArrayList<>());
+            return recipeMapper.toResponseDto(recipe, steps, recipeIngredients, allIngredients, recipeTags, allTags);
+        });
     }
     
     public List<RecipeResponseDto> getBestRecipes(int limit) {

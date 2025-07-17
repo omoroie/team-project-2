@@ -1,4 +1,4 @@
-import { QueryClient, QueryFunction } from "@tanstack/react-query";
+import { QueryClient } from '@tanstack/react-query';
 import { recipeAPI, authAPI } from "./apiClient";
 import axios, { AxiosResponse } from 'axios';
 import { User, Recipe } from '@shared/schema';
@@ -81,17 +81,20 @@ export const getQueryFn: <T>(options: {
 export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      queryFn: getQueryFn({ on401: "returnNull" }),
-      refetchInterval: false,
-      refetchOnWindowFocus: false,
-      staleTime: 30000, // 30초 캐시
-      retry: (failureCount, error: unknown) => {
-        if ((error as { response?: { status?: number } })?.response?.status === 401) return false;
-        return failureCount < 1; // 재시도 횟수 줄임
+      staleTime: 5 * 60 * 1000, // 5분간 데이터를 fresh로 유지
+      gcTime: 10 * 60 * 1000, // 10분간 캐시 유지 (기존 cacheTime)
+      retry: (failureCount, error: any) => {
+        // 네트워크 오류나 5xx 오류만 재시도
+        if (failureCount >= 2) return false;
+        if (error?.response?.status >= 500) return true;
+        if (error?.code === 'NETWORK_ERROR') return true;
+        return false;
       },
+      refetchOnWindowFocus: false, // 윈도우 포커스시 자동 리페치 비활성화
+      refetchOnReconnect: true, // 네트워크 재연결시 리페치 활성화
     },
     mutations: {
-      retry: false,
+      retry: 1, // 뮤테이션은 1번만 재시도
     },
   },
 });

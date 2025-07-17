@@ -18,8 +18,8 @@ public class StorageConfig {
     @Getter
     @Setter
     public static class Gcp {
-        private String bucketName = "dev-recipe-assets";
-        private String projectId = "team-project-464904";
+        private String bucketName = "test-recipe-assets";
+        private String projectId = "formidable-byte-461400-t1";
         private String folderName = "images";  // 이미지 저장 폴더명
     }
 } 

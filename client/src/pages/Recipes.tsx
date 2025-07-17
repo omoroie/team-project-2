@@ -6,10 +6,11 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { useApp } from '@/contexts/AppContext';
 import { useQuery } from '@tanstack/react-query';
 import { Recipe } from '@shared/schema';
-import { Search, Plus, Filter, Clock, Users, ChefHat } from 'lucide-react';
+import { Search, Plus, Filter, Clock, Users, ChefHat, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useLocation } from 'wouter';
 import { recipeAPI } from '@/lib/apiClient';
+import { useImagePreload } from '@/hooks/useImagePreload';
 
 export default function Recipes() {
   const { t } = useLanguage();
@@ -25,48 +26,81 @@ export default function Recipes() {
   const [selectedTime, setSelectedTime] = useState(t('all'));
   const [selectedIngredient, setSelectedIngredient] = useState(t('all'));
   const [showFilters, setShowFilters] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [pageSize] = useState(20); // 페이지당 20개씩 로드
   
   // URL 검색어가 변경되면 상태 업데이트
   useEffect(() => {
     const newSearch = urlParams.get('search') || '';
     setSearchQuery(newSearch);
+    setCurrentPage(0); // 검색어 변경시 첫 페이지로
   }, [location]);
 
-  const { data: recipes = [], isLoading } = useQuery<Recipe[]>({
-    queryKey: ['recipes'],
+  // 페이징된 레시피 데이터 로드
+  const { data: recipeResponse, isLoading } = useQuery({
+    queryKey: ['recipes', currentPage, pageSize, searchQuery, selectedDifficulty, selectedTime, selectedIngredient],
     queryFn: async () => {
       try {
-        const response = await recipeAPI.getAll();
-        const data = response.data;
-        // 응답 구조에 따라 적절히 처리
-        if (Array.isArray(data)) {
-          return data;
-        } else if (data && Array.isArray(data.recipes)) {
-          return data.recipes;
-        } else if (data && Array.isArray(data.data)) {
-          return data.data;
+        // 검색어가 있으면 검색 API 사용, 없으면 페이징된 전체 데이터 사용
+        if (searchQuery.trim()) {
+          const response = await recipeAPI.search(searchQuery);
+          return {
+            recipes: response.data.recipes || response.data.data || [],
+            currentPage: 0,
+            totalPages: 1,
+            totalElements: (response.data.recipes || response.data.data || []).length,
+            size: pageSize
+          };
+        } else {
+          const response = await recipeAPI.getAllPaged({ 
+            page: currentPage, 
+            size: pageSize 
+          });
+          return {
+            recipes: response.data.recipes || response.data.data || [],
+            currentPage: response.data.currentPage || 0,
+            totalPages: response.data.totalPages || 1,
+            totalElements: response.data.totalElements || 0,
+            size: response.data.size || pageSize
+          };
         }
-        return [];
       } catch (error) {
         console.error('Failed to fetch recipes:', error);
-        return [];
+        return {
+          recipes: [],
+          currentPage: 0,
+          totalPages: 1,
+          totalElements: 0,
+          size: pageSize
+        };
       }
     },
     retry: 1,
+    staleTime: 5 * 60 * 1000, // 5분간 캐시
   });
 
-  // 필터링된 레시피
+  const recipes = recipeResponse?.recipes || [];
+  const totalPages = recipeResponse?.totalPages || 1;
+  const totalElements = recipeResponse?.totalElements || 0;
+
+  // 이미지 프리로딩
+  const imageUrls = useMemo(() => {
+    return recipes
+      .map(recipe => recipe.imageUrl)
+      .filter(Boolean) as string[];
+  }, [recipes]);
+
+  const { isImageLoaded, isImageLoading } = useImagePreload(imageUrls);
+
+  // 페이지 변경 핸들러
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 필터링된 레시피 (클라이언트 사이드 필터링은 최소화)
   const filteredRecipes = useMemo(() => {
     let filtered = recipes;
-
-    // 검색어 필터링
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
-      filtered = filtered.filter(recipe =>
-        recipe.title.toLowerCase().includes(query) ||
-        recipe.description.toLowerCase().includes(query)
-      );
-    }
 
     // 난이도 필터링
     if (selectedDifficulty !== t('all')) {
@@ -103,7 +137,7 @@ export default function Recipes() {
       });
     }
 
-    // 재료별 필터링 (정규화된 재료 구조에 맞춰 수정)
+    // 재료별 필터링
     if (selectedIngredient !== t('all')) {
       filtered = filtered.filter(recipe => {
         return recipe.ingredients?.some(ingredient => 
@@ -115,7 +149,7 @@ export default function Recipes() {
     }
 
     return filtered;
-  }, [recipes, searchQuery, selectedDifficulty, selectedTime, selectedIngredient, t]);
+  }, [recipes, selectedDifficulty, selectedTime, selectedIngredient, t]);
 
   // 필터 옵션들
   const difficultyOptions = [t('all'), t('easy'), t('medium'), t('hard')];
@@ -267,18 +301,62 @@ export default function Recipes() {
         {/* 결과 카운트 */}
         <div className="flex justify-between items-center mb-6">
           <p className="text-muted-foreground">
-            총 {filteredRecipes.length}개의 레시피
+            총 {totalElements}개의 레시피 중 {filteredRecipes.length}개 표시
             {searchQuery && ` "${searchQuery}" 검색 결과`}
           </p>
         </div>
 
         {/* 레시피 그리드 */}
         {filteredRecipes.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredRecipes.map((recipe) => (
-              <RecipeCard key={recipe.id} recipe={recipe} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {filteredRecipes.map((recipe) => (
+                <RecipeCard key={recipe.id} recipe={recipe} />
+              ))}
+            </div>
+
+            {/* 페이징 컨트롤 */}
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center mt-8 gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 0}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                  이전
+                </Button>
+                
+                <div className="flex gap-1">
+                  {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                    const pageNum = Math.max(0, Math.min(totalPages - 5, currentPage - 2)) + i;
+                    return (
+                      <Button
+                        key={pageNum}
+                        variant={currentPage === pageNum ? 'default' : 'outline'}
+                        size="sm"
+                        onClick={() => handlePageChange(pageNum)}
+                        className="w-10"
+                      >
+                        {pageNum + 1}
+                      </Button>
+                    );
+                  })}
+                </div>
+                
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage >= totalPages - 1}
+                >
+                  다음
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-12">
             <Search className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
@@ -293,6 +371,7 @@ export default function Recipes() {
               setSelectedDifficulty(t('all'));
               setSelectedTime(t('all'));
               setSelectedIngredient(t('all'));
+              setCurrentPage(0);
             }}>
               필터 초기화
             </Button>

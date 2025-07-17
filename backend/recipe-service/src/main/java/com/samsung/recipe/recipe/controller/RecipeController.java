@@ -116,6 +116,34 @@ public class RecipeController {
         }
     }
     
+    @GetMapping("/paged")
+    public ResponseEntity<Map<String, Object>> getAllRecipesPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        try {
+            Page<RecipeResponseDto> recipePage = recipeService.getAllRecipesPaged(page, size);
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", true);
+            response.put("recipes", recipePage.getContent());
+            response.put("currentPage", recipePage.getNumber());
+            response.put("totalPages", recipePage.getTotalPages());
+            response.put("totalElements", recipePage.getTotalElements());
+            response.put("size", recipePage.getSize());
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            log.error("Paged recipes fetch failed: {}", e.getMessage());
+            
+            Map<String, Object> response = new HashMap<>();
+            response.put("success", false);
+            response.put("message", "Failed to fetch paged recipes");
+            
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
     @GetMapping("/writer/{writerId}")
     public ResponseEntity<Map<String, Object>> getRecipesByWriter(@PathVariable String writerId) {
         try {

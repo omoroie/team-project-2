@@ -14,10 +14,15 @@
     "allowImportingTsExtensions": false,
     "moduleResolution": "bundler",
     "baseUrl": ".",
-    "types": ["node", "vite/client"],
+    // [CHANGED] "vite/client" 제거 - vite-env.d.ts에서 처리
+    "types": ["node"],
     "paths": {
       "@/*": ["./src/*"],
       "@shared/*": ["../shared/*"]
     }
-  }
+  },
+  // [ADDED] Vite 설정 파일 참조 추가
+  "references": [
+    { "path": "./tsconfig.node.json" }
+  ]
 }

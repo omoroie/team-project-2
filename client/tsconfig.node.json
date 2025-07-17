@@ -1,0 +1,18 @@
+// ========================================
+// [NEW FILE] Vite 설정용 TypeScript 설정
+// ========================================
+// 이 파일은 새로 추가된 파일입니다.
+// vite.config.ts 파일에서 사용하는 TypeScript 설정을 담당합니다.
+
+{
+  "compilerOptions": {
+    "composite": true,
+    "skipLibCheck": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "types": ["node", "vite/client"]
+  },
+  "include": ["vite.config.ts"]
+} 
