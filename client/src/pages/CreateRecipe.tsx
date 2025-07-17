@@ -30,7 +30,7 @@ export default function CreateRecipe() {
     ingredients: [{ name: '', amount: '' }],
     instructions: [''],
     hashtags: [] as string[],
-    instructionImages: ['']
+    instructionImages: [] as string[]
   });
   
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
@@ -82,18 +82,18 @@ export default function CreateRecipe() {
       }
       
       // Upload instruction images if selected
-      let instructionImages = [...data.instructionImages.filter((item: string) => item.trim() !== '')];
-      for (let i = 0; i < selectedInstructionImages.length; i++) {
+      let instructionImages: string[] = [];
+      for (let i = 0; i < data.instructions.length; i++) {
+        // 파일이 선택된 경우 업로드, 아니면 직접 입력된 URL 사용
         if (selectedInstructionImages[i]) {
           console.log(`Uploading instruction image ${i + 1}:`, selectedInstructionImages[i]!.name);
           const uploadedUrl = await uploadImage(selectedInstructionImages[i]!);
           console.log(`Instruction image ${i + 1} uploaded:`, uploadedUrl);
-          
-          // 배열 크기를 맞춰주기 위해 필요시 확장
-          while (instructionImages.length <= i) {
-            instructionImages.push('');
-          }
           instructionImages[i] = uploadedUrl;
+        } else if (data.instructionImages[i] && data.instructionImages[i].trim() !== '') {
+          instructionImages[i] = data.instructionImages[i];
+        } else {
+          instructionImages[i] = '';
         }
       }
       
@@ -138,7 +138,7 @@ export default function CreateRecipe() {
         steps: recipeSteps,
         tags: recipeTags,
         instructions: data.instructions.filter((item: string) => item.trim() !== ''),
-        instructionImages: data.instructionImages.filter((item: string) => item.trim() !== '')
+        instructionImages: instructionImages.filter((item: string) => item.trim() !== '')
       };
       
       console.log('Sending recipe data:', recipeData);
