@@ -71,11 +71,8 @@ spec:
             secretKeyRef:
               name: gcp-storage-secrets
               key: gcp-project-id
-        - name: GCP_STORAGE_BUCKET
-          valueFrom:
-            secretKeyRef:
-              name: gcp-storage-secrets
-              key: gcp-storage-bucket
+        # - name: GCP_STORAGE_BUCKET
+        #   value: "test-asia-northeast3-recipe-assets"
         - name: GCP_STORAGE_FOLDER
           value: "test-recipe-assets"  # 환경별로 다른 폴더 사용 가능
         - name: GOOGLE_APPLICATION_CREDENTIALS

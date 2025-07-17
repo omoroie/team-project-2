@@ -18,7 +18,7 @@ public class StorageConfig {
     @Getter
     @Setter
     public static class Gcp {
-        private String bucketName = "test-recipe-assets";
+        private String bucketName = "test-asia-northeast3-recipe-assets";
         private String projectId = "formidable-byte-461400-t1";
         private String folderName = "images";  // 이미지 저장 폴더명
     }

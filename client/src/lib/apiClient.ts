@@ -38,7 +38,7 @@ interface LoginResponse {
 const createApiClient = (baseURL: string): AxiosInstance => {
   const client = axios.create({
     baseURL,
-    timeout: 30000, // 30초로 증가
+    timeout: 15000,
     headers: {
       'Content-Type': 'application/json',
       'Accept': 'application/json',
@@ -130,8 +130,6 @@ export const authAPI = {
 export const recipeAPI = {
   getAll: (params?: { page?: number; size?: number; category?: string; difficulty?: string }) =>
     recipeApi.get<ApiResponse<Recipe[]>>('/recipes', { params }),
-  getAllPaged: (params?: { page?: number; size?: number }) =>
-    recipeApi.get<ApiResponse<Recipe[]>>('/recipes/paged', { params }),
   getBest: (limit?: number) => 
     recipeApi.get<ApiResponse<Recipe[]>>('/recipes/best', { params: { limit } }),
   getById: (id: number) => recipeApi.get<ApiResponse<Recipe>>(`/recipes/${id}`),

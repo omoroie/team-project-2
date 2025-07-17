@@ -165,14 +165,34 @@ public class RecipeService {
     
     public RecipeResponseDto getRecipeById(Long id) {
         log.info("Fetching recipe by ID: {}", id);
+        
         Recipe recipe = recipeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Recipe not found"));
+                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
+        
+        // 조회수 증가
+        recipe.setViewCount(recipe.getViewCount() + 1);
+        recipeRepository.save(recipe);
+        log.info("View count increased for recipe {}: {}", id, recipe.getViewCount());
+        
         List<RecipeStep> steps = recipeStepRepository.findByRecipeIdOrderByStepIndex(id);
         List<RecipeIngredient> recipeIngredients = recipeIngredientRepository.findByRecipeId(id);
         List<Ingredient> allIngredients = ingredientRepository.findAll();
         List<RecipeTag> recipeTags = recipeTagRepository.findByRecipeId(id);
         List<Tag> allTags = tagRepository.findAll();
+        
         return recipeMapper.toResponseDto(recipe, steps, recipeIngredients, allIngredients, recipeTags, allTags);
+    }
+    
+    public void incrementViewCount(Long id) {
+        log.info("Incrementing view count for recipe: {}", id);
+        
+        Recipe recipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Recipe not found with id: " + id));
+        
+        recipe.setViewCount(recipe.getViewCount() + 1);
+        recipeRepository.save(recipe);
+        
+        log.info("View count incremented for recipe {}: {}", id, recipe.getViewCount());
     }
     
     public List<RecipeResponseDto> getAllRecipes() {
