@@ -27,6 +27,11 @@ public class RecipeController {
     @PostMapping
     public ResponseEntity<Map<String, Object>> createRecipe(@Valid @RequestBody RecipeRequestDto recipeRequestDto) {
         try {
+            log.info("Received recipe creation request: {}", recipeRequestDto.getTitle());
+            log.info("Steps data: {}", recipeRequestDto.getSteps());
+            log.info("Instructions data: {}", recipeRequestDto.getInstructions());
+            log.info("Instruction images data: {}", recipeRequestDto.getInstructionImages());
+
             RecipeResponseDto recipe = recipeService.createRecipe(recipeRequestDto);
             
             Map<String, Object> response = new HashMap<>();
