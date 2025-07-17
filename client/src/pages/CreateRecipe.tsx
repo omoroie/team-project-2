@@ -205,7 +205,9 @@ export default function CreateRecipe() {
       [field]: [...prev[field], '']
     }));
     
-    if (field === 'instructionImages') {
+    if (field === 'instructions') {
+      setSelectedInstructionImages(prev => [...prev, null]);
+    } else if (field === 'instructionImages') {
       setSelectedInstructionImages(prev => [...prev, null]);
     }
   };
@@ -224,7 +226,9 @@ export default function CreateRecipe() {
         [field]: prev[field].filter((_: any, i: number) => i !== index)
       }));
       
-      if (field === 'instructionImages') {
+      if (field === 'instructions') {
+        setSelectedInstructionImages(prev => prev.filter((_, i) => i !== index));
+      } else if (field === 'instructionImages') {
         setSelectedInstructionImages(prev => prev.filter((_, i) => i !== index));
       }
     }
