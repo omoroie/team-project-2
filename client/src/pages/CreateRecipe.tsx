@@ -83,6 +83,10 @@ export default function CreateRecipe() {
       
       // Upload instruction images if selected
       let instructionImages: string[] = [];
+      console.log('Debug - data.instructions.length:', data.instructions.length);
+      console.log('Debug - selectedInstructionImages:', selectedInstructionImages);
+      console.log('Debug - data.instructionImages:', data.instructionImages);
+      
       for (let i = 0; i < data.instructions.length; i++) {
         // 파일이 선택된 경우 업로드, 아니면 직접 입력된 URL 사용
         if (selectedInstructionImages[i]) {
@@ -91,11 +95,15 @@ export default function CreateRecipe() {
           console.log(`Instruction image ${i + 1} uploaded:`, uploadedUrl);
           instructionImages[i] = uploadedUrl;
         } else if (data.instructionImages[i] && data.instructionImages[i].trim() !== '') {
+          console.log(`Using direct URL for step ${i + 1}:`, data.instructionImages[i]);
           instructionImages[i] = data.instructionImages[i];
         } else {
+          console.log(`No image for step ${i + 1}`);
           instructionImages[i] = '';
         }
       }
+      
+      console.log('Debug - Final instructionImages:', instructionImages);
       
       // Convert ingredients to RecipeIngredient format for backend
       const recipeIngredients = data.ingredients
