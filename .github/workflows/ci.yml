@@ -72,7 +72,7 @@ jobs:
             cd ../../
           done
           
-      - name: Docker Build & Push (Frontend) 
+      - name: Docker Build & Push (Frontend)
         if: github.ref == 'refs/heads/main'
         run: |
           FULL_REPO="$GCP_REGISTRY_DOMAIN/$GCP_PROJECT_ID/$GCP_REPO_NAME"
