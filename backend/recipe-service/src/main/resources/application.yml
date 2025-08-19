@@ -7,8 +7,8 @@ spring:
   
   datasource:
     url: jdbc:postgresql://${DB_HOST:localhost}:5432/${DB_NAME:recipe_db}
-    username: ${DB_USER:recipe_user}
-    password: ${DB_PASSWORD:recipe_password}
+    username: ${DB_USER:your_db_user}
+    password: ${DB_PASSWORD:your_secure_password}
     driver-class-name: org.postgresql.Driver
     # GCP Cloud SQL 직접 연결 (쿠버네티스에서 실행 시)
     # url: jdbc:postgresql:///${DB_NAME}?socketFactory=com.google.cloud.sql.postgres.SocketFactory&cloudSqlInstance=${DB_HOST}
@@ -53,7 +53,7 @@ spring:
   cloud:
     gcp:
       storage:
-        project-id: ${GCP_PROJECT_ID:team-project-464904}
+        project-id: ${GCP_PROJECT_ID:your-gcp-project-id}
         credentials:
           location: ${GOOGLE_APPLICATION_CREDENTIALS:}
         auto-configuration:
@@ -74,8 +74,8 @@ logging:
 app:
   storage:
     gcp:
-      bucket-name: ${GCP_STORAGE_BUCKET:test-asia-northeast3-recipe-assets}
-      project-id: ${GCP_PROJECT_ID:formidable-byte-461400-t1}
+      bucket-name: ${GCP_STORAGE_BUCKET:your-storage-bucket-name}
+      project-id: ${GCP_PROJECT_ID:your-gcp-project-id}
       folder-name: ${GCP_STORAGE_FOLDER:images}
 
 management:

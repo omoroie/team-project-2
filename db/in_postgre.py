@@ -49,11 +49,11 @@ def get_int(row, col):
 
 # ✅ GCP Cloud SQL 연결 (로컬 개발용 - Cloud SQL Proxy 필요)
 # 환경변수에서 비밀번호를 가져오거나, 직접 입력
-DB_PASSWORD = os.getenv('DB_PASSWORD', '실제_GCP_SQL_비밀번호_여기에_입력')
+DB_PASSWORD = os.getenv('DB_PASSWORD', 'your_gcp_sql_password_here')
 
 conn = psycopg2.connect(
     dbname="recipe_db",
-    user="p646626910485-oprfkm@gcp-sa-cloud-sql.iam.gserviceaccount.com",
+    user=os.getenv('DB_USER', 'your_gcp_service_account@gcp-sa-cloud-sql.iam.gserviceaccount.com'),
     password=DB_PASSWORD,
     host="127.0.0.1",  # Cloud SQL Proxy가 5432 포트로 포워딩
     port="5432"

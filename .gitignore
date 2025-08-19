@@ -65,11 +65,17 @@ jspm_packages/
 *.db
 *.sqlite
 
-# Spring Boot
+# Spring Boot & Maven
 backend/*/target/
 backend/*/.mvn/
 backend/*/mvnw
 backend/*/mvnw.cmd
+target/
+**/target/
+*.jar
+*.war
+*.ear
+*.class
 
 # IntelliJ IDEA
 backend/*/.idea/
@@ -96,9 +102,56 @@ backend/*/.mvn/timing.properties
 # Kubernetes secrets
 k8s/secrets/
 
+# GCP Service Account Keys
+service-account-key.json
+*-service-account.json
+gcp-credentials.json
+
+# JWT Secrets and API Keys
+jwt-secret.txt
+api-keys.txt
+
 # Temporary files
 tmp/
 temp/
 
 # Replit Log File Trash
 attached_assets/
+
+# Project specific files that shouldn't be in git
+build_log.txt
+*.csv
+recipe_*.csv
+uv.lock
+*.zip
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Database dumps and data files
+*.sql.gz
+*.dump
+*.backup
+
+# Upload directories (may contain user data)
+uploads/*
+!uploads/.gitkeep
+
+# Generated files
+generated-icon.png
+
+# Development tools
+.replit
+.dockerignore
